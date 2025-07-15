@@ -6,18 +6,6 @@ This project provides several practical tools for image dataset preparation. The
 
 ---
 
-## 📑 Table of Contents
-
--   [📝 Overview](#overview)
--   [🛠️ Tool Usage & Requirements](#tool-usage--requirements)
-    -   [1️⃣ process_txt_files.zsh](#1-processtxtfileszsh)
-    -   [2️⃣ resize_images.zsh](#2-resizeimageszsh)
-    -   [3️⃣ fetch_tags.py](#3-fetchtagspy)
--   [💡 Notes](#faq--notes)
--   [📜 License](#-license)
-
----
-
 ## 📝 Overview
 
 -   **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on a user-provided trigger keyword.
