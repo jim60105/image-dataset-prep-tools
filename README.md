@@ -2,7 +2,11 @@
 
 This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training.
 
-**Important**: Add this project's root directory to your PATH to execute scripts from anywhere and process files in your current working directory.
+> [!TIP]  
+> Add this project's root directory to your PATH to execute scripts from anywhere and process files in your current working directory.
+
+> [!CAUTION]  
+> All three tools overwrite original files. Always back up important data first!
 
 ---
 
@@ -120,16 +124,15 @@ uv run fetch_tags.py
 
 -   1-second delay between each image query to avoid being rate-limited.
 -   If neither site returns tags, an error will be shown in the logs.
+-   **API rate limits:** Fetching tags may encounter rate limiting; do not run the script in parallel.
 
 ---
 
 ## 💡 Notes
 
--   **Files will be overwritten:** All three tools overwrite original files. **Always back up important data first!**
 -   **Dependency installation:**
     -   `resize_images.zsh` requires ImageMagick.
     -   `fetch_tags.py` requires `requests<3`, recommended to use uv for management.
--   **API rate limits:** `fetch_tags.py` may have rate limiting; do not run the script in parallel.
 
 ---
 
