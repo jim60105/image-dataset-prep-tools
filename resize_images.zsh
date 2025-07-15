@@ -18,8 +18,13 @@
 # Resize all images in the current working directory to have the long side as 1024px, skipping images that are already smaller.
 # Usage: resize_images.zsh (from any directory)
 
+
 # Set nullglob option to handle cases where no files match the pattern
 setopt nullglob
+
+# Remove all .npz files in the current directory before resizing images
+rm -f -- *.npz
+echo "Removed all .npz files in current directory"
 
 for img in *.jpg *.png; do
   [[ ! -f "$img" ]] && continue
