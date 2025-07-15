@@ -1,4 +1,4 @@
-# Image Dataset Preparation Tools
+# 🖼️ Image Dataset Preparation Tools
 
 This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training.
 
@@ -6,18 +6,19 @@ This project provides several practical tools for image dataset preparation. The
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
--   [Overview](#overview)
--   [Tool Usage & Requirements](#tool-usage--requirements)
-    -   [1. process_txt_files.zsh](#1-processtxtfileszsh)
-    -   [2. resize_images.zsh](#2-resizeimageszsh)
-    -   [3. fetch_tags.py](#3-fetchtagspy)
--   [FAQ & Notes](#faq--notes)
+-   [📝 Overview](#overview)
+-   [🛠️ Tool Usage & Requirements](#tool-usage--requirements)
+    -   [1️⃣ process_txt_files.zsh](#1-processtxtfileszsh)
+    -   [2️⃣ resize_images.zsh](#2-resizeimageszsh)
+    -   [3️⃣ fetch_tags.py](#3-fetchtagspy)
+-   [💡 Notes](#faq--notes)
+-   [📜 License](#-license)
 
 ---
 
-## Overview
+## 📝 Overview
 
 -   **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on a user-provided trigger keyword.
 -   **resize_images.zsh**: Automatically resizes all images in the current working directory so the long side is 1024px, skipping images that are already smaller.
@@ -25,9 +26,9 @@ This project provides several practical tools for image dataset preparation. The
 
 ---
 
-## Tool Usage & Requirements
+## 🛠️ Tool Usage & Requirements
 
-### Setup
+### ⚙️ Setup
 
 First, add this project's root directory to your PATH to run scripts from anywhere:
 
@@ -38,7 +39,7 @@ export PATH="/path/to/image-dataset-prep-tools:$PATH"
 
 After setup, navigate to any directory containing your dataset files and run the scripts directly.
 
-### 1. process_txt_files.zsh
+### 1️⃣ process_txt_files.zsh
 
 **Requirements:**
 
@@ -68,7 +69,7 @@ process_txt_files.zsh
 
 ---
 
-### 2. resize_images.zsh
+### 2️⃣ resize_images.zsh
 
 **Requirements:**
 
@@ -97,7 +98,7 @@ resize_images.zsh
 
 ---
 
-### 3. fetch_tags.py
+### 3️⃣ fetch_tags.py
 
 **Requirements:**
 
@@ -134,7 +135,7 @@ uv run fetch_tags.py
 
 ---
 
-## Notes
+## 💡 Notes
 
 -   **Files will be overwritten:** All three tools overwrite original files. **Always back up important data first!**
 -   **Dependency installation:**
