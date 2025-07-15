@@ -101,7 +101,7 @@ resize_images.zsh
 
 **Requirements:**
 
--   Python 3.11+
+-   Python 3.12+
 -   [`requests<3`](https://pypi.org/project/requests/)
     -   If you use `uv run`, all requirements are managed automatically, no manual installation needed.
     -   If you do not use `uv`, you must manually install dependencies with `pip install requests<3`.
