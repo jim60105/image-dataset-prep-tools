@@ -15,8 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ==================================================================
 #
-# Process all .txt files in the current directory: cleans and restructures content based on user-provided trigger, removes specified keywords and noise, and prepends "1girl, {trigger}" to each line.
-# Usage: zsh process_txt_files.zsh
+# Process all .txt files in the current working directory: cleans and restructures content based on user-provided trigger, removes specified keywords and noise, and prepends "1girl, {trigger}" to each line.
+# Usage: process_txt_files.zsh (from any directory)
 
 # Prompt user for trigger input
 echo "What's the trigger?"

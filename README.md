@@ -2,6 +2,8 @@
 
 This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training.
 
+**Important**: Add this project's root directory to your PATH to execute scripts from anywhere and process files in your current working directory.
+
 ---
 
 ## Table of Contents
@@ -17,13 +19,24 @@ This project provides several practical tools for image dataset preparation. The
 
 ## Overview
 
--   **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current directory, removing noise and unifying format based on a user-provided trigger keyword.
--   **resize_images.zsh**: Automatically resizes all images in the folder so the long side is 1024px, skipping images that are already smaller.
--   **fetch_tags.py**: Fetches tags from Danbooru/Gelbooru using the MD5 in the image filename and writes them to a corresponding `.txt` file.
+-   **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on a user-provided trigger keyword.
+-   **resize_images.zsh**: Automatically resizes all images in the current working directory so the long side is 1024px, skipping images that are already smaller.
+-   **fetch_tags.py**: Fetches tags from Danbooru/Gelbooru using the MD5 in the image filename from the current working directory and writes them to a corresponding `.txt` file.
 
 ---
 
 ## Tool Usage & Requirements
+
+### Setup
+
+First, add this project's root directory to your PATH to run scripts from anywhere:
+
+```bash
+# Add to your shell configuration file (.bashrc, .zshrc, etc.)
+export PATH="/path/to/image-dataset-prep-tools:$PATH"
+```
+
+After setup, navigate to any directory containing your dataset files and run the scripts directly.
 
 ### 1. process_txt_files.zsh
 
@@ -33,12 +46,14 @@ This project provides several practical tools for image dataset preparation. The
 
 **Function:**
 
--   Batch processes all `.txt` tag files in the current directory, cleans content based on a user-input trigger keyword, removes noise tags, and prepends `1girl, {trigger}` to each line.
+-   Batch processes all `.txt` tag files in the current working directory, cleans content based on a user-input trigger keyword, removes noise tags, and prepends `1girl, {trigger}` to each line.
 
 **Usage:**
 
 ```bash
-zsh process_txt_files.zsh
+# Navigate to your dataset directory first
+cd /path/to/your/dataset
+process_txt_files.zsh
 ```
 
 -   The script will prompt for a trigger keyword, then process all `.txt` files automatically.
@@ -62,13 +77,15 @@ zsh process_txt_files.zsh
 
 **Function:**
 
--   Resizes all `.jpg` and `.png` images in the current directory so the long side is 1024px, keeping aspect ratio.
+-   Resizes all `.jpg` and `.png` images in the current working directory so the long side is 1024px, keeping aspect ratio.
 -   Images with both sides smaller than 1024px are skipped.
 
 **Usage:**
 
 ```bash
-zsh resize_images.zsh
+# Navigate to your dataset directory first
+cd /path/to/your/dataset
+resize_images.zsh
 ```
 
 -   Original images will be overwritten. **Back up important files first!**
@@ -91,16 +108,19 @@ zsh resize_images.zsh
 
 **Function:**
 
--   Scans the current directory for images named `{id}_{md5}.{ext}` and fetches tags from Danbooru by MD5. If not found, falls back to Gelbooru.
+-   Scans the current working directory for images named `{id}_{md5}.{ext}` and fetches tags from Danbooru by MD5. If not found, falls back to Gelbooru.
 -   Tags are written to a `.txt` file with the same name as the image, comma-separated.
 
 **Usage:**
 
 ```bash
+# Navigate to your dataset directory first
+cd /path/to/your/dataset
 uv run fetch_tags.py
 ```
 
--   No extra parameters needed; just run the script.
+-   No extra parameters needed; just run the script with uv run.
+-   Note: This script requires `uv` to manage Python dependencies automatically.
 
 **Filename pattern:**
 

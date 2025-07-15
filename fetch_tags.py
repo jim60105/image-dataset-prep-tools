@@ -30,7 +30,9 @@ from typing import List, Optional
 import requests
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 IMAGE_PATTERN = re.compile(r"^(\d+)_([0-9a-fA-F]{32})\.(jpg|jpeg|png|gif)$")
@@ -38,9 +40,12 @@ GELBOORU_MD5_PATTERN = re.compile(
     r'<section[^>]+class="[^"]*image-container note-container[^"]*"'
     r'[^>]*data-md5="([0-9a-fA-F]{32})"'
 )
-GELBOORU_TAG_UL_PATTERN = re.compile(r'<ul[^>]+id="tag-list"[^>]*>([\s\S]*?)</ul>')
+GELBOORU_TAG_UL_PATTERN = re.compile(
+    r'<ul[^>]+id="tag-list"[^>]*>([\s\S]*?)</ul>'
+)
 GELBOORU_TAG_LI_PATTERN = re.compile(
-    r'<li[^>]+class="tag-type-general"[^>]*>[\s\S]*?' r'<a [^>]*href="[^"]*tags=[^>]+>([^<]+)</a>',
+    r'<li[^>]+class="tag-type-general"[^>]*>[\s\S]*?'
+    r'<a [^>]*href="[^"]*tags=[^>]+>([^<]+)</a>',
     re.IGNORECASE,
 )
 
@@ -107,9 +112,13 @@ def fetch_gelbooru_tags(md5_hash: str, post_id: str) -> Optional[List[str]]:
     }
 
     try:
-        post_url = f"https://gelbooru.com/index.php?page=post&s=view&id={post_id}"
+        post_url = (
+            f"https://gelbooru.com/index.php?page=post&s=view&id={post_id}"
+        )
         resp = requests.get(post_url, headers=headers, timeout=10)
-        logger.info(f"[Gelbooru-HTML] Post Status: {resp.status_code} for id {post_id}")
+        logger.info(
+            f"[Gelbooru-HTML] Post Status: {resp.status_code} for id {post_id}"
+        )
 
         if resp.status_code != 200:
             logger.error(f"[Gelbooru-HTML] Post HTTP {resp.status_code}")
@@ -121,13 +130,16 @@ def fetch_gelbooru_tags(md5_hash: str, post_id: str) -> Optional[List[str]]:
         md5_match = GELBOORU_MD5_PATTERN.search(html)
         if not md5_match or md5_match.group(1).lower() != md5_hash.lower():
             logger.warning(
-                f"[Gelbooru-HTML] md5 {md5_hash} not found " f"in data-md5 for id {post_id}."
+                f"[Gelbooru-HTML] md5 {md5_hash} not found "
+                f"in data-md5 for id {post_id}."
             )
             found_md5 = md5_match.group(1) if md5_match else None
             logger.info(f"[Gelbooru-HTML] md5 in data-md5: {found_md5}")
             return None
 
-        logger.info(f"[Gelbooru-HTML] Matched md5 for id {post_id} (from data-md5)")
+        logger.info(
+            f"[Gelbooru-HTML] Matched md5 for id {post_id} (from data-md5)"
+        )
 
         # Parse tags from tag-list
         tags = _parse_gelbooru_tags(html)
@@ -136,7 +148,9 @@ def fetch_gelbooru_tags(md5_hash: str, post_id: str) -> Optional[List[str]]:
             logger.info(f"[Gelbooru-HTML] Tags (from tag-list): {tags}")
             return tags
         else:
-            logger.warning("[Gelbooru-HTML] No tags found in tag-list. " "Dumping snippet:")
+            logger.warning(
+                "[Gelbooru-HTML] No tags found in tag-list. Dumping snippet:"
+            )
             logger.debug(html[:2000])
             return None
 
@@ -156,7 +170,9 @@ def _parse_gelbooru_tags(html: str) -> List[str]:
     tag_block = tag_ul.group(1)
 
     # Split by Tag header to get only general tags
-    tag_section = re.split(r"<li[^>]*><b>\s*Tag\s*</b></li>", tag_block, flags=re.IGNORECASE)
+    tag_section = re.split(
+        r"<li[^>]*><b>\s*Tag\s*</b></li>", tag_block, flags=re.IGNORECASE
+    )
 
     if len(tag_section) > 1:
         tag_block = tag_section[1]
@@ -164,7 +180,10 @@ def _parse_gelbooru_tags(html: str) -> List[str]:
         tag_block = ""
 
     # Extract tag names from general tag links
-    tags = [m.group(1).replace(" ", "_") for m in GELBOORU_TAG_LI_PATTERN.finditer(tag_block)]
+    tags = [
+        m.group(1).replace(" ", "_")
+        for m in GELBOORU_TAG_LI_PATTERN.finditer(tag_block)
+    ]
 
     return tags
 
@@ -208,8 +227,8 @@ def process_image_file(root: Path, filename: str) -> None:
 
 
 def main() -> None:
-    """Main function to process all image files in the current directory."""
-    root = Path(__file__).parent
+    """Main function to process all image files in current work directory."""
+    root = Path.cwd()
     image_files = get_image_files(root)
 
     logger.info(f"Found {len(image_files)} images:")

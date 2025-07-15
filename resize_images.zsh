@@ -15,8 +15,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ==================================================================
 #
-# Resize all images in the current directory to have the long side as 1024px, skipping images that are already smaller.
-# Usage: zsh resize_images.zsh
+# Resize all images in the current working directory to have the long side as 1024px, skipping images that are already smaller.
+# Usage: resize_images.zsh (from any directory)
+
+# Set nullglob option to handle cases where no files match the pattern
+setopt nullglob
 
 for img in *.jpg *.png; do
   [[ ! -f "$img" ]] && continue
