@@ -134,6 +134,7 @@ uv run fetch_tags.py
 **Requirements:**
 - `zsh` shell  
 - [ImageMagick](https://imagemagick.org/) (`magick identify` command)
+- [czkawka_cli](https://github.com/qarmin/czkawka) (optional, for similarity detection)
 
 **Function:**
 - Validates image dataset completeness and quality by checking image files and corresponding tag files
@@ -158,6 +159,7 @@ validate_dataset.zsh "your_trigger_word"
 - Trigger word is present in tag files
 - Tag count is between 5-100 per file
 - No orphaned .txt files exist
+- Similar images detection (≥80% similarity) - requires czkawka_cli
 
 **Output colors:**
 - Red: Errors that must be fixed
@@ -173,6 +175,28 @@ validate_dataset.zsh "your_trigger_word"
     -   `resize_images.zsh` requires ImageMagick.
     -   `validate_dataset.zsh` requires zsh and ImageMagick.
     -   `fetch_tags.py` requires `requests<3`, recommended to use uv for management.
+
+#### Installing czkawka_cli (Optional)
+
+For similarity detection functionality in `validate_dataset.zsh`, install czkawka_cli:
+
+**Ubuntu/Debian:**
+```bash
+# Install from releases
+wget https://github.com/qarmin/czkawka/releases/latest/download/linux_czkawka_cli.tar.xz
+tar -xf linux_czkawka_cli.tar.xz
+sudo mv czkawka_cli /usr/local/bin/
+```
+
+**Arch Linux:**
+```bash
+yay -S czkawka-cli
+```
+
+**Cargo (Rust):**
+```bash
+cargo install czkawka_cli
+```
 
 ---
 

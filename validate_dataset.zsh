@@ -33,6 +33,8 @@ total_images=0
 total_texts=0
 missing_txt_files=0
 orphaned_txt_files=0
+similar_image_groups=0
+similar_images_total=0
 error_count=0
 warning_count=0
 
@@ -195,6 +197,84 @@ validate_text_files() {
     done
 }
 
+# Function to validate similar images using czkawka_cli
+validate_similar_images() {
+    print_info "檢查影像相似度..."
+    
+    # Check if czkawka_cli is available
+    if ! command -v czkawka_cli >/dev/null 2>&1; then
+        print_warning "czkawka_cli 不可用 - 跳過影像相似度檢查"
+        return
+    fi
+    
+    local temp_file="/tmp/similar_images_${RANDOM}.txt"
+    
+    # Run czkawka_cli to find similar images
+    if czkawka_cli image \
+        --directories "$(pwd)" \
+        --similarity-preset "High" \
+        --hash-alg "Gradient" \
+        --image-filter "Nearest" \
+        --hash-size 16 \
+        --file-to-save "$temp_file" \
+        --not-recursive \
+        --do-not-print-results > /dev/null 2>&1; then
+        
+        # Parse results if temp file exists and has content
+        if [[ -f "$temp_file" && -s "$temp_file" ]]; then
+            print_verbose "解析相似影像結果..."
+            
+            # Parse the czkawka_cli output to find similar image groups
+            local group_images=()
+            local line_count=0
+            
+            while IFS= read -r line; do
+                ((line_count++))
+                
+                # Skip empty lines at the beginning and header lines
+                if [[ -z "$line" ]]; then
+                    # Empty line - process current group if it has images
+                    if [[ ${#group_images[@]} -gt 1 ]]; then
+                        local group_list="${group_images[*]}"
+                        group_list="${group_list// /, }"
+                        print_warning "發現相似影像群組 (相似度 ≥ 80%): $group_list"
+                        ((similar_image_groups++))
+                        ((similar_images_total += ${#group_images[@]}))
+                    fi
+                    group_images=()
+                elif [[ "$line" =~ \.(jpg|png|jpeg|gif)$ ]]; then
+                    # This is an image file path
+                    local image_name=$(basename "$line")
+                    group_images+=("$image_name")
+                elif [[ "$line" =~ ^Found.*groups || "$line" =~ ^Size: ]]; then
+                    # Skip header lines
+                    continue
+                fi
+            done < "$temp_file"
+            
+            # Process final group if any (in case file doesn't end with empty line)
+            if [[ ${#group_images[@]} -gt 1 ]]; then
+                local group_list="${group_images[*]}"
+                group_list="${group_list// /, }"
+                print_warning "發現相似影像群組 (相似度 ≥ 80%): $group_list"
+                ((similar_image_groups++))
+                ((similar_images_total += ${#group_images[@]}))
+            fi
+            
+            print_verbose "相似度檢查完成"
+        else
+            print_verbose "未發現相似影像"
+        fi
+        
+        # Clean up temp file
+        [[ -f "$temp_file" ]] && rm -f "$temp_file"
+    else
+        print_warning "影像相似度檢查失敗"
+        # Clean up temp file even on failure
+        [[ -f "$temp_file" ]] && rm -f "$temp_file"
+    fi
+}
+
 # Function to print statistics report
 print_statistics() {
     print_info ""
@@ -203,6 +283,8 @@ print_statistics() {
     print_info "Total text files: $total_texts"
     print_info "Missing .txt files: $missing_txt_files"
     print_info "Orphaned .txt files: $orphaned_txt_files"
+    print_info "Similar image groups: $similar_image_groups"
+    print_info "Total similar images: $similar_images_total"
     print_info "Total errors: $error_count"
     print_info "Total warnings: $warning_count"
     
@@ -275,6 +357,9 @@ main() {
     
     # Validate text files
     validate_text_files "$trigger_word"
+    
+    # Validate similar images
+    validate_similar_images
     
     # Print final statistics
     print_statistics
