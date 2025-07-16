@@ -243,7 +243,7 @@ validate_similar_images() {
                     if [[ ${#group_images[@]} -gt 1 ]]; then
                         local group_list="${group_images[*]}"
                         group_list="${group_list// /, }"
-                        print_warning "發現相似影像群組 (相似度 ≥ 80%): $group_list"
+                        print_warning "發現 High 相似度影像群組: $group_list"
                         ((similar_image_groups++))
                         ((similar_images_total += ${#group_images[@]}))
                     fi
@@ -262,7 +262,7 @@ validate_similar_images() {
             if [[ ${#group_images[@]} -gt 1 ]]; then
                 local group_list="${group_images[*]}"
                 group_list="${group_list// /, }"
-                print_warning "發現相似影像群組 (相似度 ≥ 80%): $group_list"
+                print_warning "發現 High 相似度影像群組: $group_list"
                 ((similar_image_groups++))
                 ((similar_images_total += ${#group_images[@]}))
             fi

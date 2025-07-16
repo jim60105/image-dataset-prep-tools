@@ -159,7 +159,7 @@ validate_dataset.zsh "your_trigger_word"
 - Trigger word is present in tag files
 - Tag count is between 5-100 per file
 - No orphaned .txt files exist
-- Similar images detection (≥80% similarity) - requires czkawka_cli
+- Similar images detection (High similarity preset) - requires czkawka_cli
 
 **Output colors:**
 - Red: Errors that must be fixed
