@@ -156,7 +156,7 @@ validate_dataset.zsh "your_trigger_word"
 - Image files have corresponding .txt files
 - Image dimensions are at least 500px on both sides
 - Trigger word is present in tag files
-- Tag count is between 5-150 per file
+- Tag count is between 5-100 per file
 - No orphaned .txt files exist
 
 **Output colors:**

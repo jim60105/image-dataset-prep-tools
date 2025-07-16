@@ -174,8 +174,8 @@ validate_text_files() {
         local tag_count=$(echo "$content" | tr ',' '\n' | wc -l)
         if (( tag_count < 5 )); then
             print_warning "Too few tags ($tag_count) in file: $txt (should be >= 5)"
-        elif (( tag_count > 150 )); then
-            print_warning "Too many tags ($tag_count) in file: $txt (should be <= 150)"
+        elif (( tag_count > 100 )); then
+            print_warning "Too many tags ($tag_count) in file: $txt (should be <= 100)"
         fi
         print_verbose "File $txt: $tag_count tags"
         
