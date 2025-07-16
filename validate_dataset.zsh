@@ -210,7 +210,8 @@ validate_similar_images() {
     local temp_file="/tmp/similar_images_${RANDOM}.txt"
     
     # Run czkawka_cli to find similar images
-    if czkawka_cli image \
+    # Note: czkawka_cli returns exit code 11 when files are found, which is normal
+    czkawka_cli image \
         --directories "$(pwd)" \
         --similarity-preset "High" \
         --hash-alg "Gradient" \
@@ -218,7 +219,10 @@ validate_similar_images() {
         --hash-size 16 \
         --file-to-save "$temp_file" \
         --not-recursive \
-        --do-not-print-results > /dev/null 2>&1; then
+        --do-not-print-results > /dev/null 2>&1
+    
+    local exit_code=$?
+    if [[ $exit_code -eq 0 || $exit_code -eq 11 ]]; then
         
         # Parse results if temp file exists and has content
         if [[ -f "$temp_file" && -s "$temp_file" ]]; then
@@ -226,13 +230,15 @@ validate_similar_images() {
             
             # Parse the czkawka_cli output to find similar image groups
             local group_images=()
-            local line_count=0
+            local in_group=false
             
             while IFS= read -r line; do
-                ((line_count++))
-                
-                # Skip empty lines at the beginning and header lines
-                if [[ -z "$line" ]]; then
+                # Skip header lines and empty lines
+                if [[ "$line" =~ ^[0-9]+\ images\ which\ have\ similar || "$line" =~ ^Found\ [0-9]+\ images ]]; then
+                    # Header line indicating start of results
+                    in_group=true
+                    continue
+                elif [[ -z "$line" ]]; then
                     # Empty line - process current group if it has images
                     if [[ ${#group_images[@]} -gt 1 ]]; then
                         local group_list="${group_images[*]}"
@@ -242,13 +248,13 @@ validate_similar_images() {
                         ((similar_images_total += ${#group_images[@]}))
                     fi
                     group_images=()
-                elif [[ "$line" =~ \.(jpg|png|jpeg|gif)$ ]]; then
-                    # This is an image file path
-                    local image_name=$(basename "$line")
+                    in_group=false
+                elif [[ $in_group == true && "$line" =~ ^\".*\.(jpg|png|jpeg|gif)\" ]]; then
+                    # This is an image file path line
+                    # Extract filename from quoted path
+                    local full_path=$(echo "$line" | cut -d'"' -f2)
+                    local image_name=$(basename "$full_path")
                     group_images+=("$image_name")
-                elif [[ "$line" =~ ^Found.*groups || "$line" =~ ^Size: ]]; then
-                    # Skip header lines
-                    continue
                 fi
             done < "$temp_file"
             
@@ -261,7 +267,11 @@ validate_similar_images() {
                 ((similar_images_total += ${#group_images[@]}))
             fi
             
-            print_verbose "相似度檢查完成"
+            if [[ $similar_image_groups -eq 0 ]]; then
+                print_verbose "未發現相似影像"
+            else
+                print_verbose "相似度檢查完成，發現 $similar_image_groups 個相似群組"
+            fi
         else
             print_verbose "未發現相似影像"
         fi
