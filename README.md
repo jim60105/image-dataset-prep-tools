@@ -15,6 +15,7 @@ This project provides several practical tools for image dataset preparation. The
 -   **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on a user-provided trigger keyword.
 -   **resize_images.zsh**: Automatically resizes all images in the current working directory so the long side is 1024px, skipping images that are already smaller.
 -   **fetch_tags.py**: Fetches tags from Danbooru/Gelbooru using the MD5 in the image filename from the current working directory and writes them to a corresponding `.txt` file.
+-   **validate_dataset.zsh**: Validates image dataset completeness and quality by checking image files and corresponding tag files.
 
 ---
 
@@ -128,10 +129,49 @@ uv run fetch_tags.py
 
 ---
 
+### 4️⃣ validate_dataset.zsh
+
+**Requirements:**
+- `zsh` shell  
+- [ImageMagick](https://imagemagick.org/) (`magick identify` command)
+
+**Function:**
+- Validates image dataset completeness and quality by checking image files and corresponding tag files
+- Automatically extracts trigger word from directory path or accepts it as parameter
+- Provides comprehensive validation report with color-coded output
+
+**Usage:**
+```bash
+# Navigate to your dataset directory first
+cd /path/to/your/dataset
+
+# Auto-detect trigger word from path
+validate_dataset.zsh
+
+# Or specify trigger word manually  
+validate_dataset.zsh "your_trigger_word"
+```
+
+**Validation checks:**
+- Image files have corresponding .txt files
+- Image dimensions are at least 500px on both sides
+- Trigger word is present in tag files
+- Tag count is between 5-150 per file
+- No orphaned .txt files exist
+
+**Output colors:**
+- Red: Errors that must be fixed
+- Yellow: Warnings that should be reviewed
+- Default: Informational messages
+- Gray: Verbose details
+
+---
+
 ## 💡 Notes
 
 -   **Dependency installation:**
     -   `resize_images.zsh` requires ImageMagick.
+    -   `validate_dataset.zsh` requires zsh and ImageMagick.
     -   `fetch_tags.py` requires `requests<3`, recommended to use uv for management.
 
 ---
