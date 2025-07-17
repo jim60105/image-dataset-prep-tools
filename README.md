@@ -139,6 +139,7 @@ uv run fetch_tags.py
 **Function:**
 - Validates image dataset completeness and quality by checking image files and corresponding tag files
 - Automatically extracts trigger word from directory path or accepts it as parameter
+- Detects duplicate tags within each .txt file using efficient comma-separated parsing
 - Provides comprehensive validation report with color-coded output
 
 **Usage:**
@@ -158,6 +159,7 @@ validate_dataset.zsh "your_trigger_word"
 - Image dimensions are at least 500px on both sides
 - Trigger word is present in tag files
 - Tag count is between 5-100 per file
+- No duplicate tags within each file
 - No orphaned .txt files exist
 - Similar images detection (High similarity preset) - requires czkawka_cli
 
