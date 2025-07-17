@@ -16,11 +16,69 @@
 # ==================================================================
 #
 # Process all .txt files in the current working directory: cleans and restructures content based on user-provided trigger, removes specified keywords and noise, and prepends "1girl, {trigger}" to each line.
-# Usage: process_txt_files.zsh (from any directory)
+# Automatically extracts trigger word from directory path or accepts it as parameter.
+# Usage: process_txt_files.zsh [trigger_word] (from any directory)
 
-# Prompt user for trigger input
-echo "What's the trigger?"
-read trigger
+# Set nullglob option to handle cases where no files match the pattern
+setopt nullglob
+
+# Function to extract trigger word from current directory path
+extract_trigger_from_path() {
+    local current_dir=$(basename "$(pwd)")
+    local trigger=""
+    
+    # Remove numeric prefix (e.g., "5_Doraemon" -> "Doraemon")
+    local clean_dir=${current_dir##[0-9]*_}
+    
+    # Split on spaces and take max 2 parts
+    local parts=(${(s: :)clean_dir})
+    if [[ ${#parts[@]} -eq 1 ]]; then
+        trigger="${parts[1]}"
+    elif [[ ${#parts[@]} -eq 2 ]]; then
+        trigger="${parts[2]}, ${parts[1]}"
+    elif [[ ${#parts[@]} -gt 2 ]]; then
+        trigger="${parts[2]}, ${parts[1]}"
+    fi
+    
+    echo "$trigger"
+}
+
+# Function to get trigger word based on parameters
+get_trigger_word() {
+    local trigger=""
+    
+    if [[ $# -eq 1 ]]; then
+        # Single parameter mode
+        trigger="$1"
+        echo "Using provided trigger word: $trigger"
+    elif [[ $# -eq 0 ]]; then
+        # Zero parameter mode - try to extract from path
+        trigger=$(extract_trigger_from_path)
+        if [[ -n "$trigger" && "$trigger" != "" ]]; then
+            echo "Auto-detected trigger word from path: $trigger"
+        else
+            # Interactive mode
+            echo "Could not auto-detect trigger word from current path."
+            echo -n "Please enter the trigger word: "
+            read trigger
+            echo "Using provided trigger word: $trigger"
+        fi
+    else
+        echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]"
+        exit 1
+    fi
+    
+    echo "$trigger"
+}
+
+# Get trigger word based on parameters
+trigger=$(get_trigger_word "$@")
+
+# Validate that we have a trigger word
+if [[ -z "$trigger" ]]; then
+    echo "ERROR: No trigger word provided or could be determined"
+    exit 1
+fi
 
 echo "Processing text files with trigger: $trigger"
 
