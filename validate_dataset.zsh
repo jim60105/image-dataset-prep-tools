@@ -33,6 +33,7 @@ total_images=0
 total_texts=0
 missing_txt_files=0
 orphaned_txt_files=0
+duplicate_tag_files=0
 similar_image_groups=0
 similar_images_total=0
 error_count=0
@@ -61,6 +62,45 @@ print_info() {
 
 print_verbose() {
     echo -e "${GRAY}$1${RESET}"
+}
+
+# Function to check for duplicate tags in a text file
+check_duplicate_tags() {
+    local content="$1"
+    local filename="$2"
+    
+    # Use associative array to track seen tags
+    declare -A seen_tags
+    declare -a duplicate_tags
+    
+    # Split tags by comma and check for duplicates
+    local tags_array
+    IFS=',' read -rA tags_array <<< "$content"
+    
+    for tag in "${tags_array[@]}"; do
+        # Trim whitespace from beginning and end
+        tag=$(echo "$tag" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        
+        # Skip empty tags
+        [[ -z "$tag" ]] && continue
+        
+        # Check if tag already exists
+        if [[ -n "${seen_tags[$tag]}" ]]; then
+            duplicate_tags+=("$tag")
+        else
+            seen_tags[$tag]=1
+        fi
+    done
+    
+    # If duplicates found, issue warning
+    if (( ${#duplicate_tags[@]} > 0 )); then
+        local dup_list="${duplicate_tags[*]}"
+        dup_list="${dup_list// /, }"
+        print_warning "重複標籤在檔案 $filename: $dup_list"
+        return 1
+    fi
+    
+    return 0
 }
 
 # Function to extract trigger word from current directory path
@@ -170,6 +210,11 @@ validate_text_files() {
         # Check if trigger word is present
         if [[ ! "$content" =~ .*${trigger_word}.* ]]; then
             print_error "Trigger word '${trigger_word}' not found in: $txt"
+        fi
+        
+        # Check for duplicate tags
+        if ! check_duplicate_tags "$content" "$txt"; then
+            ((duplicate_tag_files++))
         fi
         
         # Count tags (split by comma)
@@ -293,6 +338,7 @@ print_statistics() {
     print_info "Total text files: $total_texts"
     print_info "Missing .txt files: $missing_txt_files"
     print_info "Orphaned .txt files: $orphaned_txt_files"
+    print_info "Files with duplicate tags: $duplicate_tag_files"
     print_info "Similar image groups: $similar_image_groups"
     print_info "Total similar images: $similar_images_total"
     print_info "Total errors: $error_count"
