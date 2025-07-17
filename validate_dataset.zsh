@@ -96,7 +96,7 @@ check_duplicate_tags() {
     if (( ${#duplicate_tags[@]} > 0 )); then
         local dup_list="${duplicate_tags[*]}"
         dup_list="${dup_list// /, }"
-        print_warning "重複標籤在檔案 $filename: $dup_list"
+        print_warning "Duplicate tags found in file $filename: $dup_list"
         return 1
     fi
     
