@@ -41,7 +41,7 @@ After setup, navigate to any directory containing your dataset files and run the
 
 **Function:**
 
--   Batch processes all `.txt` tag files in the current working directory, cleans content based on a user-input trigger keyword, removes noise tags, and prepends `1girl, {trigger}` to each line.
+-   Batch processes all `.txt` tag files in the current working directory, cleans content based on a user-input trigger keyword, removes noise tags, and prepends `{trigger}` to each line.
 
 **Usage:**
 
@@ -57,9 +57,9 @@ process_txt_files.zsh
 **Processing details:**
 
 -   Replaces all `(` with `\(` and `)` with `\)`.
--   Removes `1girl`, the trigger keyword, and commentary/commission-related noise tags.
+-   Removes the trigger keyword, and commentary/commission-related noise tags.
 -   Cleans up redundant commas and spaces.
--   Prepends `1girl, {trigger}` to the beginning of each file's content.
+-   Prepends `{trigger}` to the beginning of each file's content.
 
 ---
 

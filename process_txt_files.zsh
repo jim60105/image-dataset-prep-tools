@@ -33,13 +33,12 @@ for file in *.txt; do
         content=$(cat "$file")
         
         # Step 1: Replace ( with \( and ) with \)
+        content=${content///\(/\(}
+        content=${content///\)/\)}
         content=${content//\(/\\(}
         content=${content//\)/\\)}
         
         # Step 2: Remove specific patterns
-        # Remove "1girl" (raw text)
-        content=${content//1girl/}
-        
         # Remove the trigger variable
         content=${content//$trigger/}
         
@@ -51,7 +50,10 @@ for file in *.txt; do
         
         # Remove ", (;)" (raw text)
         content=${content//, \\\(;\\\)/}
-        
+
+        # Remove ", _," (raw text)
+        content=${content//, \\\(_\\\)/,}
+
         # Remove ", virtual_youtuber" (raw text)
         content=${content//, virtual_youtuber/}
         
@@ -72,11 +74,11 @@ for file in *.txt; do
         # Remove trailing comma and space if present
         content=${content%, }
         
-        # Step 3: Add "1girl, {trigger}" to the front
+        # Step 3: Add "{trigger}" to the front
         if [[ -n "$content" ]]; then
-            new_content="1girl, $trigger, $content"
+            new_content="$trigger, $content"
         else
-            new_content="1girl, $trigger"
+            new_content="$trigger"
         fi
         
         # Write the new content to the file (no extra newline)
