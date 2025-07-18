@@ -16,6 +16,7 @@ This project provides several practical tools for image dataset preparation. The
 -   **resize_images.zsh**: Automatically resizes all images in the current working directory so the long side is 1024px, skipping images that are already smaller.
 -   **fetch_tags.py**: Fetches tags from Danbooru/Gelbooru using the MD5 in the image filename from the current working directory and writes them to a corresponding `.txt` file.
 -   **validate_dataset.zsh**: Validates image dataset completeness and quality by checking image files and corresponding tag files.
+-   **scrape_danbooru_aliases.zsh**: Scrapes all Danbooru tag aliases from the API and saves them to a CSV file for dataset tag normalization.
 
 ---
 
@@ -171,12 +172,54 @@ validate_dataset.zsh "your_trigger_word"
 
 ---
 
+### 5️⃣ scrape_danbooru_aliases.zsh
+
+**Requirements:**
+- `zsh` shell
+- `curl` for HTTP requests
+- `jq` for JSON parsing
+- `bc` for rate limiting calculations
+- Optional: `DANBOORU_LOGIN` and `DANBOORU_APIKEY` environment variables for authentication
+
+**Function:**
+- Scrapes all Danbooru tag aliases from the API and saves them to a CSV file
+- Supports pagination to fetch complete dataset
+- Implements proper rate limiting (10 requests/second max)
+- Designed for danbooru.donmai.us, easily configurable for test environments
+
+**Usage:**
+```bash
+# Navigate to your working directory
+cd /path/to/your/workspace
+
+# Optional: Set authentication credentials
+export DANBOORU_LOGIN="your_username"
+export DANBOORU_APIKEY="your_api_key"
+
+# Run the scraper
+scrape_danbooru_aliases.zsh
+```
+
+**Output:**
+- Creates `data/` directory in current working directory
+- Generates CSV file: `danbooru_tag_aliases_YYYYMMDD_HHMMSS.csv`
+- CSV columns: id, antecedent_name, consequent_name, creator_id, forum_topic_id, status, created_at, updated_at, approver_id, forum_post_id, reason
+
+**Safety:**
+- Uses only GET requests (no DELETE or modification operations)
+- Implements strict rate limiting to comply with API limits (10 requests/second)
+- Authentication via environment variables only
+- Proper error handling for network issues and API errors
+
+---
+
 ## 💡 Notes
 
 -   **Dependency installation:**
     -   `resize_images.zsh` requires ImageMagick.
     -   `validate_dataset.zsh` requires zsh and ImageMagick.
     -   `fetch_tags.py` requires `requests<3`, recommended to use uv for management.
+    -   `scrape_danbooru_aliases.zsh` requires zsh, curl, jq, and bc.
 
 #### Installing czkawka_cli (Optional)
 
