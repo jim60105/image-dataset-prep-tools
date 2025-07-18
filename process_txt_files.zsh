@@ -22,12 +22,56 @@
 # Set nullglob option to handle cases where no files match the pattern
 setopt nullglob
 
+# Global variable for tag aliases
+declare -gA tag_aliases
+
+# ============================================================================
+# UTILITY FUNCTIONS
+# ============================================================================
+
+# Function to trim whitespace from a string
+trim_whitespace() {
+    local input="$1"
+    echo "$input" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+}
+
+# Function to split content into tags array
+split_tags() {
+    local content="$1"
+    local -a tags_array
+    IFS=',' read -rA tags_array <<< "$content"
+    
+    # Return array via global variable for efficiency
+    split_tags_result=()
+    for tag in "${tags_array[@]}"; do
+        local trimmed_tag=$(trim_whitespace "$tag")
+        [[ -n "$trimmed_tag" ]] && split_tags_result+=("$trimmed_tag")
+    done
+}
+
+# Function to join tags array back to comma-separated string
+join_tags() {
+    local -a tags=("$@")
+    local result=""
+    
+    for ((i=1; i<=${#tags[@]}; i++)); do
+        if [[ $i -eq 1 ]]; then
+            result="${tags[$i]}"
+        else
+            result="$result, ${tags[$i]}"
+        fi
+    done
+    
+    echo "$result"
+}
+
+# ============================================================================
+# TAG ALIAS FUNCTIONS
+# ============================================================================
 # Function to load Danbooru tag aliases
 load_tag_aliases() {
-    # Get the directory where this script is located
     local script_dir="$(dirname "$(realpath "${(%):-%x}")")"
     local csv_file="$script_dir/data/danbooru_tag_aliases.csv"
-    declare -gA tag_aliases
     
     if [[ ! -f "$csv_file" ]]; then
         echo "WARNING: Tag aliases file not found: $csv_file" >&2
@@ -36,20 +80,13 @@ load_tag_aliases() {
     
     echo "Loading tag aliases from: $csv_file" >&2
     
-    # Read CSV file and build associative array (skip header line)
-    # Only include active aliases
     local line_count=0
     while IFS=',' read -r id antecedent_name consequent_name creator_id forum_topic_id alias_status rest; do
         ((line_count++))
+        [[ $line_count -eq 1 ]] && continue  # Skip header
         
-        # Skip header line
-        [[ $line_count -eq 1 ]] && continue
-        
-        # Remove quotes from tag names
         local clean_antecedent=${antecedent_name//\"/}
         local clean_consequent=${consequent_name//\"/}
-        
-        # Store in associative array
         tag_aliases[$clean_antecedent]=$clean_consequent
     done < "$csv_file"
     
@@ -61,7 +98,6 @@ load_tag_aliases() {
 apply_tag_alias() {
     local tag="$1"
     
-    # Check if tag exists in aliases
     if [[ -n "${tag_aliases[$tag]}" ]]; then
         echo "${tag_aliases[$tag]}"
     else
@@ -69,204 +105,241 @@ apply_tag_alias() {
     fi
 }
 
+# Function to apply aliases to all tags in content
+apply_tag_aliases_to_content() {
+    local content="$1"
+    [[ ${#tag_aliases[@]} -eq 0 ]] && { echo "$content"; return; }
+    
+    split_tags "$content"
+    local processed_tags=()
+    
+    for tag in "${split_tags_result[@]}"; do
+        local processed_tag=$(apply_tag_alias "$tag")
+        processed_tags+=("$processed_tag")
+    done
+    
+    join_tags "${processed_tags[@]}"
+}
+
+# ============================================================================
+# CONTENT CLEANING FUNCTIONS
+# ============================================================================
+
+# Function to escape parentheses in content
+escape_parentheses() {
+    local content="$1"
+    echo "$content" | sed -E 's/([^\\]|^)[(]/\1\\(/g; s/([^\\]|^)\)/\1\\)/g'
+}
+
+# Function to remove unwanted patterns from content
+remove_unwanted_patterns() {
+    local content="$1"
+    local trigger="$2"
+    
+    # Remove the trigger word itself
+    content=${content//$trigger/}
+    
+    # Remove commentary patterns using bash parameter expansion where possible
+    content=${content//, commentary_request/}
+    content=$(echo "$content" | sed -E 's/, commentary[[:alnum:]_]*//g')
+    content=$(echo "$content" | sed -E 's/, [[:alnum:]_]*_commentary//g')
+    
+    # Remove specific unwanted tags
+    content=${content//, \\(;\\)/}
+    content=${content//, \\(_\\)/}
+    content=${content//, virtual_youtuber/}
+    content=${content//, commission/}
+    content=$(echo "$content" | sed -E 's/, [[:alnum:]_]*_commission//g')
+    
+    echo "$content"
+}
+
+# Function to convert emoji tags
+convert_emoji_tags() {
+    local content="$1"
+    echo "$content" | sed -E 's/, _([a-zA-Z0-9]),/, :\1,/g'
+}
+
+# Function to remove standalone problematic tags
+remove_standalone_tags() {
+    local content="$1"
+    echo "$content" | sed -E 's/, s,/,/g'
+}
+
+# Function to clean up comma and space formatting
+cleanup_formatting() {
+    local content="$1"
+    
+    # Clean up multiple commas and spaces
+    content=${content//,, /, }
+    content=${content//,,/,}
+    content=${content//, ,/,}
+    
+    # Remove leading and trailing comma/space
+    content=${content#, }
+    content=${content%, }
+    
+    echo "$content"
+}
+
 # Function to remove duplicate tags from content
 remove_duplicate_tags() {
     local content="$1"
     
-    # Use associative array to track seen tags
+    split_tags "$content"
     declare -A seen_tags
     declare -a unique_tags
     
-    # Split tags by comma
-    local tags_array
-    IFS=',' read -rA tags_array <<< "$content"
-    
-    for tag in "${tags_array[@]}"; do
-        # Trim whitespace from beginning and end
-        tag=$(echo "$tag" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-        
-        # Skip empty tags
-        [[ -z "$tag" ]] && continue
-        
-        # Check if tag already exists
+    for tag in "${split_tags_result[@]}"; do
         if [[ -z "${seen_tags[$tag]}" ]]; then
             seen_tags[$tag]=1
             unique_tags+=("$tag")
         fi
     done
     
-    # Join unique tags back with commas
-    local result=""
-    for ((i=1; i<=${#unique_tags[@]}; i++)); do
-        if [[ $i -eq 1 ]]; then
-            result="${unique_tags[$i]}"
-        else
-            result="$result, ${unique_tags[$i]}"
-        fi
-    done
-    
-    echo "$result"
+    join_tags "${unique_tags[@]}"
 }
+
+# ============================================================================
+# TRIGGER WORD FUNCTIONS
+# ============================================================================
 
 # Function to extract trigger word from current directory path
 extract_trigger_from_path() {
     local current_dir=$(basename "$(pwd)")
-    local trigger=""
     
     # Remove numeric prefix (e.g., "5_Doraemon" -> "Doraemon")
     local clean_dir=${current_dir##[0-9]*_}
     
     # Split on spaces and take max 2 parts
     local parts=(${(s: :)clean_dir})
-    if [[ ${#parts[@]} -eq 1 ]]; then
-        trigger="${parts[1]}"
-        elif [[ ${#parts[@]} -eq 2 ]]; then
-        trigger="${parts[2]}, ${parts[1]}"
-        elif [[ ${#parts[@]} -gt 2 ]]; then
-        trigger="${parts[2]}, ${parts[1]}"
-    fi
-    
+    case ${#parts[@]} in
+        1) echo "${parts[1]}" ;;
+        2) echo "${parts[2]}, ${parts[1]}" ;;
+        *) echo "${parts[2]}, ${parts[1]}" ;;  # 3 or more parts
+    esac
+}
+
+# Function to prompt user for trigger word
+prompt_for_trigger() {
+    echo "Could not auto-detect trigger word from current path." >&2
+    echo -n "Please enter the trigger word: " >&2
+    read trigger
+    echo "Using provided trigger word: $trigger" >&2
     echo "$trigger"
 }
 
 # Function to get trigger word based on parameters
 get_trigger_word() {
-    local trigger=""
-    
-    if [[ $# -eq 1 ]]; then
-        # Single parameter mode
-        trigger="$1"
-        echo "Using provided trigger word: $trigger" >&2
-        elif [[ $# -eq 0 ]]; then
-        # Zero parameter mode - try to extract from path
-        trigger=$(extract_trigger_from_path)
-        if [[ -n "$trigger" && "$trigger" != "" ]]; then
-            echo "Auto-detected trigger word from path: $trigger" >&2
-        else
-            # Interactive mode
-            echo "Could not auto-detect trigger word from current path." >&2
-            echo -n "Please enter the trigger word: " >&2
-            read trigger
-            echo "Using provided trigger word: $trigger" >&2
-        fi
-    else
-        echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]" >&2
-        exit 1
-    fi
-    echo "$trigger"
+    case $# in
+        0)
+            # Auto-detect mode
+            local auto_trigger=$(extract_trigger_from_path)
+            if [[ -n "$auto_trigger" && "$auto_trigger" != "" ]]; then
+                echo "Auto-detected trigger word from path: $auto_trigger" >&2
+                echo "$auto_trigger"
+            else
+                prompt_for_trigger
+            fi
+            ;;
+        1)
+            # Single parameter mode
+            echo "Using provided trigger word: $1" >&2
+            echo "$1"
+            ;;
+        *)
+            echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]" >&2
+            exit 1
+            ;;
+    esac
 }
 
-# Get trigger word based on parameters
-trigger=$(get_trigger_word "$@")
+# ============================================================================
+# CONTENT PROCESSING FUNCTIONS
+# ============================================================================
 
-# Validate that we have a trigger word
-if [[ -z "$trigger" ]]; then
-    echo "ERROR: No trigger word provided or could be determined"
-    exit 1
-fi
+# Function to process content through all cleaning steps
+process_content() {
+    local content="$1"
+    local trigger="$2"
+    
+    # Step 1: Escape parentheses
+    content=$(escape_parentheses "$content")
+    
+    # Step 2: Remove unwanted patterns
+    content=$(remove_unwanted_patterns "$content" "$trigger")
+    
+    # Step 3: Convert emoji tags
+    content=$(convert_emoji_tags "$content")
+    
+    # Step 4: Remove standalone problematic tags
+    content=$(remove_standalone_tags "$content")
+    
+    # Step 5: Clean up formatting
+    content=$(cleanup_formatting "$content")
+    
+    # Step 6: Apply tag aliases
+    content=$(apply_tag_aliases_to_content "$content")
+    
+    # Step 7: Remove duplicates
+    content=$(remove_duplicate_tags "$content")
+    
+    echo "$content"
+}
 
-# Load tag aliases
-load_tag_aliases
-
-echo "Processing text files with trigger: $trigger"
-
-# Process all txt files in the current directory
-for file in *.txt; do
-    if [[ -f "$file" ]]; then
-        echo "Processing: $file"
-        
-        # Read the original content
-        content=$(cat "$file")
-        
-        # Step 1: Replace ( with \( and ) with \) (only if not already escaped)
-        content=$(echo "$content" | sed -E 's/([^\\]|^)[(]/\1\\(/g; s/([^\\]|^)\)/\1\\)/g')
-        
-        # Step 2: Remove specific patterns
-        # Remove the trigger variable
-        content=${content//$trigger/}
-        
-        # Remove ", commentary" followed by any word characters (regex pattern)
-        content=${content//, commentary[[:alnum:]_]*/}
-        
-        # Remove ", " followed by word characters and "_commentary" (regex pattern)
-        content=${content//, [[:alnum:]_]*_commentary/}
-        
-        # Remove ", (;)" (raw text)
-        content=${content//, \\(;\\)/}
-        
-        # Remove ", _," (raw text)
-        content=${content//, \\(_\\)/,}
-        
-        # Convert ', _w,' to ', :w,' for emoji tag support
-        content=$(echo "$content" | sed -E 's/, _([a-zA-Z0-9]),/, :\1,/g')
-        
-        # Remove ', s,' as a standalone tag
-        content=$(echo "$content" | sed -E 's/, s,/,/g')
-        
-        # Remove ", virtual_youtuber" (raw text)
-        content=${content//, virtual_youtuber/}
-        
-        # Remove ", " followed by word characters and "_commission" (regex pattern)
-        content=${content//, [[:alnum:]_]*_commission/}
-        
-        # Remove ", commission" (raw text)
-        content=${content//, commission/}
-        
-        # Clean up multiple commas and spaces
-        content=${content//,, /, }
-        content=${content//,,/,}
-        content=${content//, ,/,}
-        
-        # Remove leading comma and space if present
-        content=${content#, }
-        
-        # Remove trailing comma and space if present
-        content=${content%, }
-        
-        # Step 4: Apply tag aliases and handle duplicates
-        if [[ ${#tag_aliases[@]} -gt 0 ]]; then
-            # Split content into tags and apply aliases
-            local tags_array
-            IFS=',' read -rA tags_array <<< "$content"
-            
-            local processed_tags=()
-            for tag in "${tags_array[@]}"; do
-                # Trim whitespace
-                tag=$(echo "$tag" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-                
-                # Skip empty tags
-                [[ -z "$tag" ]] && continue
-                
-                # Apply alias if exists
-                local processed_tag=$(apply_tag_alias "$tag")
-                processed_tags+=("$processed_tag")
-            done
-            
-            # Rebuild content with processed tags
-            content=""
-            for ((i=1; i<=${#processed_tags[@]}; i++)); do
-                if [[ $i -eq 1 ]]; then
-                    content="${processed_tags[$i]}"
-                else
-                    content="$content, ${processed_tags[$i]}"
-                fi
-            done
-        fi
-        
-        # Step 5: Remove duplicate tags
-        content=$(remove_duplicate_tags "$content")
-        
-        # Step 6: Add "{trigger}" to the front
-        if [[ -n "$content" ]]; then
-            new_content="$trigger, $content"
-        else
-            new_content="$trigger"
-        fi
-        
-        # Write the new content to the file (no extra newline)
-        printf "%s" "$new_content" > "$file"
-        
+# Function to add trigger to front of content
+add_trigger_to_content() {
+    local content="$1"
+    local trigger="$2"
+    
+    if [[ -n "$content" ]]; then
+        echo "$trigger, $content"
+    else
+        echo "$trigger"
     fi
-done
+}
 
-echo "Processing complete!"
+# Function to process a single file
+process_single_file() {
+    local file="$1"
+    local trigger="$2"
+    
+    echo "Processing: $file"
+    
+    local content=$(cat "$file")
+    local processed_content=$(process_content "$content" "$trigger")
+    local final_content=$(add_trigger_to_content "$processed_content" "$trigger")
+    
+    printf "%s" "$final_content" > "$file"
+}
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+# Main function
+main() {
+    # Get trigger word based on parameters
+    local trigger=$(get_trigger_word "$@")
+    
+    # Validate that we have a trigger word
+    if [[ -z "$trigger" ]]; then
+        echo "ERROR: No trigger word provided or could be determined"
+        exit 1
+    fi
+    
+    # Load tag aliases
+    load_tag_aliases
+    
+    echo "Processing text files with trigger: $trigger"
+    
+    # Process all txt files in the current directory
+    for file in *.txt; do
+        [[ -f "$file" ]] && process_single_file "$file" "$trigger"
+    done
+    
+    echo "Processing complete!"
+}
+
+# Run main function with all arguments
+main "$@"
