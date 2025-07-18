@@ -31,32 +31,14 @@ Describe 'validate_dataset.zsh functionality'
       echo "test_trigger, tag1, tag2, tag3, tag4, tag5" > good.txt
       echo "test_trigger, tag1, tag2, tag3, tag4, tag5" > good.txt
       
-      # Mock dependencies
-      mkdir -p bin
-      cat > bin/identify << 'EOF'
-#!/bin/bash
-echo "1024 768"  # Always return good dimensions
-EOF
-      chmod +x bin/identify
-      
-      cat > bin/czkawka_cli << 'EOF'
-#!/bin/bash
-# Parse arguments to find output file
-output_file=""
-for arg in "$@"; do
-  if [[ "$1" == "--file-to-save" ]]; then
-    output_file="$2"
-    break
-  fi
-  shift
-done
-if [[ -n "$output_file" ]]; then
-  echo "Found 0 images which have similar friends" > "$output_file"
-fi
-exit 0
-EOF
-      chmod +x bin/czkawka_cli
-      export PATH="$PWD/bin:$PATH"
+  # Mock dependencies
+  Mock identify
+    echo "1024 768"  # Always return good dimensions
+  End
+
+  Mock czkawka_cli
+    echo "Found 0 images which have similar friends"
+  End
       
       When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
@@ -68,30 +50,14 @@ EOF
       # Create images without txt files
       touch missing1.jpg missing2.png
       
-      # Mock dependencies
-      mkdir -p bin
-      cat > bin/identify << 'EOF'
-#!/bin/bash
-echo "1024 768"
-EOF
-      chmod +x bin/identify
-      
-      cat > bin/czkawka_cli << 'EOF'
-#!/bin/bash
-for arg in "$@"; do
-  if [[ "$1" == "--file-to-save" ]]; then
-    output_file="$2"
-    break
-  fi
-  shift
-done
-if [[ -n "$output_file" ]]; then
-  echo "Found 0 images which have similar friends" > "$output_file"
-fi
-exit 0
-EOF
-      chmod +x bin/czkawka_cli
-      export PATH="$PWD/bin:$PATH"
+  # Mock dependencies
+  Mock identify
+    echo "1024 768"
+  End
+
+  Mock czkawka_cli
+    echo "Found 0 images which have similar friends"
+  End
       
       When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
@@ -104,30 +70,14 @@ EOF
       touch test.jpg
       echo "provided_trigger, tag1, tag2, tag3, tag4" > test.txt
       
-      # Mock dependencies
-      mkdir -p bin
-      cat > bin/identify << 'EOF'
-#!/bin/bash
-echo "1024 768"
-EOF
-      chmod +x bin/identify
-      
-      cat > bin/czkawka_cli << 'EOF'
-#!/bin/bash
-for arg in "$@"; do
-  if [[ "$1" == "--file-to-save" ]]; then
-    output_file="$2"
-    break
-  fi
-  shift
-done
-if [[ -n "$output_file" ]]; then
-  echo "Found 0 images which have similar friends" > "$output_file"
-fi
-exit 0
-EOF
-      chmod +x bin/czkawka_cli
-      export PATH="$PWD/bin:$PATH"
+  # Mock dependencies
+  Mock identify
+    echo "1024 768"
+  End
+
+  Mock czkawka_cli
+    echo "Found 0 images which have similar friends"
+  End
       
       When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "provided_trigger"
       The status should be success
@@ -138,23 +88,9 @@ EOF
       # Empty directory
       
       # Mock dependencies  
-      mkdir -p bin
-      cat > bin/czkawka_cli << 'EOF'
-#!/bin/bash
-for arg in "$@"; do
-  if [[ "$1" == "--file-to-save" ]]; then
-    output_file="$2"
-    break
-  fi
-  shift
-done
-if [[ -n "$output_file" ]]; then
-  echo "Found 0 images which have similar friends" > "$output_file"
-fi
-exit 0
-EOF
-      chmod +x bin/czkawka_cli
-      export PATH="$PWD/bin:$PATH"
+      Mock czkawka_cli
+        echo "Found 0 images which have similar friends"
+      End
       
       When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
@@ -168,30 +104,14 @@ EOF
       touch small.jpg
       echo "test_trigger, tag1, tag2, tag3, tag4" > small.txt
       
-      # Mock identify to return small dimensions
-      mkdir -p bin
-      cat > bin/identify << 'EOF'
-#!/bin/bash
-echo "400 300"  # Small dimensions
-EOF
-      chmod +x bin/identify
-      
-      cat > bin/czkawka_cli << 'EOF'
-#!/bin/bash
-for arg in "$@"; do
-  if [[ "$1" == "--file-to-save" ]]; then
-    output_file="$2"
-    break
-  fi
-  shift
-done
-if [[ -n "$output_file" ]]; then
-  echo "Found 0 images which have similar friends" > "$output_file"
-fi
-exit 0
-EOF
-      chmod +x bin/czkawka_cli
-      export PATH="$PWD/bin:$PATH"
+  # Mock identify to return small dimensions
+  Mock identify
+    echo "400 300"  # Small dimensions
+  End
+
+  Mock czkawka_cli
+    echo "Found 0 images which have similar friends"
+  End
       
       When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
@@ -203,23 +123,9 @@ EOF
       echo "test_trigger, tag1, tag2, tag3, tag4" > orphan.txt
       
       # Mock dependencies
-      mkdir -p bin
-      cat > bin/czkawka_cli << 'EOF'
-#!/bin/bash
-for arg in "$@"; do
-  if [[ "$1" == "--file-to-save" ]]; then
-    output_file="$2"
-    break
-  fi
-  shift
-done
-if [[ -n "$output_file" ]]; then
-  echo "Found 0 images which have similar friends" > "$output_file"
-fi
-exit 0
-EOF
-      chmod +x bin/czkawka_cli
-      export PATH="$PWD/bin:$PATH"
+      Mock czkawka_cli
+        echo "Found 0 images which have similar friends"
+      End
       
       When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success

@@ -49,38 +49,6 @@ mock_user_input() {
   echo "$input"
 }
 
-# Mock function for czkawka_cli
-mock_czkawka_cli() {
-  local output_file=""
-  
-  # Parse arguments to find output file
-  for arg in "$@"; do
-    if [[ "$arg" == --file-to-save ]]; then
-      shift
-      output_file="$1"
-      break
-    fi
-    shift
-  done
-  
-  # Create mock output file with similar images
-  if [[ -n "$output_file" ]]; then
-    cat > "$output_file" << 'EOF'
-Found 4 images which have similar friends
-
-Group 1 (2 images):
-"test_similar1.jpg"
-"test_similar2.jpg"
-
-Group 2 (2 images):  
-"test_dup1.png"
-"test_dup2.png"
-EOF
-  fi
-  
-  return 11  # czkawka_cli returns 11 when files are found
-}
-
 # Helper function to create test image files
 create_test_image() {
   local filename="$1"
@@ -135,6 +103,5 @@ create_test_dataset() {
 
 # Override commands with mocks when testing
 if [[ "$TESTING" == "1" ]]; then
-  alias czkawka_cli='mock_czkawka_cli'
   alias read='mock_user_input'
 fi
