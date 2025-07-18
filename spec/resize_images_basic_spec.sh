@@ -28,6 +28,9 @@ Describe 'resize_images.zsh basic functionality'
     End
 
     It 'should execute without parameters in empty directory'
+      Mock magick
+        :
+      End
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
