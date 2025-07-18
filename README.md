@@ -234,108 +234,41 @@ scrape_danbooru_aliases.zsh
 
 ## 🧪 Testing
 
-This project uses [ShellSpec](https://shellspec.info/) for comprehensive unit testing of all zsh scripts to ensure code quality and reliability.
+This project uses [ShellSpec](https://shellspec.info/) for comprehensive BDD testing of all zsh scripts.
 
 ### 📋 Test Coverage
 
-- 🎯 **Target Coverage**: 85% minimum for all zsh scripts
-- 📊 **Current Coverage**: Comprehensive test suites implemented
-- 🧪 **Total Tests**: 44+ test examples across all scripts including scrape_danbooru_aliases.zsh
-- 🔄 **Flexible Testing**: Tests use dynamic pattern matching for tag alias counts to handle future changes gracefully
+- 🎯 **Target**: 85% minimum coverage for all zsh scripts
+- 🧪 **Total Tests**: 44+ examples across all scripts
+- 📊 **Framework**: ShellSpec with BDD approach
+- 🔄 **CI/CD**: Automated testing on every commit
 
-### 🛠️ Running Tests
-
-#### Prerequisites
-
-Install ShellSpec and dependencies:
+### 🛠️ Quick Start
 
 ```bash
 # Install ShellSpec
-curl -fsSL https://github.com/shellspec/shellspec/releases/download/0.28.1/shellspec-dist.tar.gz | tar -xz
-sudo cp -r shellspec /usr/local/bin/
-sudo ln -s /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
+curl -fsSL https://git.io/shellspec | sh
 
-# Install test dependencies - only zsh and kcov needed
-sudo apt-get install -y zsh kcov
-
-# Note: imagemagick and czkawka_cli are NOT required for testing
-```
-
-#### Test Execution
-
-```bash
 # Run all tests
 cd spec/
 shellspec
 
-# Run specific test file
-shellspec resize_images_functional_spec.sh
-
-# Run tests with coverage
+# Run with coverage
 shellspec --kcov ../coverage
-
-# Run tests in different formats
-shellspec --format documentation  # Detailed output
-shellspec --format tap           # TAP format
-shellspec --format json          # JSON output
 ```
 
-#### Test Structure
+### 📖 Writing Tests
 
-```
-spec/
-├── .shellspec                           # ShellSpec configuration
-├── spec_helper.sh                       # Common test utilities
-├── support/
-│   └── fixtures/                        # Test data files
-├── resize_images_functional_spec.sh     # resize_images.zsh tests
-├── process_txt_files_spec.sh            # process_txt_files.zsh tests
-├── validate_dataset_spec.sh             # validate_dataset.zsh tests
-├── scrape_danbooru_aliases_spec.sh      # scrape_danbooru_aliases.zsh tests
-└── basic_test_spec.sh                   # Framework verification
-```
+For detailed guidelines on writing effective BDD tests for zsh scripts, see our comprehensive [Testing Guideline](docs/testing-guideline.md).
 
-### 🔄 Continuous Integration
-
-Tests run automatically on:
-
-- ✅ Every push to master branch
-- ✅ All pull requests
-- ✅ Coverage threshold enforcement (85% minimum)
-- ✅ zsh-only testing (scripts are designed for zsh exclusively)
-
-### 📊 Coverage Reporting
-
-Coverage reports are generated using [kcov](https://github.com/SimonKagstrom/kcov) and include:
-
-- Line-by-line coverage analysis
-- Function coverage statistics
-- Overall project coverage percentage
-- HTML reports for detailed investigation
-
-### 🤝 Contributing Tests
+### 🤝 Contributing
 
 When adding new features:
 
 1. Write tests first (TDD approach)
-2. Ensure all existing tests pass
-3. Maintain or improve coverage percentage
-4. Follow existing test patterns and naming conventions
-
-Example test structure:
-
-```bash
-Describe 'Feature description'
-  Context 'when condition'
-    It 'should behave as expected'
-      # Test setup
-      When call command_to_test
-      The output should include "expected output"
-      The status should be success
-    End
-  End
-End
-```
+2. Follow our [Testing Guideline](docs/testing-guideline.md)
+3. Ensure 85%+ coverage
+4. Verify all existing tests pass
 
 ## 💡 Notes
 
