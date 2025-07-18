@@ -1,0 +1,12 @@
+# ShellSpec configuration file
+# Copyright (C) 2025 Jim Chen <Jim@ChenJ.im>, licensed under GPL-3.0-or-later
+
+# --require spec_helper
+--format documentation
+--color
+--fail-fast
+--random none
+--shell zsh
+
+# Coverage options for kcov integration  
+--kcov-options "--include-pattern=$(pwd) --exclude-pattern=spec/ --exclude-pattern=.git"
