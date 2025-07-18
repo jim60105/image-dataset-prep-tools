@@ -21,7 +21,7 @@ Describe 'validate_dataset.zsh functionality'
 
   Describe 'Script execution'
     It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
       The status should be success
     End
 
@@ -58,7 +58,7 @@ EOF
       chmod +x bin/czkawka_cli
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh" "test_trigger"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
       The output should include "Starting dataset validation"
       The output should include "✅ Dataset validation completed successfully"
@@ -93,7 +93,7 @@ EOF
       chmod +x bin/czkawka_cli
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh" "test_trigger"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
       The output should include "ERROR: Missing .txt file for image: missing1.jpg"
       The output should include "ERROR: Missing .txt file for image: missing2.png"
@@ -129,7 +129,7 @@ EOF
       chmod +x bin/czkawka_cli
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh" "provided_trigger"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "provided_trigger"
       The status should be success
       The output should include "Using provided trigger word: provided_trigger"
     End
@@ -156,7 +156,7 @@ EOF
       chmod +x bin/czkawka_cli
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh" "test_trigger"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
       The output should include "Total image files: 0"
       The output should include "Total text files: 0"
@@ -193,7 +193,7 @@ EOF
       chmod +x bin/czkawka_cli
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh" "test_trigger"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
       The output should include "WARNING: Image small.jpg has small dimensions: 400x300"
     End
@@ -221,7 +221,7 @@ EOF
       chmod +x bin/czkawka_cli
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh" "test_trigger"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "test_trigger"
       The status should be success
       The output should include "WARNING: Orphaned .txt file (no corresponding image): orphan.txt"
     End

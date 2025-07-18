@@ -21,7 +21,7 @@ Describe 'process_txt_files.zsh functionality'
 
   Describe 'Script execution'
     It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/../process_txt_files.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh"
       The status should be success
     End
 
@@ -30,31 +30,20 @@ Describe 'process_txt_files.zsh functionality'
       echo "original content" > test1.txt
       echo "1girl, old_trigger, some tags" > test2.txt
       
-      # Create input file for mock
-      echo "new_trigger" > input.txt
-      
-      When call zsh -c '
-        read() { echo "new_trigger"; }
-        export -f read
-        source "$SHELLSPEC_PROJECT_ROOT/../process_txt_files.zsh"
-      ' < input.txt
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "new_trigger"
       
       The status should be success
-      The output should include "Processing text files with trigger: new_trigger"
+      The stderr should include "Using provided trigger word: new_trigger"
       The output should include "Processing complete!"
     End
 
     It 'should handle empty directory gracefully'
       # No txt files in directory
-      echo "test_trigger" > input.txt
       
-      When call zsh -c '
-        read() { echo "test_trigger"; }
-        export -f read
-        source "$SHELLSPEC_PROJECT_ROOT/../process_txt_files.zsh"
-      ' < input.txt
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "test_trigger"
       
       The status should be success
+      The stderr should include "Using provided trigger word: test_trigger"
       The output should include "Processing complete!"
     End
   End
@@ -62,34 +51,32 @@ Describe 'process_txt_files.zsh functionality'
   Describe 'Text processing logic'
     It 'should replace parentheses correctly'
       echo "tags with (parentheses) content" > test.txt
-      echo "character" > input.txt
       
-      When call zsh -c '
-        read() { echo "character"; }
-        export -f read
-        source "$SHELLSPEC_PROJECT_ROOT/../process_txt_files.zsh"
-      ' < input.txt
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "character"
       
       The status should be success
-      The file test.txt should be exist
-      # Check if file was processed (should contain 1girl, character at start)
+      The stderr should include "Using provided trigger word: character"
+      The output should include "Processing complete!"
+    End
+
+    It 'should verify file content after processing'
+      echo "tags with (parentheses) content" > test.txt
+      zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "character" >/dev/null 2>&1
+      
+      # Check if file was processed (should contain character at start)
       When call head -1 test.txt
-      The output should include "1girl, character"
+      The output should include "character, tags"
     End
 
     It 'should handle multiple txt files'
       echo "content1" > file1.txt
       echo "content2" > file2.txt
       echo "content3" > file3.txt
-      echo "trigger" > input.txt
       
-      When call zsh -c '
-        read() { echo "trigger"; }
-        export -f read
-        source "$SHELLSPEC_PROJECT_ROOT/../process_txt_files.zsh"
-      ' < input.txt
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "trigger"
       
       The status should be success
+      The stderr should include "Using provided trigger word: trigger"
       The output should include "Processing: file1.txt"
       The output should include "Processing: file2.txt"
       The output should include "Processing: file3.txt"

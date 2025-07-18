@@ -24,36 +24,41 @@ Describe 'ShellSpec Testing Framework Integration'
     End
 
     It 'should have all main scripts present'
-      When call test -f "$SHELLSPEC_PROJECT_ROOT/../resize_images.zsh"
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
     End
 
     It 'should have process_txt_files.zsh present'
-      When call test -f "$SHELLSPEC_PROJECT_ROOT/../process_txt_files.zsh"
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh"
       The status should be success
     End
 
     It 'should have validate_dataset.zsh present'
-      When call test -f "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh"
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      The status should be success
+    End
+
+    It 'should have scrape_danbooru_aliases.zsh present'
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
       The status should be success
     End
   End
 
   Describe 'Test infrastructure'
     It 'should have mock utilities available'
-      When call test -d "$SHELLSPEC_PROJECT_ROOT/support/mocks"
+      When call test -d "$SHELLSPEC_PROJECT_ROOT/spec/support/mocks"
       The status should be success
     End
 
     It 'should have test fixtures available'
-      When call test -d "$SHELLSPEC_PROJECT_ROOT/support/fixtures"
+      When call test -d "$SHELLSPEC_PROJECT_ROOT/spec/support/fixtures"
       The status should be success
     End
 
     It 'should count total test examples correctly'
-      When call bash -c 'cd "$SHELLSPEC_PROJECT_ROOT" && shellspec --format tap --count *_functional_spec.sh basic_test_spec.sh'
+      When call bash -c 'cd "$SHELLSPEC_PROJECT_ROOT" && shellspec --format tap --count spec/*_functional_spec.sh spec/basic_test_spec.sh'
       The status should be success
-      The output should include "20"
+      The output should include "40"
     End
   End
 
@@ -61,28 +66,35 @@ Describe 'ShellSpec Testing Framework Integration'
     It 'should handle imagemagick availability for testing'
       When call bash -c 'which identify || echo "imagemagick not available - tests will use mocks"'
       The status should be success
+      The output should include "imagemagick"
     End
 
     It 'should handle missing optional dependencies gracefully'
       # Test that scripts can handle missing czkawka_cli
       When call bash -c 'test -x /usr/local/bin/czkawka_cli || echo "czkawka_cli not required for basic tests"'
-      The status should be success
+      The status should be success  
+      The output should include "czkawka_cli"
     End
   End
 
   Describe 'Code quality checks'
     It 'should have all scripts pass zsh syntax check'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/../resize_images.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
     End
 
     It 'should have process_txt_files.zsh pass syntax check'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/../process_txt_files.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh"
       The status should be success
     End
 
     It 'should have validate_dataset.zsh pass syntax check'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/../validate_dataset.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      The status should be success
+    End
+
+    It 'should have scrape_danbooru_aliases.zsh pass syntax check'
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
       The status should be success
     End
   End

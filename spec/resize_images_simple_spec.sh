@@ -43,13 +43,13 @@ Describe 'resize_images.zsh'
     It 'should remove npz files'
       touch test1.npz test2.npz test.jpg
       
-      When call bash -c '
+      When call zsh -c '
         magick() {
           case "$1" in
             "identify") echo "400 300" ;;
           esac
         }
-        export -f magick
+        
         setopt nullglob
         rm -f -- *.npz
         echo "Removed all .npz files in current directory"
@@ -72,13 +72,13 @@ Describe 'resize_images.zsh'
     It 'should skip small images'
       touch test_400x300.jpg
       
-      When call bash -c '
+      When call zsh -c '
         magick() {
           case "$1" in
             "identify") echo "400 300" ;;
           esac
         }
-        export -f magick
+        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -96,14 +96,14 @@ Describe 'resize_images.zsh'
     It 'should resize landscape images'
       touch test_1200x800.jpg
       
-      When call bash -c '
+      When call zsh -c '
         magick() {
           case "$1" in
             "identify") echo "1200 800" ;;
             *) echo "Landscape image test_1200x800.jpg resized height to 1024 (overwritten)" ;;
           esac
         }
-        export -f magick
+        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -128,14 +128,14 @@ Describe 'resize_images.zsh'
     It 'should resize portrait images'
       touch test_600x1200.jpg
       
-      When call bash -c '
+      When call zsh -c '
         magick() {
           case "$1" in
             "identify") echo "600 1200" ;;
             *) echo "Portrait image test_600x1200.jpg resized width to 1024 (overwritten)" ;;
           esac
         }
-        export -f magick
+        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -162,14 +162,14 @@ Describe 'resize_images.zsh'
     It 'should process jpg files'
       touch test.jpg
       
-      When call bash -c '
+      When call zsh -c '
         magick() {
           case "$1" in
             "identify") echo "1200 800" ;;
             *) echo "Landscape image test.jpg resized height to 1024 (overwritten)" ;;
           esac
         }
-        export -f magick
+        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -190,14 +190,14 @@ Describe 'resize_images.zsh'
     It 'should process png files'
       touch test.png
       
-      When call bash -c '
+      When call zsh -c '
         magick() {
           case "$1" in
             "identify") echo "1200 800" ;;
             *) echo "Landscape image test.png resized height to 1024 (overwritten)" ;;
           esac
         }
-        export -f magick
+        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -218,7 +218,7 @@ Describe 'resize_images.zsh'
     It 'should skip unsupported formats'
       touch test.bmp test.tiff
       
-      When call bash -c '
+      When call zsh -c '
         setopt nullglob
         count=0
         for img in *.jpg *.png; do
@@ -237,7 +237,7 @@ Describe 'resize_images.zsh'
       touch small.jpg large.jpg
       # Mock ImageMagick for the actual script
       
-      When call bash -c '
+      When call zsh -c '
         # Create a mock magick command
         cat > magick << "EOF"
 #!/bin/bash

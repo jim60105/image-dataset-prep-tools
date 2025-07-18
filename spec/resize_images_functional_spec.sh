@@ -21,7 +21,7 @@ Describe 'resize_images.zsh functionality'
 
   Describe 'Script execution'
     It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/../resize_images.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
     End
 
@@ -38,7 +38,7 @@ EOF
       chmod +x bin/magick
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../resize_images.zsh"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
     End
@@ -59,7 +59,7 @@ EOF
       chmod +x bin/magick
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../resize_images.zsh"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
       The output should include "Skip test.jpg"
@@ -82,7 +82,7 @@ EOF
       chmod +x bin/magick
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../resize_images.zsh"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "resized height to 1024"
     End
@@ -101,8 +101,9 @@ EOF
       chmod +x bin/magick
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/../resize_images.zsh"
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success  # Script should continue despite individual failures
+      The output should include "Removed all .npz files"
     End
   End
 End
