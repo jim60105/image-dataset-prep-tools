@@ -24,12 +24,24 @@ jobs:
         sudo apt-get update
         
         # Install zsh for ShellSpec
-        sudo apt-get install -y zsh
+        sudo apt-get install -y zsh bc
         
-        # Install kcov for coverage measurement
-        sudo apt-get install -y kcov
+        # Install kcov build dependencies
+        sudo apt-get install -y cmake g++ pkg-config libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev zlib1g-dev
+        
+        # Build and install kcov from source
+        cd /tmp
+        git clone --depth 1 https://github.com/SimonKagstrom/kcov.git
+        cd kcov
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local
+        make -j$(nproc)
+        sudo make install
+        sudo ldconfig
         
         # Install ShellSpec
+        cd /tmp
         curl -fsSL https://github.com/shellspec/shellspec/releases/download/${SHELLSPEC_VERSION}/shellspec-dist.tar.gz | tar -xz
         sudo cp -r shellspec /usr/local/bin/
         sudo ln -s /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
