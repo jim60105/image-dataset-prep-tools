@@ -29,7 +29,7 @@ Describe 'process_txt_files.zsh basic functionality'
       When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "param1" "param2" "param3"
       The status should be failure
       The stderr should include "ERROR: Too many parameters"
-      The output should include "ERROR: No trigger word provided"
+      The output should include "ERROR: No trigger word provided or could be determined"
     End
   End
 
@@ -40,6 +40,9 @@ Describe 'process_txt_files.zsh basic functionality'
       When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "test_trigger"
       The status should be success
       The stderr should include "Using provided trigger word: test_trigger"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should include "Loaded 19608 active tag aliases"
+      The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing complete!"
     End
 
@@ -50,6 +53,8 @@ Describe 'process_txt_files.zsh basic functionality'
       When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh"
       The status should be success
       The stderr should include "Auto-detected trigger word from path"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should include "Loaded 19608 active tag aliases"
       The output should include "Processing complete!"
     End
   End
@@ -62,6 +67,9 @@ Describe 'process_txt_files.zsh basic functionality'
       When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "character"
       The status should be success
       The stderr should include "Using provided trigger word: character"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should include "Loaded 19608 active tag aliases"
+      The output should include "Processing text files with trigger: character"
       The output should include "Processing: file1.txt"
       The output should include "Processing: file2.txt"
       The output should include "Processing complete!"
@@ -71,6 +79,9 @@ Describe 'process_txt_files.zsh basic functionality'
       When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "character"
       The status should be success
       The stderr should include "Using provided trigger word: character"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should include "Loaded 19608 active tag aliases"
+      The output should include "Processing text files with trigger: character"
       The output should include "Processing complete!"
     End
 
@@ -80,7 +91,7 @@ Describe 'process_txt_files.zsh basic functionality'
       When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" ""
       The status should be failure
       The stderr should include "Using provided trigger word:"
-      The output should include "ERROR: No trigger word provided"
+      The output should include "ERROR: No trigger word provided or could be determined"
     End
   End
 End
