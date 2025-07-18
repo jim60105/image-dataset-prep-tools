@@ -70,22 +70,31 @@ api_request() {
 
 # Function to convert JSON response to CSV format
 json_to_csv() {
-    jq -r '
+    local input_json="$1"
+    
+    # First check if input is valid JSON array
+    if ! echo "$input_json" | jq -e 'type == "array"' >/dev/null 2>&1; then
+        echo "" # Return empty string for invalid JSON
+        return 1
+    fi
+    
+    # Convert JSON to CSV, handling null values properly
+    echo "$input_json" | jq -r '
         .[] | 
         [
-            .id // "",
-            .antecedent_name // "",
-            .consequent_name // "",
-            .creator_id // "",
-            .forum_topic_id // "",
-            .status // "",
-            .created_at // "",
-            .updated_at // "",
-            .approver_id // "",
-            .forum_post_id // "",
-            .reason // ""
+            (.id // ""),
+            (.antecedent_name // ""),
+            (.consequent_name // ""),
+            (.creator_id // ""),
+            (.forum_topic_id // ""),
+            (.status // ""),
+            (.created_at // ""),
+            (.updated_at // ""),
+            (.approver_id // ""),
+            (.forum_post_id // ""),
+            (.reason // "")
         ] | @csv
-    ' 2>/dev/null
+    ' 2>/dev/null || echo ""
 }
 
 # Function to fetch all pages
@@ -121,15 +130,27 @@ fetch_all_pages() {
         
         # Convert to CSV and count records
         local csv_data
-        csv_data=$(echo "$response" | json_to_csv)
-        if [[ -z "$csv_data" ]]; then
-            echo -e "${YELLOW}WARNING: No valid data on page $page${RESET}" >&2
+        csv_data=$(json_to_csv "$response")
+        local csv_exit_code=$?
+        
+        # Check if CSV conversion was successful and produced data
+        if [[ $csv_exit_code -ne 0 || -z "$csv_data" ]]; then
+            echo -e "${YELLOW}WARNING: No valid data on page $page (JSON to CSV conversion failed)${RESET}" >&2
             page=$((page + 1))
             continue
         fi
         
-        local page_records
-        page_records=$(echo "$csv_data" | wc -l)
+        # Additional check: ensure we have actual CSV lines (not just whitespace)
+        local csv_line_count
+        csv_line_count=$(echo "$csv_data" | grep -c '^[0-9]')
+        if [[ $csv_line_count -eq 0 ]]; then
+            echo -e "${YELLOW}WARNING: No valid CSV records on page $page${RESET}" >&2
+            page=$((page + 1))
+            continue
+        fi
+        
+        # Use the already calculated line count
+        local page_records=$csv_line_count
         
         # Append CSV data to temp file
         echo "$csv_data" >> "$temp_file"
