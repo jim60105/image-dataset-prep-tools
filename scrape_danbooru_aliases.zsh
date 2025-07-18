@@ -82,7 +82,7 @@ json_to_csv() {
     
     # Convert JSON to CSV, handling null values properly
     echo "$input_json" | jq -r '
-        .[] | 
+        .[] |
         [
             (.id // ""),
             (.antecedent_name // ""),
@@ -132,7 +132,7 @@ fetch_all_pages() {
         
         # Check if response is empty array or empty string
         if [[ -z "$response" || "$response" == "[]" ]]; then
-            echo "Reached last page, total records fetched: $total_records" >&2
+            echo "Reached last page, total records fetched: $total_records"
             break
         fi
         
@@ -140,23 +140,23 @@ fetch_all_pages() {
         local csv_data
         csv_data=$(json_to_csv "$response")
         local csv_exit_code=$?
-
+        
         # Check if CSV conversion was successful and produced data
         if [[ $csv_exit_code -ne 0 || -z "$csv_data" ]]; then
             echo -e "${YELLOW}WARNING: No valid data on page $page (JSON to CSV conversion failed)${RESET}" >&2
             page=$((page + 1))
             continue
         fi
-
+        
         # Count non-empty lines (for summary)
         local page_records
         page_records=$(echo "$csv_data" | grep -cve '^\s*$')
-
+        
         # Append CSV data to temp file
         echo "$csv_data" >> "$temp_file"
         total_records=$((total_records + page_records))
-
-        echo -e "${GRAY}Page $page completed, $page_records records${RESET}" >&2
+        
+        echo -e "Page $page completed, $page_records records" # stdout
         
         page=$((page + 1))
     done
@@ -164,8 +164,8 @@ fetch_all_pages() {
     # Move temp file to final location if successful
     if [[ -f "$temp_file" && $total_records -gt 0 ]]; then
         mv "$temp_file" "$output_file"
-        echo "Successfully moved temp file to final location" >&2
-    elif [[ -f "$temp_file" ]]; then
+        echo "Successfully moved temp file to final location"
+        elif [[ -f "$temp_file" ]]; then
         rm "$temp_file"
         echo -e "${YELLOW}WARNING: Removed empty temp file${RESET}" >&2
     fi
