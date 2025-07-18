@@ -202,7 +202,7 @@ scrape_danbooru_aliases.zsh
 
 **Output:**
 - Creates `data/` directory in current working directory
-- Generates CSV file: `danbooru_tag_aliases_YYYYMMDD_HHMMSS.csv`
+- Generates CSV file: `danbooru_tag_aliases.csv`
 - CSV columns: id, antecedent_name, consequent_name, creator_id, forum_topic_id, status, created_at, updated_at, approver_id, forum_post_id, reason
 
 **Safety:**

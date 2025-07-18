@@ -159,9 +159,8 @@ main() {
         echo "Created data directory"
     fi
     
-    # Generate output filename with timestamp
-    local timestamp=$(date +"%Y%m%d_%H%M%S")
-    local output_file="data/danbooru_tag_aliases_${timestamp}.csv"
+    # Generate output filename
+    local output_file="data/danbooru_tag_aliases.csv"
     
     echo "Output file: $output_file"
     echo ""
