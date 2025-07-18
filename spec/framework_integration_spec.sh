@@ -1,4 +1,6 @@
 #!/bin/zsh
+
+eval "$(shellspec - -c) exit 1"
 # Copyright (C) 2025 Jim Chen <Jim@ChenJ.im>, licensed under GPL-3.0-or-later
 #
 # Test suite integration and framework validation
