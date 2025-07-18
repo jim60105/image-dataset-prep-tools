@@ -182,11 +182,12 @@ validate_dataset.zsh "your_trigger_word"
 - Optional: `DANBOORU_LOGIN` and `DANBOORU_APIKEY` environment variables for authentication
 
 **Function:**
-- Scrapes all Danbooru tag aliases from the API and saves them to a CSV file
-- Supports pagination to fetch complete dataset with a maximum of 1000 pages
-- Data is sorted by tag count (most popular aliases first) for better relevance
-- Implements proper rate limiting (10 requests/second max)
-- Designed for danbooru.donmai.us, easily configurable for test environments
+-   Scrapes all Danbooru tag aliases from the API and saves them to a CSV file
+-   Supports pagination to fetch complete dataset with a maximum of 1000 pages
+-   Data is sorted by tag count (most popular aliases first) for better relevance
+-   Implements proper rate limiting (10 requests/second max)
+-   Improved CSV data validation: as long as the API returns valid JSON and the CSV conversion is successful, the data is accepted (no longer misclassifies valid data as invalid)
+-   Designed for danbooru.donmai.us, easily configurable for test environments
 
 **Usage:**
 ```bash

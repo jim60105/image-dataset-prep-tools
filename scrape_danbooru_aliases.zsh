@@ -136,34 +136,26 @@ fetch_all_pages() {
             break
         fi
         
-        # Convert to CSV and count records
+        # Convert to CSV
         local csv_data
         csv_data=$(json_to_csv "$response")
         local csv_exit_code=$?
-        
+
         # Check if CSV conversion was successful and produced data
         if [[ $csv_exit_code -ne 0 || -z "$csv_data" ]]; then
             echo -e "${YELLOW}WARNING: No valid data on page $page (JSON to CSV conversion failed)${RESET}" >&2
             page=$((page + 1))
             continue
         fi
-        
-        # Additional check: ensure we have actual CSV lines (not just whitespace)
-        local csv_line_count
-        csv_line_count=$(echo "$csv_data" | grep -c '^[0-9]')
-        if [[ $csv_line_count -eq 0 ]]; then
-            echo -e "${YELLOW}WARNING: No valid CSV records on page $page${RESET}" >&2
-            page=$((page + 1))
-            continue
-        fi
-        
-        # Use the already calculated line count
-        local page_records=$csv_line_count
-        
+
+        # Count non-empty lines (for summary)
+        local page_records
+        page_records=$(echo "$csv_data" | grep -cve '^\s*$')
+
         # Append CSV data to temp file
         echo "$csv_data" >> "$temp_file"
         total_records=$((total_records + page_records))
-        
+
         echo -e "${GRAY}Page $page completed, $page_records records${RESET}" >&2
         
         page=$((page + 1))
