@@ -251,7 +251,6 @@ sudo ln -s /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
 sudo apt-get install -y zsh kcov
 
 # Note: imagemagick and czkawka_cli are NOT required for testing
-# Tests use comprehensive mocks to avoid external dependencies
 ```
 
 #### Test Execution
@@ -281,7 +280,6 @@ spec/
 ├── spec_helper.sh                       # Common test utilities
 ├── support/
 │   ├── fixtures/                        # Test data files
-│   └── mocks/                           # Mock utilities (curl, imagemagick, czkawka)
 ├── resize_images_functional_spec.sh     # resize_images.zsh tests
 ├── process_txt_files_spec.sh            # process_txt_files.zsh tests
 ├── validate_dataset_spec.sh             # validate_dataset.zsh tests

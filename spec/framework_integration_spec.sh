@@ -45,10 +45,6 @@ Describe 'ShellSpec Testing Framework Integration'
   End
 
   Describe 'Test infrastructure'
-    It 'should have mock utilities available'
-      When call test -d "$SHELLSPEC_PROJECT_ROOT/spec/support/mocks"
-      The status should be success
-    End
 
     It 'should have test fixtures available'
       When call test -d "$SHELLSPEC_PROJECT_ROOT/spec/support/fixtures"
