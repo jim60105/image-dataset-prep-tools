@@ -1,0 +1,8 @@
+# Ignore data directory with scraped results
+data/
+
+# Temporary files
+*.tmp
+
+# Build artifacts  
+*.npz
