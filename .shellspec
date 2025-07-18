@@ -8,4 +8,4 @@
 --shell zsh
 
 # Coverage options for kcov integration  
---kcov-options "--include-pattern=$(pwd) --exclude-pattern=spec/ --exclude-pattern=.git"
+--kcov-options "--include-pattern=. --exclude-pattern=spec/ --exclude-pattern=.git --exclude-pattern=coverage/"

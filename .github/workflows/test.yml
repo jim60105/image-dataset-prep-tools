@@ -48,17 +48,15 @@ jobs:
     
     - name: 🧪 Run tests
       run: |
-        cd spec/
         shellspec --format documentation
         
     - name: 📊 Run tests with coverage
       run: |
-        cd spec/
         # Create coverage directory
-        mkdir -p ../coverage
+        mkdir -p coverage
         
         # Run tests with kcov coverage
-        shellspec --kcov ../coverage
+        shellspec --kcov coverage
         
     - name: 🎯 Check coverage threshold (85%)
       run: |
