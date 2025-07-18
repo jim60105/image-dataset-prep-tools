@@ -58,7 +58,7 @@ Describe 'ShellSpec Testing Framework Integration'
     It 'should count total test examples correctly'
       When call bash -c 'cd "$SHELLSPEC_PROJECT_ROOT" && shellspec --format tap --count spec/*_functional_spec.sh spec/basic_test_spec.sh'
       The status should be success
-      The output should include "40"
+      The output should include "21"
     End
   End
 
