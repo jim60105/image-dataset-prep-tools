@@ -34,9 +34,9 @@ extract_trigger_from_path() {
     local parts=(${(s: :)clean_dir})
     if [[ ${#parts[@]} -eq 1 ]]; then
         trigger="${parts[1]}"
-    elif [[ ${#parts[@]} -eq 2 ]]; then
+        elif [[ ${#parts[@]} -eq 2 ]]; then
         trigger="${parts[2]}, ${parts[1]}"
-    elif [[ ${#parts[@]} -gt 2 ]]; then
+        elif [[ ${#parts[@]} -gt 2 ]]; then
         trigger="${parts[2]}, ${parts[1]}"
     fi
     
@@ -50,24 +50,23 @@ get_trigger_word() {
     if [[ $# -eq 1 ]]; then
         # Single parameter mode
         trigger="$1"
-        echo "Using provided trigger word: $trigger"
-    elif [[ $# -eq 0 ]]; then
+        echo "Using provided trigger word: $trigger" >&2
+        elif [[ $# -eq 0 ]]; then
         # Zero parameter mode - try to extract from path
         trigger=$(extract_trigger_from_path)
         if [[ -n "$trigger" && "$trigger" != "" ]]; then
-            echo "Auto-detected trigger word from path: $trigger"
+            echo "Auto-detected trigger word from path: $trigger" >&2
         else
             # Interactive mode
-            echo "Could not auto-detect trigger word from current path."
-            echo -n "Please enter the trigger word: "
+            echo "Could not auto-detect trigger word from current path." >&2
+            echo -n "Please enter the trigger word: " >&2
             read trigger
-            echo "Using provided trigger word: $trigger"
+            echo "Using provided trigger word: $trigger" >&2
         fi
     else
-        echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]"
+        echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]" >&2
         exit 1
     fi
-    
     echo "$trigger"
 }
 
@@ -86,15 +85,12 @@ echo "Processing text files with trigger: $trigger"
 for file in *.txt; do
     if [[ -f "$file" ]]; then
         echo "Processing: $file"
-
+        
         # Read the original content
         content=$(cat "$file")
         
-        # Step 1: Replace ( with \( and ) with \)
-        content=${content///\(/\(}
-        content=${content///\)/\)}
-        content=${content//\(/\\(}
-        content=${content//\)/\\)}
+        # Step 1: Replace ( with \( and ) with \) (only if not already escaped)
+        content=$(echo "$content" | sed -E 's/([^\\]|^)[(]/\1\\(/g; s/([^\\]|^)\)/\1\\)/g')
         
         # Step 2: Remove specific patterns
         # Remove the trigger variable
@@ -107,11 +103,17 @@ for file in *.txt; do
         content=${content//, [[:alnum:]_]*_commentary/}
         
         # Remove ", (;)" (raw text)
-        content=${content//, \\\(;\\\)/}
-
+        content=${content//, \\(;\\)/}
+        
         # Remove ", _," (raw text)
-        content=${content//, \\\(_\\\)/,}
-
+        content=${content//, \\(_\\)/,}
+        
+        # Convert ', _w,' to ', :w,' for emoji tag support
+        content=$(echo "$content" | sed -E 's/, _([a-zA-Z0-9]),/, :\1,/g')
+        
+        # Remove ', s,' as a standalone tag
+        content=$(echo "$content" | sed -E 's/, s,/,/g')
+        
         # Remove ", virtual_youtuber" (raw text)
         content=${content//, virtual_youtuber/}
         
@@ -141,7 +143,7 @@ for file in *.txt; do
         
         # Write the new content to the file (no extra newline)
         printf "%s" "$new_content" > "$file"
-
+        
     fi
 done
 
