@@ -5,13 +5,16 @@
 
 # shellcheck shell=zsh
 
+# Include spec helper
+Include spec_helper.sh
+
 Describe 'resize_images.zsh'
   # Include the script to test
   # Note: We'll source it in each test to avoid interference
 
   setup() {
     setup_test_env
-    # Source mocks
+    # Source mocks with correct path
     source "$SHELLSPEC_PROJECT_ROOT/spec/support/mocks/imagemagick_mock.sh"
   }
 

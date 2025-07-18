@@ -1,7 +1,6 @@
 # ShellSpec configuration file
 # Copyright (C) 2025 Jim Chen <Jim@ChenJ.im>, licensed under GPL-3.0-or-later
 
-# --require spec_helper
 --format documentation
 --color
 --fail-fast

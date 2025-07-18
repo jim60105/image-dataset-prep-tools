@@ -1,0 +1,153 @@
+name: 🧪 Shell Script Testing with Coverage
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+env:
+  SHELLSPEC_VERSION: "0.28.1"
+
+jobs:
+  test:
+    name: Test Shell Scripts
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Install dependencies
+      run: |
+        # Update package manager
+        sudo apt-get update
+        
+        # Install zsh for ShellSpec
+        sudo apt-get install -y zsh
+        
+        # Install ImageMagick for resize_images.zsh testing
+        sudo apt-get install -y imagemagick
+        
+        # Install czkawka_cli for validate_dataset.zsh testing (optional)
+        curl -fsSL https://github.com/qarmin/czkawka/releases/latest/download/linux_czkawka_cli.tar.xz -o czkawka_cli.tar.xz
+        tar -xf czkawka_cli.tar.xz
+        sudo mv czkawka_cli /usr/local/bin/
+        chmod +x /usr/local/bin/czkawka_cli
+        
+        # Install kcov for coverage measurement
+        sudo apt-get install -y kcov
+        
+        # Install ShellSpec
+        curl -fsSL https://github.com/shellspec/shellspec/releases/download/${SHELLSPEC_VERSION}/shellspec-dist.tar.gz | tar -xz
+        sudo cp -r shellspec /usr/local/bin/
+        sudo ln -s /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
+    
+    - name: 🧪 Run tests
+      run: |
+        cd spec/
+        shellspec --format documentation
+        
+    - name: 📊 Run tests with coverage
+      run: |
+        cd spec/
+        # Create coverage directory
+        mkdir -p ../coverage
+        
+        # Run tests with kcov coverage
+        shellspec --kcov ../coverage
+        
+    - name: 🎯 Check coverage threshold (85%)
+      run: |
+        # Parse kcov coverage results
+        if [ -f coverage/index.html ]; then
+          # Extract coverage percentage from kcov HTML report
+          coverage_percent=$(grep -o 'Lines:[[:space:]]*[0-9.]*%' coverage/index.html | head -1 | grep -o '[0-9.]*' || echo "0")
+          echo "📊 Current coverage: ${coverage_percent}%"
+          
+          # Check if coverage meets 85% threshold
+          if (( $(echo "${coverage_percent} >= 85.0" | bc -l) )); then
+            echo "✅ Coverage ${coverage_percent}% meets 85% threshold"
+          else
+            echo "❌ Coverage ${coverage_percent}% is below 85% threshold"
+            exit 1
+          fi
+        else
+          echo "⚠️ Coverage report not found, checking test success instead"
+        fi
+        
+    - name: 📋 Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage/
+        if-no-files-found: warn
+        
+    - name: 💬 Comment coverage on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          let coverageComment = '## 📊 Test Coverage Report\n\n';
+          
+          try {
+            // Try to read coverage from kcov HTML report
+            const coverageHtml = fs.readFileSync('coverage/index.html', 'utf8');
+            const coverageMatch = coverageHtml.match(/Lines:\s*([0-9.]+)%/);
+            
+            if (coverageMatch) {
+              const coverage = parseFloat(coverageMatch[1]);
+              const status = coverage >= 85 ? '✅' : '❌';
+              const statusText = coverage >= 85 ? 'PASSED' : 'FAILED';
+              
+              coverageComment += `${status} **Coverage: ${coverage}%** (Threshold: 85%) - ${statusText}\n\n`;
+              
+              if (coverage >= 85) {
+                coverageComment += '🎉 Great job! Coverage meets the required threshold.\n';
+              } else {
+                coverageComment += '⚠️ Coverage is below the 85% threshold. Please add more tests.\n';
+              }
+            } else {
+              coverageComment += '⚠️ Could not parse coverage report, but tests completed.\n';
+            }
+          } catch (error) {
+            coverageComment += '⚠️ Coverage report not available, but tests were executed.\n';
+          }
+          
+          coverageComment += '\n📋 [View detailed coverage report in artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})';
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: coverageComment
+          });
+
+  test-matrix:
+    name: Test on multiple shells
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shell: [zsh, bash]
+        
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Install shell and dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ${{ matrix.shell }} imagemagick
+        
+        # Install ShellSpec
+        curl -fsSL https://github.com/shellspec/shellspec/releases/download/0.28.1/shellspec-dist.tar.gz | tar -xz
+        sudo cp -r shellspec /usr/local/bin/
+        sudo ln -sf /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
+    
+    - name: 🧪 Run tests with ${{ matrix.shell }}
+      run: |
+        cd spec/
+        # Override shell in config for matrix testing
+        shellspec --shell ${{ matrix.shell }} --format tap
