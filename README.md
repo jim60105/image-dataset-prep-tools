@@ -227,7 +227,7 @@ This project uses [ShellSpec](https://shellspec.info/) for comprehensive unit te
 
 - 🎯 **Target Coverage**: 85% minimum for all zsh scripts
 - 📊 **Current Coverage**: Comprehensive test suites implemented
-- 🧪 **Total Tests**: 90+ test examples across all scripts
+- 🧪 **Total Tests**: 44+ test examples across all scripts including scrape_danbooru_aliases.zsh
 
 ### 🛠️ Running Tests
 
@@ -241,13 +241,11 @@ curl -fsSL https://github.com/shellspec/shellspec/releases/download/0.28.1/shell
 sudo cp -r shellspec /usr/local/bin/
 sudo ln -s /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
 
-# Install test dependencies
-sudo apt-get install -y zsh imagemagick kcov
+# Install test dependencies - only zsh and kcov needed
+sudo apt-get install -y zsh kcov
 
-# Optional: Install czkawka_cli for full validation tests
-curl -fsSL https://github.com/qarmin/czkawka/releases/latest/download/linux_czkawka_cli.tar.xz -o czkawka_cli.tar.xz
-tar -xf czkawka_cli.tar.xz
-sudo mv czkawka_cli /usr/local/bin/
+# Note: imagemagick and czkawka_cli are NOT required for testing
+# Tests use comprehensive mocks to avoid external dependencies
 ```
 
 #### Test Execution
@@ -273,24 +271,25 @@ shellspec --format json          # JSON output
 
 ```
 spec/
-├── .shellspec                      # ShellSpec configuration
-├── spec_helper.sh                 # Common test utilities
+├── .shellspec                           # ShellSpec configuration
+├── spec_helper.sh                       # Common test utilities
 ├── support/
-│   ├── fixtures/                  # Test data files
-│   └── mocks/                     # Mock utilities
-├── resize_images_functional_spec.sh    # resize_images.zsh tests
-├── process_txt_files_spec.sh          # process_txt_files.zsh tests
-├── validate_dataset_spec.sh           # validate_dataset.zsh tests
-└── basic_test_spec.sh                 # Framework verification
+│   ├── fixtures/                        # Test data files
+│   └── mocks/                           # Mock utilities (curl, imagemagick, czkawka)
+├── resize_images_functional_spec.sh     # resize_images.zsh tests
+├── process_txt_files_spec.sh            # process_txt_files.zsh tests
+├── validate_dataset_spec.sh             # validate_dataset.zsh tests
+├── scrape_danbooru_aliases_spec.sh      # scrape_danbooru_aliases.zsh tests
+└── basic_test_spec.sh                   # Framework verification
 ```
 
 ### 🔄 Continuous Integration
 
 Tests run automatically on:
-- ✅ Every push to master/main branches
+- ✅ Every push to master branch
 - ✅ All pull requests
 - ✅ Coverage threshold enforcement (85% minimum)
-- ✅ Multi-shell compatibility testing (zsh, bash)
+- ✅ zsh-only testing (scripts are designed for zsh exclusively)
 
 ### 📊 Coverage Reporting
 
