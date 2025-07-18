@@ -42,6 +42,8 @@ After setup, navigate to any directory containing your dataset files and run the
 **Function:**
 
 -   Batch processes all `.txt` tag files in the current working directory, cleans content based on a user-input trigger keyword, removes noise tags, and prepends `{trigger}` to each line.
+-   Automatically applies Danbooru tag aliases from `data/danbooru_tag_aliases.csv` to standardize tag names.
+-   Removes duplicate tags from each file after alias processing.
 
 **Usage:**
 
@@ -52,6 +54,7 @@ process_txt_files.zsh
 ```
 
 -   The script will prompt for a trigger keyword, then process all `.txt` files automatically.
+-   Requires `data/danbooru_tag_aliases.csv` file for tag alias functionality.
 -   Original files will be overwritten. **Back up important files first!**
 
 **Processing details:**
@@ -59,6 +62,8 @@ process_txt_files.zsh
 -   Replaces all `(` with `\(` and `)` with `\)`.
 -   Removes the trigger keyword, and commentary/commission-related noise tags.
 -   Cleans up redundant commas and spaces.
+-   Applies Danbooru tag aliases to standardize tag names.
+-   Removes duplicate tags from each file after alias processing.
 -   Prepends `{trigger}` to the beginning of each file's content.
 
 ---
