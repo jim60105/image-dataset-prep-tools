@@ -400,7 +400,7 @@ shellspec
 shellspec script_name_spec.sh
 
 # Run with coverage
-shellspec --kcov ../coverage
+shellspec --kcov
 
 # Run with detailed output
 shellspec --format documentation

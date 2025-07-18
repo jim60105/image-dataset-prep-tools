@@ -6,3 +6,6 @@
 
 # Local shellspec installation
 shellspec/
+# Ignore everything in coverage except .gitkeep
+coverage/*
+!coverage/.gitkeep
