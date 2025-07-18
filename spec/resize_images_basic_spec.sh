@@ -35,18 +35,13 @@ Describe 'resize_images.zsh basic functionality'
   Describe 'NPZ file cleanup'
     It 'should remove npz files when they exist'
       touch file1.npz file2.npz test.jpg
-      
-      # Create simple mock magick
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/zsh
-if [[ "$1" == "identify" ]]; then
-  echo "400 300"  # Small image, will be skipped
-fi
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "400 300"  # Small image, will be skipped
+        fi
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
@@ -55,17 +50,12 @@ EOF
     End
 
     It 'should work when no npz files exist'
-      # Create simple mock magick
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/zsh
-if [[ "$1" == "identify" ]]; then
-  echo "400 300"
-fi
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "400 300"
+        fi
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
@@ -74,15 +64,10 @@ EOF
 
   Describe 'File processing basics'
     It 'should skip files when no images exist'
-      # Create simple mock magick
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/zsh
-echo "400 300"
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+      Mock magick
+        echo "400 300"
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
@@ -90,18 +75,13 @@ EOF
 
     It 'should process jpg files when they exist'
       touch test.jpg
-      
-      # Create simple mock magick that returns small dimensions
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/zsh
-if [[ "$1" == "identify" ]]; then
-  echo "400 300"  # Small image, will be skipped
-fi
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "400 300"  # Small image, will be skipped
+        fi
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Skip test.jpg"
@@ -109,18 +89,13 @@ EOF
 
     It 'should process png files when they exist'
       touch test.png
-      
-      # Create simple mock magick that returns small dimensions
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/zsh
-if [[ "$1" == "identify" ]]; then
-  echo "400 300"  # Small image, will be skipped
-fi
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "400 300"  # Small image, will be skipped
+        fi
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Skip test.png"

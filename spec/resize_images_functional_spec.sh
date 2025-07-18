@@ -26,18 +26,14 @@ Describe 'resize_images.zsh functionality'
     End
 
     It 'should handle empty directory gracefully'
-      # Create a mock magick command that does nothing
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/bash
-case "$1" in
-  "identify") echo "1024 768" ;;
-  *) echo "Mock resize operation" ;;
-esac
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "1024 768"
+        else
+          echo "Mock resize operation"
+        fi
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
@@ -46,19 +42,15 @@ EOF
     It 'should process files when they exist'
       # Create test files
       touch test.jpg test.png test.npz
-      
-      # Create mock magick that simulates small images
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/bash
-case "$1" in
-  "identify") echo "400 300" ;;  # Small image
-  *) echo "Mock resize: $*" ;;
-esac
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "400 300"
+        else
+          echo "Mock resize: $*"
+        fi
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
@@ -69,19 +61,15 @@ EOF
     It 'should resize large images'
       # Create test files
       touch large.jpg
-      
-      # Create mock magick that simulates large images
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/bash
-case "$1" in
-  "identify") echo "1200 800" ;;  # Large landscape image
-  *) echo "Landscape image large.jpg resized height to 1024 (overwritten)" ;;
-esac
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
+
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "1200 800"
+        else
+          echo "Landscape image large.jpg resized height to 1024 (overwritten)"
+        fi
+      End
+
       When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "resized height to 1024"
@@ -91,20 +79,15 @@ EOF
   Describe 'Error handling'
     It 'should handle magick command failure gracefully'
       touch test.jpg
-      
-      # Create mock magick that fails
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/bash
-exit 1  # Always fail
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
-  When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-  The status should be success  # Script should continue despite individual failures
-  The output should include "Removed all .npz files"
-  The stderr should include "magick: error processing test.jpg"
+
+      Mock magick
+        exit 1  # Always fail
+      End
+
+      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      The status should be success  # Script should continue despite individual failures
+      The output should include "Removed all .npz files"
+      The stderr should include "magick: error processing test.jpg"
     End
   End
 End

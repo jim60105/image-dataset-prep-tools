@@ -49,44 +49,6 @@ mock_user_input() {
   echo "$input"
 }
 
-# Mock function for ImageMagick identify command
-mock_identify() {
-  local filename="$1"
-  case "$filename" in
-    *test_1024x768*) echo "1024 768" ;;
-    *test_800x600*) echo "800 600" ;;
-    *test_400x300*) echo "400 300" ;;
-    *test_2000x1500*) echo "2000 1500" ;;
-    *test_corrupted*) return 1 ;;
-    *) echo "1024 768" ;;  # Default
-  esac
-}
-
-# Mock function for ImageMagick resize command
-mock_magick() {
-  local operation="$1"
-  shift
-  
-  case "$operation" in
-    "identify")
-      mock_identify "$@"
-      ;;
-    *)
-      # For resize operations, just touch the target file
-      local target_file=""
-      for arg in "$@"; do
-        if [[ -f "$arg" ]]; then
-          target_file="$arg"
-          break
-        fi
-      done
-      if [[ -n "$target_file" ]]; then
-        touch "$target_file"
-      fi
-      ;;
-  esac
-}
-
 # Mock function for czkawka_cli
 mock_czkawka_cli() {
   local output_file=""
@@ -173,8 +135,6 @@ create_test_dataset() {
 
 # Override commands with mocks when testing
 if [[ "$TESTING" == "1" ]]; then
-  alias magick='mock_magick'
-  alias identify='mock_identify'
   alias czkawka_cli='mock_czkawka_cli'
   alias read='mock_user_input'
 fi

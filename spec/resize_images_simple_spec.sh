@@ -8,25 +8,6 @@ Describe 'resize_images.zsh'
     # Create temporary test directory
     TEST_DIR=$(mktemp -d)
     cd "$TEST_DIR"
-    
-    # Mock magick command for testing
-    magick() {
-      case "$1" in
-        "identify")
-          case "$3" in
-            *test_800x600*) echo "800 600" ;;
-            *test_400x300*) echo "400 300" ;;
-            *test_1024x768*) echo "1024 768" ;;
-            *) echo "1024 768" ;;
-          esac
-          ;;
-        *)
-          # For resize operations, just touch the file to simulate success
-          local target_file="$1"
-          touch "$target_file"
-          ;;
-      esac
-    }
   }
 
   cleanup() {
@@ -43,13 +24,13 @@ Describe 'resize_images.zsh'
     It 'should remove npz files'
       touch test1.npz test2.npz test.jpg
       
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "400 300"
+        fi
+      End
+
       When call zsh -c '
-        magick() {
-          case "$1" in
-            "identify") echo "400 300" ;;
-          esac
-        }
-        
         setopt nullglob
         rm -f -- *.npz
         echo "Removed all .npz files in current directory"
@@ -72,13 +53,13 @@ Describe 'resize_images.zsh'
     It 'should skip small images'
       touch test_400x300.jpg
       
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "400 300"
+        fi
+      End
+
       When call zsh -c '
-        magick() {
-          case "$1" in
-            "identify") echo "400 300" ;;
-          esac
-        }
-        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -96,14 +77,15 @@ Describe 'resize_images.zsh'
     It 'should resize landscape images'
       touch test_1200x800.jpg
       
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "1200 800"
+        else
+          echo "Landscape image test_1200x800.jpg resized height to 1024 (overwritten)"
+        fi
+      End
+
       When call zsh -c '
-        magick() {
-          case "$1" in
-            "identify") echo "1200 800" ;;
-            *) echo "Landscape image test_1200x800.jpg resized height to 1024 (overwritten)" ;;
-          esac
-        }
-        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -128,14 +110,15 @@ Describe 'resize_images.zsh'
     It 'should resize portrait images'
       touch test_600x1200.jpg
       
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "600 1200"
+        else
+          echo "Portrait image test_600x1200.jpg resized width to 1024 (overwritten)"
+        fi
+      End
+
       When call zsh -c '
-        magick() {
-          case "$1" in
-            "identify") echo "600 1200" ;;
-            *) echo "Portrait image test_600x1200.jpg resized width to 1024 (overwritten)" ;;
-          esac
-        }
-        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -162,14 +145,15 @@ Describe 'resize_images.zsh'
     It 'should process jpg files'
       touch test.jpg
       
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "1200 800"
+        else
+          echo "Landscape image test.jpg resized height to 1024 (overwritten)"
+        fi
+      End
+
       When call zsh -c '
-        magick() {
-          case "$1" in
-            "identify") echo "1200 800" ;;
-            *) echo "Landscape image test.jpg resized height to 1024 (overwritten)" ;;
-          esac
-        }
-        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -190,14 +174,15 @@ Describe 'resize_images.zsh'
     It 'should process png files'
       touch test.png
       
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "1200 800"
+        else
+          echo "Landscape image test.png resized height to 1024 (overwritten)"
+        fi
+      End
+
       When call zsh -c '
-        magick() {
-          case "$1" in
-            "identify") echo "1200 800" ;;
-            *) echo "Landscape image test.png resized height to 1024 (overwritten)" ;;
-          esac
-        }
-        
         setopt nullglob
         for img in *.jpg *.png; do
           [[ ! -f "$img" ]] && continue
@@ -237,27 +222,21 @@ Describe 'resize_images.zsh'
       touch small.jpg large.jpg
       # Mock ImageMagick for the actual script
       
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          if [[ "$3" == *small* ]]; then
+            echo "400 300"
+          elif [[ "$3" == *large* ]]; then
+            echo "1200 800"
+          else
+            echo "1024 768"
+          fi
+        else
+          echo "Resize operation: $*"
+        fi
+      End
+
       When call zsh -c '
-        # Create a mock magick command
-        cat > magick << "EOF"
-#!/bin/bash
-case "$1" in
-  "identify")
-    case "$3" in
-      *small*) echo "400 300" ;;
-      *large*) echo "1200 800" ;;
-      *) echo "1024 768" ;;
-    esac
-    ;;
-  *)
-    # For resize operations
-    echo "Resize operation: $*"
-    ;;
-esac
-EOF
-        chmod +x magick
-        export PATH=".:$PATH"
-        
         # Run the actual script with our mock
         source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       '
