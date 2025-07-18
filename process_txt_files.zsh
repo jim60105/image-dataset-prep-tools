@@ -22,6 +22,92 @@
 # Set nullglob option to handle cases where no files match the pattern
 setopt nullglob
 
+# Function to load Danbooru tag aliases
+load_tag_aliases() {
+    # Get the directory where this script is located
+    local script_dir="$(dirname "$(realpath "${(%):-%x}")")"
+    local csv_file="$script_dir/data/danbooru_tag_aliases.csv"
+    declare -gA tag_aliases
+    
+    if [[ ! -f "$csv_file" ]]; then
+        echo "WARNING: Tag aliases file not found: $csv_file" >&2
+        return 1
+    fi
+    
+    echo "Loading tag aliases from: $csv_file" >&2
+    
+    # Read CSV file and build associative array (skip header line)
+    # Only include active aliases
+    local line_count=0
+    while IFS=',' read -r id antecedent_name consequent_name creator_id forum_topic_id alias_status rest; do
+        ((line_count++))
+        
+        # Skip header line
+        [[ $line_count -eq 1 ]] && continue
+        
+        # Remove quotes from tag names
+        local clean_antecedent=${antecedent_name//\"/}
+        local clean_consequent=${consequent_name//\"/}
+        
+        # Store in associative array
+        tag_aliases[$clean_antecedent]=$clean_consequent
+    done < "$csv_file"
+    
+    echo "Loaded ${#tag_aliases[@]} active tag aliases" >&2
+    return 0
+}
+
+# Function to apply tag aliases to a single tag
+apply_tag_alias() {
+    local tag="$1"
+    
+    # Check if tag exists in aliases
+    if [[ -n "${tag_aliases[$tag]}" ]]; then
+        echo "${tag_aliases[$tag]}"
+    else
+        echo "$tag"
+    fi
+}
+
+# Function to remove duplicate tags from content
+remove_duplicate_tags() {
+    local content="$1"
+    
+    # Use associative array to track seen tags
+    declare -A seen_tags
+    declare -a unique_tags
+    
+    # Split tags by comma
+    local tags_array
+    IFS=',' read -rA tags_array <<< "$content"
+    
+    for tag in "${tags_array[@]}"; do
+        # Trim whitespace from beginning and end
+        tag=$(echo "$tag" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        
+        # Skip empty tags
+        [[ -z "$tag" ]] && continue
+        
+        # Check if tag already exists
+        if [[ -z "${seen_tags[$tag]}" ]]; then
+            seen_tags[$tag]=1
+            unique_tags+=("$tag")
+        fi
+    done
+    
+    # Join unique tags back with commas
+    local result=""
+    for ((i=1; i<=${#unique_tags[@]}; i++)); do
+        if [[ $i -eq 1 ]]; then
+            result="${unique_tags[$i]}"
+        else
+            result="$result, ${unique_tags[$i]}"
+        fi
+    done
+    
+    echo "$result"
+}
+
 # Function to extract trigger word from current directory path
 extract_trigger_from_path() {
     local current_dir=$(basename "$(pwd)")
@@ -79,6 +165,9 @@ if [[ -z "$trigger" ]]; then
     exit 1
 fi
 
+# Load tag aliases
+load_tag_aliases
+
 echo "Processing text files with trigger: $trigger"
 
 # Process all txt files in the current directory
@@ -134,7 +223,40 @@ for file in *.txt; do
         # Remove trailing comma and space if present
         content=${content%, }
         
-        # Step 3: Add "{trigger}" to the front
+        # Step 4: Apply tag aliases and handle duplicates
+        if [[ ${#tag_aliases[@]} -gt 0 ]]; then
+            # Split content into tags and apply aliases
+            local tags_array
+            IFS=',' read -rA tags_array <<< "$content"
+            
+            local processed_tags=()
+            for tag in "${tags_array[@]}"; do
+                # Trim whitespace
+                tag=$(echo "$tag" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+                
+                # Skip empty tags
+                [[ -z "$tag" ]] && continue
+                
+                # Apply alias if exists
+                local processed_tag=$(apply_tag_alias "$tag")
+                processed_tags+=("$processed_tag")
+            done
+            
+            # Rebuild content with processed tags
+            content=""
+            for ((i=1; i<=${#processed_tags[@]}; i++)); do
+                if [[ $i -eq 1 ]]; then
+                    content="${processed_tags[$i]}"
+                else
+                    content="$content, ${processed_tags[$i]}"
+                fi
+            done
+        fi
+        
+        # Step 5: Remove duplicate tags
+        content=$(remove_duplicate_tags "$content")
+        
+        # Step 6: Add "{trigger}" to the front
         if [[ -n "$content" ]]; then
             new_content="$trigger, $content"
         else
