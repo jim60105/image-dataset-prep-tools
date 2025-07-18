@@ -233,6 +233,7 @@ This project uses [ShellSpec](https://shellspec.info/) for comprehensive unit te
 - 🎯 **Target Coverage**: 85% minimum for all zsh scripts
 - 📊 **Current Coverage**: Comprehensive test suites implemented
 - 🧪 **Total Tests**: 44+ test examples across all scripts including scrape_danbooru_aliases.zsh
+- 🔄 **Flexible Testing**: Tests use dynamic pattern matching for tag alias counts to handle future changes gracefully
 
 ### 🛠️ Running Tests
 

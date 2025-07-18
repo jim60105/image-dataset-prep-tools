@@ -35,7 +35,7 @@ Describe 'process_txt_files.zsh functionality'
       The status should be success
       The stderr should include "Using provided trigger word: new_trigger"
       The stderr should include "Loading tag aliases from:"
-      The stderr should include "Loaded 19608 active tag aliases"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: new_trigger"
       The output should include "Processing complete!"
     End
@@ -48,7 +48,7 @@ Describe 'process_txt_files.zsh functionality'
       The status should be success
       The stderr should include "Using provided trigger word: test_trigger"
       The stderr should include "Loading tag aliases from:"
-      The stderr should include "Loaded 19608 active tag aliases"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing complete!"
     End
@@ -63,7 +63,7 @@ Describe 'process_txt_files.zsh functionality'
       The status should be success
       The stderr should include "Using provided trigger word: character"
       The stderr should include "Loading tag aliases from:"
-      The stderr should include "Loaded 19608 active tag aliases"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: character"
       The output should include "Processing complete!"
     End
@@ -87,7 +87,7 @@ Describe 'process_txt_files.zsh functionality'
       The status should be success
       The stderr should include "Using provided trigger word: trigger"
       The stderr should include "Loading tag aliases from:"
-      The stderr should include "Loaded 19608 active tag aliases"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: trigger"
       The output should include "Processing: file1.txt"
       The output should include "Processing: file2.txt"
