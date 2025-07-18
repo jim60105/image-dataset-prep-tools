@@ -62,7 +62,7 @@ process_txt_files.zsh
 -   Replaces all `(` with `\(` and `)` with `\)`.
 -   Removes the trigger keyword, and commentary/commission-related noise tags.
 -   Cleans up redundant commas and spaces.
--   Applies Danbooru tag aliases to standardize tag names (uses only "active" status aliases).
+-   Applies Danbooru tag aliases to standardize tag names.
 -   Removes duplicate tags from each file after alias processing.
 -   Prepends `{trigger}` to the beginning of each file's content.
 
