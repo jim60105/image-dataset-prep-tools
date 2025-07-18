@@ -129,29 +129,41 @@ EOF
 
   Describe 'Error handling'
     It 'should handle missing magick command gracefully'
-      touch test.jpg
-      
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-      The status should be success
+      # Remove magick from PATH by using a non-existent directory
+      export OLD_PATH="$PATH"
+      export PATH="/nonexistent"
+
+      When run script "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      The status should be failure
       The stderr should include "command not found: magick"
       The output should include "Removed all .npz files"
+
+      export PATH="$OLD_PATH"
     End
 
     It 'should continue processing when individual files fail'
       touch test1.jpg test2.jpg
-      
-      # Create mock magick that fails for identify
-      mkdir -p bin
-      cat > bin/magick << 'EOF'
-#!/bin/zsh
-exit 1  # Always fail
-EOF
-      chmod +x bin/magick
-      export PATH="$PWD/bin:$PATH"
-      
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+
+      Mock magick
+        if [[ "$1" == "identify" && "$3" == "test1.jpg" ]]; then
+          echo "magick: error processing $3" >&2
+          exit 1
+        elif [[ "$1" == "test1.jpg" ]]; then
+          echo "magick: error processing $1" >&2
+          exit 1
+        else
+          if [[ "$1" == "identify" ]]; then
+            echo "1024 1024"
+            exit 0
+          fi
+          exit 0
+        fi
+      End
+
+      When run script "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
+      The stderr should include "magick: error processing test1.jpg"
     End
   End
 End

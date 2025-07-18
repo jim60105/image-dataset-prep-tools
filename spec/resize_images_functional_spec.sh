@@ -101,9 +101,10 @@ EOF
       chmod +x bin/magick
       export PATH="$PWD/bin:$PATH"
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-      The status should be success  # Script should continue despite individual failures
-      The output should include "Removed all .npz files"
+  When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+  The status should be success  # Script should continue despite individual failures
+  The output should include "Removed all .npz files"
+  The stderr should include "magick: error processing test.jpg"
     End
   End
 End

@@ -64,7 +64,7 @@ Describe 'ShellSpec Testing Framework Integration'
 
   Describe 'External dependencies'
     It 'should handle imagemagick availability for testing'
-      When call bash -c 'which identify || echo "imagemagick not available - tests will use mocks"'
+      When call bash -c 'which identify 2>/dev/null || echo "imagemagick not available - tests will use mocks"'
       The status should be success
       The output should include "imagemagick"
     End
