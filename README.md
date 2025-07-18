@@ -245,6 +245,28 @@ cargo install czkawka_cli
 
 ---
 
+## 🤖 Automated Data Updates
+
+This repository includes automated weekly updates for the Danbooru tag aliases dataset via GitHub Actions.
+
+### Workflow Features:
+- **Schedule**: Runs every Sunday at 02:00 UTC
+- **Branch Management**: Uses `ci/update-data` branch for changes
+- **Safe Operations**: Atomic file updates with temporary file handling
+- **Automated PRs**: Creates pull requests for review before merging
+- **Manual Trigger**: Can be run manually via GitHub Actions UI
+
+### Automated Process:
+1. Checks out or creates the `ci/update-data` branch
+2. Runs `scrape_danbooru_aliases.zsh` to fetch latest data
+3. Commits changes with meaningful commit messages
+4. Opens a pull request for review if changes are detected
+5. Includes detailed PR description with update information
+
+The automation ensures the dataset stays current while maintaining proper review processes.
+
+---
+
 ## 📜 License
 
 <img src="https://github.com/user-attachments/assets/f4d883c0-80d1-4980-a9f4-eebf31a28b02" alt="gplv3" width="300" />

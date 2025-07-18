@@ -1,0 +1,129 @@
+name: Update Danbooru Tag Aliases Data
+
+on:
+  schedule:
+    # Run every Sunday at 02:00 UTC (weekly)
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch full history for branch operations
+
+    - name: Setup Git configuration
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "bot@ChenJ.im"
+
+    - name: Setup update branch
+      run: |
+        # Check if ci/update-data branch exists
+        if git ls-remote --heads origin ci/update-data | grep -q ci/update-data; then
+          echo "Branch ci/update-data exists, checking out and resetting"
+          git checkout ci/update-data
+          git reset --hard origin/master
+        else
+          echo "Creating new branch ci/update-data from master"
+          git checkout -b ci/update-data
+        fi
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl jq bc
+
+    - name: Create data directory
+      run: mkdir -p data
+
+    - name: Run Danbooru scraper
+      run: |
+        chmod +x ./scrape_danbooru_aliases.zsh
+        ./scrape_danbooru_aliases.zsh
+
+    - name: Check for changes
+      id: check_changes
+      run: |
+        if git diff --quiet HEAD -- data/danbooru_tag_aliases.csv; then
+          echo "No changes detected in danbooru_tag_aliases.csv"
+          echo "changes_detected=false" >> $GITHUB_OUTPUT
+        else
+          echo "Changes detected in danbooru_tag_aliases.csv"
+          echo "changes_detected=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit changes
+      if: steps.check_changes.outputs.changes_detected == 'true'
+      run: |
+        git add data/danbooru_tag_aliases.csv
+        git commit -m "chore: update Danbooru tag aliases dataset
+        
+        Automated weekly update of Danbooru tag aliases data from API.
+        This ensures the dataset stays current with the latest tag aliases."
+
+    - name: Push branch
+      if: steps.check_changes.outputs.changes_detected == 'true'
+      run: git push origin ci/update-data --force
+
+    - name: Create Pull Request
+      if: steps.check_changes.outputs.changes_detected == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: pulls } = await github.rest.pulls.list({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            head: 'ci/update-data',
+            state: 'open'
+          });
+
+          if (pulls.length === 0) {
+            const currentDate = new Date().toISOString().split('T')[0];
+            
+            const prBody = `## 🔄 Automated Dataset Update
+
+          This PR contains the latest Danbooru tag aliases dataset scraped from the official API.
+
+          ### Changes
+          - 📊 Updated \`data/danbooru_tag_aliases.csv\` with the latest tag aliases
+          - 🤖 Automatically generated on ${currentDate}
+
+          ### What's included
+          - All current tag aliases from Danbooru
+          - Properly formatted CSV with headers
+          - Maintains data integrity and structure
+
+          This automated update ensures our dataset stays synchronized with Danbooru's latest tag alias mappings.
+
+          ---
+          *This PR was automatically created by the weekly data update workflow.*`;
+            
+            await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `chore: update Danbooru tag aliases dataset (${currentDate})`,
+              head: 'ci/update-data',
+              base: 'master',
+              body: prBody
+            });
+            
+            console.log('✅ Pull request created successfully');
+          } else {
+            console.log('ℹ️ Pull request already exists, updating existing PR');
+          }
+
+    - name: Summary
+      run: |
+        if [ "${{ steps.check_changes.outputs.changes_detected }}" == "true" ]; then
+          echo "✅ Dataset updated successfully and PR created/updated"
+        else
+          echo "ℹ️ No changes detected, no action needed"
+        fi

@@ -93,9 +93,10 @@ fetch_all_pages() {
     local page=1
     local total_records=0
     local output_file="$1"
+    local temp_file="${output_file%.csv}.temp.csv"
     
-    # Create CSV header
-    echo "id,antecedent_name,consequent_name,creator_id,forum_topic_id,status,created_at,updated_at,approver_id,forum_post_id,reason" > "$output_file"
+    # Create CSV header in temp file
+    echo "id,antecedent_name,consequent_name,creator_id,forum_topic_id,status,created_at,updated_at,approver_id,forum_post_id,reason" > "$temp_file"
     
     while true; do
         echo "Fetching page $page..." >&2
@@ -130,14 +131,23 @@ fetch_all_pages() {
         local page_records
         page_records=$(echo "$csv_data" | wc -l)
         
-        # Append CSV data to file
-        echo "$csv_data" >> "$output_file"
+        # Append CSV data to temp file
+        echo "$csv_data" >> "$temp_file"
         total_records=$((total_records + page_records))
         
         echo -e "${GRAY}Page $page completed, $page_records records${RESET}" >&2
         
         page=$((page + 1))
     done
+    
+    # Move temp file to final location if successful
+    if [[ -f "$temp_file" && $total_records -gt 0 ]]; then
+        mv "$temp_file" "$output_file"
+        echo "Successfully moved temp file to final location" >&2
+    elif [[ -f "$temp_file" ]]; then
+        rm "$temp_file"
+        echo -e "${YELLOW}WARNING: Removed empty temp file${RESET}" >&2
+    fi
 }
 
 # Main execution
@@ -184,6 +194,10 @@ main() {
     # Start fetching data
     echo "Starting data fetch..."
     fetch_all_pages "$output_file"
+    
+    # Clean up any remaining temp files
+    local temp_file="${output_file%.csv}.temp.csv"
+    [[ -f "$temp_file" ]] && rm "$temp_file" 2>/dev/null
     
     # Final summary
     if [[ -f "$output_file" ]]; then
