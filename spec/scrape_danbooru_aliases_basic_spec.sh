@@ -4,6 +4,9 @@
 # Basic tests for scrape_danbooru_aliases.zsh to verify functionality
 
 Describe "scrape_danbooru_aliases.zsh basic functionality"
+  # Cleanup: restore tracked CSV after all tests
+  AfterAll 'git checkout -- data/danbooru_tag_aliases.csv'
+
   Context "Script syntax"
     It "should have valid syntax"
       When run zsh -n "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
