@@ -13,11 +13,17 @@ jobs:
       contents: write
       pull-requests: write
 
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0 # Fetch full history for branch operations
+
+    - name: Show working directory and files (debug)
+      run: |
+        pwd
+        tree -L 2
 
     - name: Setup Git configuration
       run: |
@@ -39,10 +45,15 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y curl jq bc
+        sudo apt-get install -y curl jq bc zsh
 
     - name: Create data directory
-      run: mkdir -p data
+      run: |
+        mkdir -p data
+
+    - name: Show files before running scraper (debug)
+      run: |
+        ls -al
 
     - name: Run Danbooru scraper
       run: |
