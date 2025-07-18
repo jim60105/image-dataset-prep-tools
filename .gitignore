@@ -3,3 +3,6 @@
 
 # Build artifacts  
 *.npz
+
+# Local shellspec installation
+shellspec/

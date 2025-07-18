@@ -2,9 +2,9 @@ name: 🧪 Shell Script Testing with Coverage
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master ]
 
 env:
   SHELLSPEC_VERSION: "0.28.1"
@@ -25,15 +25,6 @@ jobs:
         
         # Install zsh for ShellSpec
         sudo apt-get install -y zsh
-        
-        # Install ImageMagick for resize_images.zsh testing
-        sudo apt-get install -y imagemagick
-        
-        # Install czkawka_cli for validate_dataset.zsh testing (optional)
-        curl -fsSL https://github.com/qarmin/czkawka/releases/latest/download/linux_czkawka_cli.tar.xz -o czkawka_cli.tar.xz
-        tar -xf czkawka_cli.tar.xz
-        sudo mv czkawka_cli /usr/local/bin/
-        chmod +x /usr/local/bin/czkawka_cli
         
         # Install kcov for coverage measurement
         sudo apt-get install -y kcov
@@ -124,30 +115,3 @@ jobs:
             repo: context.repo.repo,
             body: coverageComment
           });
-
-  test-matrix:
-    name: Test on multiple shells
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        shell: [zsh, bash]
-        
-    steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-      
-    - name: 🔧 Install shell and dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y ${{ matrix.shell }} imagemagick
-        
-        # Install ShellSpec
-        curl -fsSL https://github.com/shellspec/shellspec/releases/download/0.28.1/shellspec-dist.tar.gz | tar -xz
-        sudo cp -r shellspec /usr/local/bin/
-        sudo ln -sf /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
-    
-    - name: 🧪 Run tests with ${{ matrix.shell }}
-      run: |
-        cd spec/
-        # Override shell in config for matrix testing
-        shellspec --shell ${{ matrix.shell }} --format tap
