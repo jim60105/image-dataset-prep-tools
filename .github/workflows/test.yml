@@ -56,7 +56,7 @@ jobs:
         mkdir -p coverage
         
         # Run tests with kcov coverage
-        shellspec --kcov coverage
+        shellspec --kcov
         
     - name: 🎯 Check coverage threshold (85%)
       run: |

@@ -23,12 +23,12 @@ Describe 'validate_dataset.zsh basic functionality'
 
   Describe 'Script validation'
     It 'should have valid zsh syntax'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
     End
 
     It 'should handle script execution without parameters'
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Dataset validation complete"
     End
@@ -36,7 +36,7 @@ Describe 'validate_dataset.zsh basic functionality'
 
   Describe 'Basic dataset validation'
     It 'should validate empty directory without errors'
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Dataset validation complete"
     End
@@ -44,7 +44,7 @@ Describe 'validate_dataset.zsh basic functionality'
     It 'should detect and report missing txt files'
       touch image1.jpg image2.png
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Missing .txt file for image: image1.jpg"
       The output should include "Missing .txt file for image: image2.png"
@@ -54,7 +54,7 @@ Describe 'validate_dataset.zsh basic functionality'
       echo "test content" > orphan1.txt
       echo "test content" > orphan2.txt
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Orphaned .txt file (no corresponding image): orphan1.txt"
       The output should include "Orphaned .txt file (no corresponding image): orphan2.txt"
@@ -66,7 +66,7 @@ Describe 'validate_dataset.zsh basic functionality'
       echo "1girl, character, test" > test.txt
       touch test.jpg
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh" "character"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh" "character"
       The status should be success
       The output should include "Using provided trigger word: character"
     End
@@ -75,7 +75,7 @@ Describe 'validate_dataset.zsh basic functionality'
       echo "1girl, test content" > test.txt
       touch test.jpg
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Dataset validation complete"
     End
@@ -86,7 +86,7 @@ Describe 'validate_dataset.zsh basic functionality'
       echo "test content" > test.txt
       touch test.jpg
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Dataset validation complete"
     End
@@ -95,7 +95,7 @@ Describe 'validate_dataset.zsh basic functionality'
       echo "test content" > test.txt
       touch test.png
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Dataset validation complete"
     End
@@ -104,7 +104,7 @@ Describe 'validate_dataset.zsh basic functionality'
       echo "test content" > test.txt
       touch test.bmp test.gif test.doc
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
       The output should include "Orphaned .txt files"
       The output should include "test.txt"

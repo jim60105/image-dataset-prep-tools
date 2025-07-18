@@ -71,7 +71,7 @@ join_tags() {
 # Function to load Danbooru tag aliases
 load_tag_aliases() {
     local script_dir="$(dirname "$(realpath "${(%):-%x}")")"
-    local csv_file="$script_dir/data/danbooru_tag_aliases.csv"
+    local csv_file="$script_dir/../data/danbooru_tag_aliases.csv"
     
     if [[ ! -f "$csv_file" ]]; then
         echo "WARNING: Tag aliases file not found: $csv_file" >&2

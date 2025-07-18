@@ -26,22 +26,22 @@ Describe 'ShellSpec Testing Framework Integration'
     End
 
     It 'should have all main scripts present'
-      When call test -f "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
     End
 
     It 'should have process_txt_files.zsh present'
-      When call test -f "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh"
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
     End
 
     It 'should have validate_dataset.zsh present'
-      When call test -f "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
     End
 
     It 'should have scrape_danbooru_aliases.zsh present'
-      When call test -f "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
+      When call test -f "$SHELLSPEC_PROJECT_ROOT/src/scrape_danbooru_aliases.zsh"
       The status should be success
     End
   End
@@ -77,22 +77,22 @@ Describe 'ShellSpec Testing Framework Integration'
 
   Describe 'Code quality checks'
     It 'should have all scripts pass zsh syntax check'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
     End
 
     It 'should have process_txt_files.zsh pass syntax check'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
     End
 
     It 'should have validate_dataset.zsh pass syntax check'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/validate_dataset.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success
     End
 
     It 'should have scrape_danbooru_aliases.zsh pass syntax check'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/scrape_danbooru_aliases.zsh"
       The status should be success
     End
   End

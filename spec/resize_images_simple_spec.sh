@@ -238,10 +238,7 @@ Describe 'resize_images.zsh'
         fi
       End
 
-      When call zsh -c '
-        # Run the actual script with our mock
-        source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
       The status should be success
       The output should include "Removed all .npz files"

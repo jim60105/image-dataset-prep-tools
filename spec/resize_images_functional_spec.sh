@@ -23,7 +23,7 @@ Describe 'resize_images.zsh functionality'
 
   Describe 'Script execution'
     It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
     End
 
@@ -36,7 +36,7 @@ Describe 'resize_images.zsh functionality'
         fi
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
     End
@@ -53,7 +53,7 @@ Describe 'resize_images.zsh functionality'
         fi
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
       The output should include "Skip test.jpg"
@@ -72,7 +72,7 @@ Describe 'resize_images.zsh functionality'
         fi
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "resized height to 1024"
     End
@@ -86,7 +86,7 @@ Describe 'resize_images.zsh functionality'
         exit 1  # Always fail
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success  # Script should continue despite individual failures
       The output should include "Removed all .npz files"
       The stderr should include "magick: error processing test.jpg"

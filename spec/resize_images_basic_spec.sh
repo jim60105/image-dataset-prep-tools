@@ -23,7 +23,7 @@ Describe 'resize_images.zsh basic functionality'
 
   Describe 'Script validation'
     It 'should have valid zsh syntax'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
     End
 
@@ -31,7 +31,7 @@ Describe 'resize_images.zsh basic functionality'
       Mock magick
         :
       End
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
     End
@@ -47,7 +47,7 @@ Describe 'resize_images.zsh basic functionality'
         fi
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
       The file file1.npz should not be exist
@@ -61,7 +61,7 @@ Describe 'resize_images.zsh basic functionality'
         fi
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
     End
@@ -73,7 +73,7 @@ Describe 'resize_images.zsh basic functionality'
         echo "400 300"
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
     End
@@ -87,7 +87,7 @@ Describe 'resize_images.zsh basic functionality'
         fi
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Skip test.jpg"
     End
@@ -101,7 +101,7 @@ Describe 'resize_images.zsh basic functionality'
         fi
       End
 
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Skip test.png"
     End
@@ -113,7 +113,7 @@ Describe 'resize_images.zsh basic functionality'
       export OLD_PATH="$PATH"
       export PATH="/nonexistent"
 
-      When run script "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be failure
       The stderr should include "command not found: magick"
       The output should include "Removed all .npz files"
@@ -140,7 +140,7 @@ Describe 'resize_images.zsh basic functionality'
         fi
       End
 
-      When run script "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       The status should be success
       The output should include "Removed all .npz files"
       The stderr should include "magick: error processing test1.jpg"

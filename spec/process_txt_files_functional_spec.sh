@@ -23,7 +23,7 @@ Describe 'process_txt_files.zsh functionality'
 
   Describe 'Script execution'
     It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh"
+      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
     End
 
@@ -32,7 +32,7 @@ Describe 'process_txt_files.zsh functionality'
       echo "original content" > test1.txt
       echo "1girl, old_trigger, some tags" > test2.txt
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "new_trigger"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "new_trigger"
       
       The status should be success
       The stderr should include "Using provided trigger word: new_trigger"
@@ -45,7 +45,7 @@ Describe 'process_txt_files.zsh functionality'
     It 'should handle empty directory gracefully'
       # No txt files in directory
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "test_trigger"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       
       The status should be success
       The stderr should include "Using provided trigger word: test_trigger"
@@ -60,7 +60,7 @@ Describe 'process_txt_files.zsh functionality'
     It 'should replace parentheses correctly'
       echo "tags with (parentheses) content" > test.txt
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "character"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "character"
       
       The status should be success
       The stderr should include "Using provided trigger word: character"
@@ -72,7 +72,7 @@ Describe 'process_txt_files.zsh functionality'
 
     It 'should verify file content after processing'
       echo "tags with (parentheses) content" > test.txt
-      zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "character" >/dev/null 2>&1
+      zsh "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "character" >/dev/null 2>&1
       
       # Check if file was processed (should contain character at start)
       When call head -1 test.txt
@@ -84,7 +84,7 @@ Describe 'process_txt_files.zsh functionality'
       echo "content2" > file2.txt
       echo "content3" > file3.txt
       
-      When call zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "trigger"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "trigger"
       
       The status should be success
       The stderr should include "Using provided trigger word: trigger"

@@ -51,14 +51,10 @@ jobs:
       run: |
         mkdir -p data
 
-    - name: Show files before running scraper (debug)
-      run: |
-        ls -al
-
     - name: Run Danbooru scraper
       run: |
-        chmod +x ./scrape_danbooru_aliases.zsh
-        ./scrape_danbooru_aliases.zsh
+        chmod +x ./src/scrape_danbooru_aliases.zsh
+        ./src/scrape_danbooru_aliases.zsh
 
     - name: Check for changes
       id: check_changes

@@ -11,7 +11,7 @@ Describe "scrape_danbooru_aliases.zsh basic functionality"
 
   Context "Script syntax"
     It "should have valid syntax"
-      When run zsh -n "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
+      When run zsh -n "$SHELLSPEC_PROJECT_ROOT/src/scrape_danbooru_aliases.zsh"
       The status should be success
     End
   End
@@ -119,7 +119,7 @@ EOF
     End
 
     It "should display header information and process two pages successfully"
-      When run zsh "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/scrape_danbooru_aliases.zsh"
       The status should be success
       The output should include "Danbooru Tag Aliases Scraper"
       The output should include "API endpoint: https://danbooru.donmai.us/tag_aliases.json"
@@ -131,7 +131,7 @@ EOF
     End
 
     It "should create output file with correct data"
-      When run zsh "$SHELLSPEC_PROJECT_ROOT/scrape_danbooru_aliases.zsh"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/scrape_danbooru_aliases.zsh"
       The status should be success
       The file "data/danbooru_tag_aliases.csv" should be exist
       The contents of file "data/danbooru_tag_aliases.csv" should include "test_tag_1"
