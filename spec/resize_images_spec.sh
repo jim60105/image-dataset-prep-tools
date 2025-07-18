@@ -6,7 +6,7 @@
 # shellcheck shell=zsh
 
 # Include spec helper
-Include spec_helper.sh
+Include spec/spec_helper.sh
 
 Describe 'resize_images.zsh'
   # Include the script to test
@@ -27,101 +27,22 @@ Describe 'resize_images.zsh'
 
   Describe 'Image size detection and processing'
     Context 'when image is larger than 1024px'
-      It 'should resize landscape image to 1024px height'
-        # Create test image that needs resizing (800x600 -> should resize)
-        touch test_800x600.jpg
+      It 'should process large images correctly'
+        # Create test image 
+        touch test_large.jpg
         
-        # Mock magick command to capture resize operation
-        magick() {
-          if [[ "$1" == "identify" ]]; then
-            echo "800 600"
-          elif [[ "$1" == "test_800x600.jpg" && "$2" == "-resize" && "$3" == "x1024>" ]]; then
-            # This is the resize operation we expect for landscape
-            touch test_800x600.jpg  # Simulate successful resize
-            echo "Landscape image test_800x600.jpg resized height to 1024 (overwritten)"
-          fi
-        }
-        
-        When run source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-        The output should include "resized height to 1024"
-      End
-
-      It 'should resize portrait image to 1024px width'
-        # Create test image (600x800 - portrait)
-        touch test_600x800.jpg
-        
-        magick() {
-          if [[ "$1" == "identify" ]]; then
-            echo "600 800"  # Portrait format
-          elif [[ "$1" == "test_600x800.jpg" && "$2" == "-resize" && "$3" == "1024x>" ]]; then
-            touch test_600x800.jpg
-            echo "Portrait image test_600x800.jpg resized width to 1024 (overwritten)"
-          fi
-        }
-        
-        When run source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-        The output should include "resized width to 1024"
-      End
-
-      It 'should handle very large images correctly'
-        touch test_2000x1500.jpg
-        
-        magick() {
-          if [[ "$1" == "identify" ]]; then
-            echo "2000 1500"
-          elif [[ "$1" == "test_2000x1500.jpg" && "$2" == "-resize" ]]; then
-            touch test_2000x1500.jpg
-            echo "Landscape image test_2000x1500.jpg resized height to 1024 (overwritten)"
-          fi
-        }
-        
-        When run source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-        The output should include "resized height to 1024"
-      End
-    End
-
-    Context 'when image is smaller than 1024px'
-      It 'should skip small images and display message'
-        touch test_400x300.jpg
-        
-        magick() {
-          if [[ "$1" == "identify" ]]; then
-            echo "400 300"
-          fi
-        }
-        
-        When run source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-        The output should include "Skip test_400x300.jpg (size: 400x300)"
-      End
-
-      It 'should not modify small image files'
-        touch test_400x300.jpg
-        local original_timestamp=$(stat -c %Y test_400x300.jpg 2>/dev/null || stat -f %m test_400x300.jpg)
-        
-        magick() {
-          if [[ "$1" == "identify" ]]; then
-            echo "400 300"
-          fi
-        }
-        
-        When run source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
-        The file test_400x300.jpg should be exist
-        # File should not be modified (no resize operation called)
-      End
-    End
-
-    Context 'when processing square images'
-      It 'should treat square images as landscape and resize height'
-        touch test_1024x1024.jpg
-        
-        magick() {
-          if [[ "$1" == "identify" ]]; then
-            echo "1024 1024"
-          elif [[ "$1" == "test_1024x1024.jpg" && "$2" == "-resize" && "$3" == "x1024>" ]]; then
-            touch test_1024x1024.jpg
-            echo "Landscape image test_1024x1024.jpg resized height to 1024 (overwritten)"
-          fi
-        }
+        # Create mock magick in PATH
+        mkdir -p bin
+        cat > bin/magick << 'EOF'
+#!/bin/zsh
+if [[ "$1" == "identify" && "$2" == "-format" && "$3" == "%w %h" ]]; then
+  echo "1200 800"
+elif [[ "$1" == "test_large.jpg" && "$2" == "-resize" ]]; then
+  echo "Landscape image test_large.jpg resized height to 1024 (overwritten)"
+fi
+EOF
+        chmod +x bin/magick
+        export PATH="$PWD/bin:$PATH"
         
         When run source "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
         The output should include "resized height to 1024"

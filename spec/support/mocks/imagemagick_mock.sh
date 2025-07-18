@@ -99,7 +99,7 @@ simulate_imagemagick_failure() {
   return 1
 }
 
-# Export mock functions
-export -f mock_magick_identify
-export -f mock_magick_resize
-export -f simulate_imagemagick_failure
+# Mock functions are automatically available in zsh subshells
+# export -f mock_magick_identify
+# export -f mock_magick_resize
+# export -f simulate_imagemagick_failure
