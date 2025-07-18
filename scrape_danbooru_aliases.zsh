@@ -17,6 +17,7 @@
 #
 # Scrapes all Danbooru tag aliases from the API and saves them to a CSV file.
 # Supports pagination to fetch complete dataset and implements proper rate limiting.
+# Data is sorted by tag count (most popular aliases first) with a maximum of 1000 pages.
 # Usage: scrape_danbooru_aliases.zsh (from any directory)
 
 # Set nullglob option to handle cases where no files match the pattern
@@ -26,6 +27,7 @@ setopt nullglob
 BASE_URL="https://danbooru.donmai.us"  # Use production environment by default
 ENDPOINT="/tag_aliases.json"
 MIN_INTERVAL=0.1  # Minimum interval between requests (10 requests/second max)
+MAX_PAGES=1000   # Maximum number of pages to scrape
 
 # Color codes for output
 RED='\033[31m'
@@ -37,7 +39,7 @@ RESET='\033[0m'
 api_request() {
     local page=$1
     local start_time=$(date +%s.%N)
-    local params="?page=${page}"
+    local params="?page=${page}&search%5Border%5D=tag_count"
     
     # Add authentication parameters if environment variables are set
     if [[ -n "$DANBOORU_LOGIN" && -n "$DANBOORU_APIKEY" ]]; then
@@ -108,6 +110,12 @@ fetch_all_pages() {
     echo "id,antecedent_name,consequent_name,creator_id,forum_topic_id,status,created_at,updated_at,approver_id,forum_post_id,reason" > "$temp_file"
     
     while true; do
+        # Check for maximum page limit
+        if [[ $page -gt $MAX_PAGES ]]; then
+            echo "Reached maximum page limit ($MAX_PAGES), stopping..." >&2
+            break
+        fi
+        
         echo "Fetching page $page..." >&2
         
         local response
@@ -176,6 +184,8 @@ main() {
     echo "Danbooru Tag Aliases Scraper"
     echo "============================"
     echo "API endpoint: ${BASE_URL}${ENDPOINT}"
+    echo "Sorting: By tag count (descending)"
+    echo "Maximum pages: $MAX_PAGES"
     
     # Check for authentication
     if [[ -n "$DANBOORU_LOGIN" && -n "$DANBOORU_APIKEY" ]]; then

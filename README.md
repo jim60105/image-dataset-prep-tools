@@ -183,7 +183,8 @@ validate_dataset.zsh "your_trigger_word"
 
 **Function:**
 - Scrapes all Danbooru tag aliases from the API and saves them to a CSV file
-- Supports pagination to fetch complete dataset
+- Supports pagination to fetch complete dataset with a maximum of 1000 pages
+- Data is sorted by tag count (most popular aliases first) for better relevance
 - Implements proper rate limiting (10 requests/second max)
 - Designed for danbooru.donmai.us, easily configurable for test environments
 
@@ -203,6 +204,8 @@ scrape_danbooru_aliases.zsh
 **Output:**
 - Creates `data/` directory in current working directory
 - Generates CSV file: `danbooru_tag_aliases.csv`
+- Data sorted by tag count for better relevance (most popular aliases first)
+- Maximum 1000 pages to prevent excessive API usage
 - CSV columns: id, antecedent_name, consequent_name, creator_id, forum_topic_id, status, created_at, updated_at, approver_id, forum_post_id, reason
 
 **Safety:**
