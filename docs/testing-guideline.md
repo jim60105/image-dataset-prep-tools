@@ -206,12 +206,11 @@ create_test_dataset "mixed_issues" # Various issues
 
 ### 1. Syntax Validation
 
-```bash
-It 'should have valid zsh syntax'
-  When call zsh -n "$SHELLSPEC_PROJECT_ROOT/script_name.zsh"
-  The status should be success
-End
-```
+> [!IMPORTANT]
+> **All zsh syntax validation tests are centralized in `spec/framework_integration_spec.sh`.**
+> Do **not** write syntax validation (`zsh -n ...`) in individual test files. This avoids duplication and ensures a single source of truth for syntax checks.
+
+If you need to add or update syntax validation, only modify `spec/framework_integration_spec.sh`.
 
 ### 2. Empty Directory Handling
 

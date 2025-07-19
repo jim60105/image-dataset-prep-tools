@@ -22,11 +22,6 @@ Describe 'resize_images.zsh basic functionality'
   After 'cleanup'
 
   Describe 'Script validation'
-    It 'should have valid zsh syntax'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
-      The status should be success
-    End
-
     It 'should execute without parameters in empty directory'
       Mock magick
         :

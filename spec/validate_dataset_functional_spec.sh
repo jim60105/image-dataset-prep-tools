@@ -22,11 +22,6 @@ Describe 'validate_dataset.zsh functionality'
   After 'cleanup'
 
   Describe 'Script execution'
-    It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
-      The status should be success
-    End
-
     It 'should validate complete dataset successfully'
       # Create complete dataset
       touch good.jpg good.png

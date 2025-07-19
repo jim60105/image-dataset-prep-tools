@@ -22,11 +22,6 @@ Describe 'resize_images.zsh functionality'
   After 'cleanup'
 
   Describe 'Script execution'
-    It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
-      The status should be success
-    End
-
     It 'should handle empty directory gracefully'
       Mock magick
         if [[ "$1" == "identify" ]]; then

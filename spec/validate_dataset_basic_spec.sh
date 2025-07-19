@@ -22,11 +22,6 @@ Describe 'validate_dataset.zsh basic functionality'
   After 'cleanup'
 
   Describe 'Script validation'
-    It 'should have valid zsh syntax'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
-      The status should be success
-    End
-
     It 'should handle script execution without parameters'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/validate_dataset.zsh"
       The status should be success

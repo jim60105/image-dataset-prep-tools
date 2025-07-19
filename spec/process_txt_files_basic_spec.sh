@@ -22,11 +22,6 @@ Describe 'process_txt_files.zsh basic functionality'
   After 'cleanup'
 
   Describe 'Script validation'
-    It 'should have valid zsh syntax'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-    End
-
     It 'should handle invalid parameters'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "param1" "param2" "param3"
       The status should be failure

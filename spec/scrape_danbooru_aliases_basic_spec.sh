@@ -9,13 +9,6 @@ Describe "scrape_danbooru_aliases.zsh basic functionality"
   # Cleanup: restore tracked CSV after all tests
   AfterAll 'git checkout -- data/danbooru_tag_aliases.csv'
 
-  Context "Script syntax"
-    It "should have valid syntax"
-      When run zsh -n "$SHELLSPEC_PROJECT_ROOT/src/scrape_danbooru_aliases.zsh"
-      The status should be success
-    End
-  End
-
   Context "Basic execution with mocked API"
     Mock curl
       url=""

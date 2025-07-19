@@ -22,11 +22,6 @@ Describe 'process_txt_files.zsh functionality'
   After 'cleanup'
 
   Describe 'Script execution'
-    It 'should execute without syntax errors'
-      When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-    End
-
     It 'should process text files with mock input'
       # Create test txt files
       echo "original content" > test1.txt
