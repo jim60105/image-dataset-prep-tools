@@ -6,7 +6,7 @@ This project provides several practical tools for image dataset preparation. The
 > Add this project's root directory to your PATH to execute scripts from anywhere and process files in your current working directory.
 
 > [!CAUTION]  
-> All three tools overwrite original files. Always back up important data first!
+> All tools overwrite original files. Always back up important data first!
 
 ---
 
@@ -28,7 +28,7 @@ First, add this project's root directory to your PATH to run scripts from anywhe
 
 ```bash
 # Add to your shell configuration file (.bashrc, .zshrc, etc.)
-export PATH="/path/to/image-dataset-prep-tools:$PATH"
+export PATH="/path/to/image-dataset-prep-tools/src:$PATH"
 ```
 
 After setup, navigate to any directory containing your dataset files and run the scripts directly.
