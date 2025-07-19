@@ -104,7 +104,7 @@ Use `When` to execute the code being tested:
 
 ```bash
 # For direct script execution
-When run zsh "$SHELLSPEC_PROJECT_ROOT/script_name.zsh"
+When run script "$SHELLSPEC_PROJECT_ROOT/script_name.zsh"
 
 # For function calls
 When call function_name arg1 arg2
@@ -112,6 +112,29 @@ When call function_name arg1 arg2
 # For script execution with arguments
 When run script "$SHELLSPEC_PROJECT_ROOT/script_name.zsh" "arg1"
 ```
+
+> [!IMPORTANT]
+> **Coverage Measurement Target in ShellSpec**
+>
+> ShellSpec only measures coverage for shell scripts executed in specific ways:
+>
+> - Only scripts executed with `When run script` or `When run source` are included in coverage measurement.
+> - Scripts executed with `When run zsh`, `When call zsh` or `When run command` (i.e., directly invoking zsh or another shell to run the script) are **not** included in coverage measurement.
+> - Only `When run script`/`When run source` will execute in the same shell and allow correct coverage tracking.
+>
+> ```bash
+> # Bad Practice, NEVER do this:
+> When run zsh "$SHELLSPEC_PROJECT_ROOT/script_name.zsh"
+> ```
+>
+> **Practical advice:**
+>
+> - For behavior/functional tests, always use `When run script "$SHELLSPEC_PROJECT_ROOT/script_name.zsh"` to ensure coverage is measured.
+> - Use `When call zsh` only for syntax checking (e.g., `When call zsh -n`) or special cases (e.g., shebang behavior).
+> - This ensures the coverage report accurately reflects the code exercised by your tests.
+
+> [!TIP]
+> See the ShellSpec official documentation: [Coverage Measurement Target](https://github.com/shellspec/shellspec/blob/master/README.md#measurement-target)
 
 ### The Expectations
 
@@ -170,7 +193,7 @@ mock_user_input() {
 # Use in tests:
 It 'should handle user input'
   # The script will receive "test_input" when it reads from stdin
-  When run zsh "$SHELLSPEC_PROJECT_ROOT/script.zsh" <<< "test_input"
+  When run script "$SHELLSPEC_PROJECT_ROOT/script.zsh" <<< "test_input"
 End
 ```
 
@@ -216,7 +239,7 @@ If you need to add or update syntax validation, only modify `spec/framework_inte
 
 ```bash
 It 'should handle empty directory gracefully'
-  When run zsh "$SHELLSPEC_PROJECT_ROOT/script_name.zsh"
+  When run script "$SHELLSPEC_PROJECT_ROOT/script_name.zsh"
   The status should be success
   The output should include "No files found"
 End
@@ -231,7 +254,7 @@ It 'should process existing files'
     echo "800 600"
   End
   
-  When run zsh "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
+  When run script "$SHELLSPEC_PROJECT_ROOT/resize_images.zsh"
   The status should be success
   The output should include "Processing: test.jpg"
 End
@@ -258,7 +281,7 @@ End
 It 'should modify file contents correctly'
   echo "original content" > test.txt
   
-  When run zsh "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "trigger"
+  When run script "$SHELLSPEC_PROJECT_ROOT/process_txt_files.zsh" "trigger"
   The contents of file test.txt should equal "trigger, original content"
 End
 ```
@@ -312,7 +335,7 @@ Describe 'Multiple scenarios'
   Example "should process $1 files with $2 dimensions"
     create_test_image "test.$1" "${2%x*}" "${2#*x}"
     
-    When run zsh "$SHELLSPEC_PROJECT_ROOT/script.zsh"
+    When run script "$SHELLSPEC_PROJECT_ROOT/script.zsh"
     The status should be success
   End
 End
@@ -337,7 +360,7 @@ End
 
 ```bash
 It 'should output progress information'
-  When run zsh "$SHELLSPEC_PROJECT_ROOT/script.zsh"
+  When run script "$SHELLSPEC_PROJECT_ROOT/script.zsh"
   The output should match pattern "Processing: * files"
   The stderr should match pattern "*Loaded * active tag aliases*"
 End
