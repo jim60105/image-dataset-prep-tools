@@ -19,30 +19,55 @@
 # Usage: resize_images.zsh (from any directory)
 
 
-# Set nullglob option to handle cases where no files match the pattern
+# Set nullglob for safe globbing
 setopt nullglob
 
-# Remove all .npz files in the current directory before resizing images
+# Remove all .npz files in the current directory
 rm -f -- *.npz
 echo "Removed all .npz files in current directory"
 
-for img in *.jpg *.png; do
-  [[ ! -f "$img" ]] && continue
-  # Get image width and height
-  read width height < <(magick identify -format "%w %h" "$img")
-  # Skip images smaller than 1024px on both sides
+# Fail fast if magick is not available
+if ! command -v magick >/dev/null 2>&1; then
+  echo "command not found: magick" >&2
+  exit 1
+fi
+
+resize_image() {
+  local img="$1"
+  # Skip if not a file
+  [[ ! -f "$img" ]] && return
+
+  # Get width and height
+  local dims
+  dims=$(magick identify -format "%w %h" "$img" 2>/dev/null) || {
+    echo "magick: error processing $img" >&2
+    return
+  }
+  local width height
+  read width height <<< "$dims"
+
+  # Skip small images
   if (( width < 1024 && height < 1024 )); then
     echo "Skip $img (size: ${width}x${height})"
-    continue
+    return
   fi
-  # Determine if the image is landscape or portrait
+
+  # Resize
   if (( width >= height )); then
-    # Landscape: resize height to 1024, overwrite original file
-    magick "$img" -resize x1024\> "$img"
+    magick "$img" -resize x1024\> "$img" 2>/dev/null || {
+      echo "magick: error processing $img" >&2
+      return
+    }
     echo "Landscape image $img resized height to 1024 (overwritten)"
   else
-    # Portrait: resize width to 1024, overwrite original file
-    magick "$img" -resize 1024x\> "$img"
+    magick "$img" -resize 1024x\> "$img" 2>/dev/null || {
+      echo "magick: error processing $img" >&2
+      return
+    }
     echo "Portrait image $img resized width to 1024 (overwritten)"
   fi
+}
+
+for img in *.jpg *.png; do
+  resize_image "$img"
 done

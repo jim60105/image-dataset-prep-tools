@@ -1,0 +1,140 @@
+name: 🧪 Shell Script Testing with Coverage
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "**/*.zsh"
+      - "**/*.sh"
+  pull_request:
+    branches: [master]
+    paths:
+      - "**/*.zsh"
+      - "**/*.sh"
+
+env:
+  SHELLSPEC_VERSION: "0.28.1"
+
+jobs:
+  test:
+    name: Test Shell Scripts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Install dependencies
+        run: |
+          # Update package manager
+          sudo apt-get update
+
+          # Install zsh for ShellSpec
+          sudo apt-get install -y zsh bc
+
+          # Install kcov build dependencies
+          sudo apt-get install -y cmake g++ pkg-config libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev zlib1g-dev
+
+          # Build and install kcov from source
+          cd /tmp
+          git clone --depth 1 https://github.com/SimonKagstrom/kcov.git
+          cd kcov
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+
+          # Install ShellSpec
+          cd /tmp
+          curl -fsSL https://github.com/shellspec/shellspec/releases/download/${SHELLSPEC_VERSION}/shellspec-dist.tar.gz | tar -xz
+          sudo cp -r shellspec /usr/local/bin/
+          sudo ln -s /usr/local/bin/shellspec/shellspec /usr/bin/shellspec
+
+      - name: 📊 Run tests with coverage
+        run: |
+          # Create coverage directory
+          mkdir -p coverage
+
+          # Run tests with kcov coverage
+          shellspec --kcov
+
+      - name: 🎯 Check coverage threshold (75%)
+        run: |
+          # Parse kcov coverage results from JSON file
+          if [ -f coverage/coverage.json ]; then
+            if command -v jq >/dev/null 2>&1; then
+              coverage_percent=$(jq -r '.percent_covered' coverage/coverage.json 2>/dev/null || echo "")
+            else
+              coverage_percent=$(sed -n 's/.*"percent_covered": "\([0-9.]*\)".*/\1/p' coverage/coverage.json | tail -1 || echo "")
+            fi
+            echo "� Final coverage: ${coverage_percent}%"
+            if (( $(echo "${coverage_percent} >= 75.0" | bc -l) )); then
+              echo "✅ Coverage ${coverage_percent}% meets 75% threshold"
+            else
+              echo "❌ Coverage ${coverage_percent}% is below 75% threshold"
+              echo "🎯 Target: 75% | Current: ${coverage_percent}% | Gap: $(echo "75.0 - ${coverage_percent}" | bc -l)%"
+              exit 1
+            fi
+          else
+            echo "❌ coverage.json not found!"
+            exit 1
+          fi
+
+      - name: ☂️ Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          directory: ./coverage/
+
+      - name: 📋 Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: warn
+
+      - name: 💬 Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let coverageComment = '## 📊 Test Coverage Report\n\n';
+
+            try {
+              // Use coverage.json for coverage reporting
+              const coverageJson = fs.readFileSync('coverage/coverage.json', 'utf8');
+              const coverageData = JSON.parse(coverageJson);
+              if (coverageData.percent_covered) {
+                const coverage = parseFloat(coverageData.percent_covered);
+                const status = coverage >= 75 ? '✅' : '❌';
+                const statusText = coverage >= 75 ? 'PASSED' : 'FAILED';
+                coverageComment += `${status} **Coverage: ${coverage}%** (Threshold: 75%) - ${statusText}\n\n`;
+                coverageComment += `📊 **Details:**\n`;
+                coverageComment += `- Covered lines: ${coverageData.covered_lines}\n`;
+                coverageComment += `- Total lines: ${coverageData.total_lines}\n\n`;
+                if (coverage >= 75) {
+                  coverageComment += '🎉 Great job! Coverage meets the required threshold.\n';
+                } else {
+                  coverageComment += '⚠️ Coverage is below the 75% threshold. Please add more tests.\n';
+                }
+              } else {
+                coverageComment += '⚠️ Could not parse coverage report, but tests completed.\n';
+              }
+            } catch (error) {
+              coverageComment += '⚠️ Coverage report not available, but tests were executed.\n';
+            }
+
+            coverageComment += '\n📋 [View detailed coverage report in artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: coverageComment
+            });
