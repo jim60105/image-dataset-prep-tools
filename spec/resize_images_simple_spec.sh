@@ -133,9 +133,14 @@ Describe 'resize_images.zsh'
 
     It 'should skip unsupported formats'
       touch test.bmp test.tiff
-      
+
+      Mock magick
+        # No-op mock: magick should not be called for unsupported formats, but mock to avoid command not found
+        return 0
+      End
+
       When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
-      
+
       The status should be success
       The output should include "Removed all .npz files"
       The output should not include "test.bmp"

@@ -236,6 +236,9 @@ scrape_danbooru_aliases.zsh
 
 This project uses [ShellSpec](https://shellspec.info/) for comprehensive BDD testing of all zsh scripts.
 
+> [!NOTE]
+> All test cases involving the `magick` command **must** mock `magick` to avoid failures on CI runners without ImageMagick installed.
+
 ### 📋 Test Coverage
 
 - 🎯 **Target**: 85% minimum coverage for all zsh scripts
