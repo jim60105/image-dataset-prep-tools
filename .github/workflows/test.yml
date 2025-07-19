@@ -55,29 +55,37 @@ jobs:
         # Create coverage directory
         mkdir -p coverage
         
-        # Run tests with kcov coverage
-        shellspec --kcov
+        # Run tests with kcov coverage and capture output
+        shellspec --kcov 2>&1 | tee coverage/shellspec_output.log
         
     - name: 🎯 Check coverage threshold (85%)
       run: |
-        # Parse kcov coverage results
-        if [ -f coverage/index.html ]; then
-          # Extract coverage percentage from kcov HTML report
-          coverage_percent=$(grep -o 'Lines:[[:space:]]*[0-9.]*%' coverage/index.html | head -1 | grep -o '[0-9.]*' || echo "0")
-          echo "📊 Current coverage: ${coverage_percent}%"
-          
-          # Check if coverage meets 85% threshold
+        # Parse kcov coverage results from JSON file
+        if [ -f coverage/coverage.json ]; then
+          if command -v jq >/dev/null 2>&1; then
+            coverage_percent=$(jq -r '.percent_covered' coverage/coverage.json 2>/dev/null || echo "")
+          else
+            coverage_percent=$(sed -n 's/.*"percent_covered": "\([0-9.]*\)".*/\1/p' coverage/coverage.json | tail -1 || echo "")
+          fi
+          echo "� Final coverage: ${coverage_percent}%"
           if (( $(echo "${coverage_percent} >= 85.0" | bc -l) )); then
             echo "✅ Coverage ${coverage_percent}% meets 85% threshold"
           else
             echo "❌ Coverage ${coverage_percent}% is below 85% threshold"
+            echo "🎯 Target: 85% | Current: ${coverage_percent}% | Gap: $(echo "85.0 - ${coverage_percent}" | bc -l)%"
             exit 1
           fi
         else
-          echo "⚠️ Coverage report not found, checking test success instead"
+          echo "❌ coverage.json not found!"
+          exit 1
         fi
         
-    - name: 📋 Upload coverage reports
+    - name: � Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        directory: ./coverage/
+        
+    - name: �📋 Upload coverage reports
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
@@ -94,17 +102,17 @@ jobs:
           let coverageComment = '## 📊 Test Coverage Report\n\n';
           
           try {
-            // Try to read coverage from kcov HTML report
-            const coverageHtml = fs.readFileSync('coverage/index.html', 'utf8');
-            const coverageMatch = coverageHtml.match(/Lines:\s*([0-9.]+)%/);
-            
-            if (coverageMatch) {
-              const coverage = parseFloat(coverageMatch[1]);
+            // Use coverage.json for coverage reporting
+            const coverageJson = fs.readFileSync('coverage/coverage.json', 'utf8');
+            const coverageData = JSON.parse(coverageJson);
+            if (coverageData.percent_covered) {
+              const coverage = parseFloat(coverageData.percent_covered);
               const status = coverage >= 85 ? '✅' : '❌';
               const statusText = coverage >= 85 ? 'PASSED' : 'FAILED';
-              
               coverageComment += `${status} **Coverage: ${coverage}%** (Threshold: 85%) - ${statusText}\n\n`;
-              
+              coverageComment += `📊 **Details:**\n`;
+              coverageComment += `- Covered lines: ${coverageData.covered_lines}\n`;
+              coverageComment += `- Total lines: ${coverageData.total_lines}\n\n`;
               if (coverage >= 85) {
                 coverageComment += '🎉 Great job! Coverage meets the required threshold.\n';
               } else {
