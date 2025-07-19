@@ -85,12 +85,12 @@ jobs:
             exit 1
           fi
 
-      - name: � Upload coverage reports to Codecov
+      - name: ☂️ Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           directory: ./coverage/
 
-      - name: �📋 Upload coverage reports
+      - name: 📋 Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
