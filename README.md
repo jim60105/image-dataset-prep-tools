@@ -1,5 +1,7 @@
 # 🖼️ Image Dataset Preparation Tools
 
+![Zsh](https://img.shields.io/badge/Zsh-F15A24?logo=Zsh&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?logo=Python&logoColor=white) [![CodeFactor](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools/badge)](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools) [![codecov](https://codecov.io/gh/jim60105/image-dataset-prep-tools/graph/badge.svg?token=eCb26rs5Ma)](https://codecov.io/gh/jim60105/image-dataset-prep-tools) [![🧪 Shell Script Testing with Coverage](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/test.yml/badge.svg)](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/test.yml) [![🔄 Update Danbooru Tag Aliases Data](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/update-danbooru-data.yml/badge.svg)](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/update-danbooru-data.yml)  
+
 This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training.
 
 > [!TIP]  
