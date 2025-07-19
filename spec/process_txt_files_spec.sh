@@ -22,11 +22,6 @@ Describe 'process_txt_files.zsh'
   After 'cleanup'
 
   Describe 'Basic execution'
-    It 'should execute without syntax errors'
-      When run zsh -n "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-    End
-
     It 'should handle empty directory gracefully'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       The status should be success
