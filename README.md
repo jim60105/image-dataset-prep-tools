@@ -79,7 +79,7 @@ process_txt_files.zsh
 
 **Function:**
 
-- Resizes all `.jpg` and `.png` images in the current working directory so the long side is 1024px, keeping aspect ratio.
+- Resizes all `.jpg` and `.png` images in the current working directory so the short side is 1024px, keeping aspect ratio.
 - Images with any side smaller than 1024px are skipped.
 
 **Usage:**
@@ -94,7 +94,7 @@ resize_images.zsh
 
 **Processing details:**
 
-- Automatically detects landscape or portrait orientation and resizes the long side.
+- Automatically detects landscape or portrait orientation and resizes the short side.
 - Only processes `.jpg` and `.png` files.
 
 ---
@@ -319,6 +319,8 @@ The automation ensures the dataset stays current while maintaining proper review
 <img src="https://github.com/user-attachments/assets/f4d883c0-80d1-4980-a9f4-eebf31a28b02" alt="gplv3" width="300" />
 
 [GNU GENERAL PUBLIC LICENSE Version 3](LICENSE)
+
+Copyright (C) 2025 Jim Chen <Jim@ChenJ.im>.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
