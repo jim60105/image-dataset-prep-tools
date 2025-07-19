@@ -46,8 +46,9 @@ resize_image() {
   local width height
   read width height <<< "$dims"
 
-  # Skip small images
-  if (( width < 1024 && height < 1024 )); then
+  # Skip images where any side is smaller than 1024px
+  # (after resize, the short side would become 1024px)
+  if (( width < 1024 || height < 1024 )); then
     echo "Skip $img (size: ${width}x${height})"
     return
   fi

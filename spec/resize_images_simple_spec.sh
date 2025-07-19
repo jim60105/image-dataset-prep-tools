@@ -187,7 +187,7 @@ Describe 'resize_images.zsh'
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
-          echo "1200 800"
+          echo "1500 1200"
         elif [[ "$1" == "resize_error.jpg" && "$2" == "-resize" ]]; then
           echo "magick: unable to resize image" >&2
           return 1
