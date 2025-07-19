@@ -1,4 +1,4 @@
-name: Update Danbooru Tag Aliases Data
+name: "🔄 Update Danbooru Tag Aliases Data"
 
 on:
   schedule:
