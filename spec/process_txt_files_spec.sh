@@ -28,7 +28,7 @@ Describe 'process_txt_files.zsh'
     End
 
     It 'should handle empty directory gracefully'
-      When run zsh "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       The status should be success
       The stderr should include "Using provided trigger word: test_trigger"
       The stderr should include "Loading tag aliases from:"
@@ -43,7 +43,7 @@ Describe 'process_txt_files.zsh'
       touch test.txt
       echo "original content" > test.txt
       
-      When run zsh "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "trigger"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "trigger"
       The contents of file test.txt should equal "trigger, original content"
       The status should be success
       The stderr should include "Using provided trigger word: trigger"
@@ -58,7 +58,7 @@ Describe 'process_txt_files.zsh'
       touch empty.txt
       echo "" > empty.txt
       
-      When run zsh "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "solo"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "solo"
       The contents of file empty.txt should equal "solo"
       The status should be success
       The stderr should include "Using provided trigger word: solo"
@@ -73,7 +73,7 @@ Describe 'process_txt_files.zsh'
       touch test.txt
       echo "hair, virtual_youtuber, eyes" > test.txt
       
-      When run zsh "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "character"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "character"
       The contents of file test.txt should equal "character, hair, eyes"
       The status should be success
       The stderr should include "Using provided trigger word: character"
@@ -89,7 +89,7 @@ Describe 'process_txt_files.zsh'
       echo "content1" > file1.txt
       echo "content2" > file2.txt
       
-      When run zsh "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "prefix"
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "prefix"
       The contents of file file1.txt should equal "prefix, content1"
       The contents of file file2.txt should equal "prefix, content2"
       The status should be success

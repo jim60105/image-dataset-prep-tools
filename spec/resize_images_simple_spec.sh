@@ -23,8 +23,9 @@ Describe 'resize_images.zsh'
   After 'cleanup'
 
   Describe 'NPZ file cleanup'
-    It 'should remove npz files'
-      touch test1.npz test2.npz test.jpg
+    It 'should remove npz files when script runs'
+      # Create test files
+      touch test1.npz test2.npz small.jpg
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
@@ -32,28 +33,19 @@ Describe 'resize_images.zsh'
         fi
       End
 
-      When call zsh -c '
-        setopt nullglob
-        rm -f -- *.npz
-        echo "Removed all .npz files in current directory"
-        for img in *.jpg *.png; do
-          [[ ! -f "$img" ]] && continue
-          read width height < <(magick identify -format "%w %h" "$img")
-          if (( width < 1024 && height < 1024 )); then
-            echo "Skip $img (size: ${width}x${height})"
-            continue
-          fi
-        done
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
+      The status should be success
       The output should include "Removed all .npz files"
-      The output should include "Skip test.jpg"
+      The output should include "Skip small.jpg"
+      The path test1.npz should not be exist
+      The path test2.npz should not be exist
     End
   End
 
   Describe 'Image processing logic'
     It 'should skip small images'
-      touch test_400x300.jpg
+      touch small_image.jpg
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
@@ -61,85 +53,46 @@ Describe 'resize_images.zsh'
         fi
       End
 
-      When call zsh -c '
-        setopt nullglob
-        for img in *.jpg *.png; do
-          [[ ! -f "$img" ]] && continue
-          read width height < <(magick identify -format "%w %h" "$img")
-          if (( width < 1024 && height < 1024 )); then
-            echo "Skip $img (size: ${width}x${height})"
-            continue
-          fi
-        done
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
-      The output should include "Skip test_400x300.jpg (size: 400x300)"
+      The status should be success
+      The output should include "Skip small_image.jpg (size: 400x300)"
     End
 
     It 'should resize landscape images'
-      touch test_1200x800.jpg
+      touch landscape.jpg
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
-          echo "1200 800"
-        else
-          echo "Landscape image test_1200x800.jpg resized height to 1024 (overwritten)"
+          echo "2400 1600"
+        elif [[ "$1" == "landscape.jpg" && "$2" == "-resize" ]]; then
+          # Simulate successful resize
+          return 0
         fi
       End
 
-      When call zsh -c '
-        setopt nullglob
-        for img in *.jpg *.png; do
-          [[ ! -f "$img" ]] && continue
-          read width height < <(magick identify -format "%w %h" "$img")
-          if (( width < 1024 && height < 1024 )); then
-            echo "Skip $img (size: ${width}x${height})"
-            continue
-          fi
-          if (( width >= height )); then
-            magick "$img" -resize x1024\> "$img"
-            echo "Landscape image $img resized height to 1024 (overwritten)"
-          else
-            magick "$img" -resize 1024x\> "$img"
-            echo "Portrait image $img resized width to 1024 (overwritten)"
-          fi
-        done
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
-      The output should include "resized height to 1024"
+      The status should be success
+      The output should include "Landscape image landscape.jpg resized height to 1024 (overwritten)"
     End
 
     It 'should resize portrait images'
-      touch test_600x1200.jpg
+      touch portrait.jpg
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
-          echo "600 1200"
-        else
-          echo "Portrait image test_600x1200.jpg resized width to 1024 (overwritten)"
+          echo "1200 2400"
+        elif [[ "$1" == "portrait.jpg" && "$2" == "-resize" ]]; then
+          # Simulate successful resize
+          return 0
         fi
       End
 
-      When call zsh -c '
-        setopt nullglob
-        for img in *.jpg *.png; do
-          [[ ! -f "$img" ]] && continue
-          read width height < <(magick identify -format "%w %h" "$img")
-          if (( width < 1024 && height < 1024 )); then
-            echo "Skip $img (size: ${width}x${height})"
-            continue
-          fi
-          if (( width >= height )); then
-            magick "$img" -resize x1024\> "$img"
-            echo "Landscape image $img resized height to 1024 (overwritten)"
-          else
-            magick "$img" -resize 1024x\> "$img"
-            echo "Portrait image $img resized width to 1024 (overwritten)"
-          fi
-        done
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
-      The output should include "resized width to 1024"
+      The status should be success
+      The output should include "Portrait image portrait.jpg resized width to 1024 (overwritten)"
     End
   End
 
@@ -149,27 +102,15 @@ Describe 'resize_images.zsh'
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
-          echo "1200 800"
-        else
-          echo "Landscape image test.jpg resized height to 1024 (overwritten)"
+          echo "1200 1200"
+        elif [[ "$1" == "test.jpg" && "$2" == "-resize" ]]; then
+          return 0
         fi
       End
 
-      When call zsh -c '
-        setopt nullglob
-        for img in *.jpg *.png; do
-          [[ ! -f "$img" ]] && continue
-          read width height < <(magick identify -format "%w %h" "$img")
-          if (( width < 1024 && height < 1024 )); then
-            continue
-          fi
-          if (( width >= height )); then
-            magick "$img" -resize x1024\> "$img"
-            echo "Landscape image $img resized height to 1024 (overwritten)"
-          fi
-        done
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
+      The status should be success
       The output should include "test.jpg resized"
     End
 
@@ -178,63 +119,54 @@ Describe 'resize_images.zsh'
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
-          echo "1200 800"
-        else
-          echo "Landscape image test.png resized height to 1024 (overwritten)"
+          echo "1200 1200"
+        elif [[ "$1" == "test.png" && "$2" == "-resize" ]]; then
+          return 0
         fi
       End
 
-      When call zsh -c '
-        setopt nullglob
-        for img in *.jpg *.png; do
-          [[ ! -f "$img" ]] && continue
-          read width height < <(magick identify -format "%w %h" "$img")
-          if (( width < 1024 && height < 1024 )); then
-            continue
-          fi
-          if (( width >= height )); then
-            magick "$img" -resize x1024\> "$img"
-            echo "Landscape image $img resized height to 1024 (overwritten)"
-          fi
-        done
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
+      The status should be success
       The output should include "test.png resized"
     End
 
     It 'should skip unsupported formats'
       touch test.bmp test.tiff
       
-      When call zsh -c '
-        setopt nullglob
-        count=0
-        for img in *.jpg *.png; do
-          [[ ! -f "$img" ]] && continue
-          ((count++))
-        done
-        echo "Processed $count files"
-      '
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
       
-      The output should include "Processed 0 files"
+      The status should be success
+      The output should include "Removed all .npz files"
+      The output should not include "test.bmp"
+      The output should not include "test.tiff"
     End
   End
 
-  Describe 'Integration with actual script'
-    It 'should execute the resize_images.zsh script without errors'
-      touch small.jpg large.jpg
-      # Mock ImageMagick for the actual script
+  Describe 'Error handling'
+    It 'should handle missing magick command'
+      # Override command builtin to simulate magick not found  
+      command() {
+        if [[ "$1" == "-v" && "$2" == "magick" ]]; then
+          return 1
+        fi
+        builtin command "$@"
+      }
+
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
+      
+      The status should be failure
+      The output should include "Removed all .npz files"
+      The stderr should include "command not found: magick"
+    End
+
+    It 'should handle magick identify errors'
+      touch error_image.jpg
       
       Mock magick
         if [[ "$1" == "identify" ]]; then
-          if [[ "$3" == *small* ]]; then
-            echo "400 300"
-          elif [[ "$3" == *large* ]]; then
-            echo "1200 800"
-          else
-            echo "1024 768"
-          fi
-        else
-          echo "Resize operation: $*"
+          echo "magick: unable to open image" >&2
+          return 1
         fi
       End
 
@@ -242,6 +174,54 @@ Describe 'resize_images.zsh'
       
       The status should be success
       The output should include "Removed all .npz files"
+      The stderr should include "magick: error processing error_image.jpg"
+    End
+
+    It 'should handle magick resize errors'
+      touch resize_error.jpg
+      
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          echo "1200 800"
+        elif [[ "$1" == "resize_error.jpg" && "$2" == "-resize" ]]; then
+          echo "magick: unable to resize image" >&2
+          return 1
+        fi
+      End
+
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
+      
+      The status should be success
+      The output should include "Removed all .npz files"
+      The stderr should include "magick: error processing resize_error.jpg"
+    End
+  End
+
+  Describe 'Integration with actual script'
+    It 'should execute the resize_images.zsh script without errors'
+      touch small.jpg large.jpg
+      
+      Mock magick
+        if [[ "$1" == "identify" ]]; then
+          if [[ "$4" == *small* ]]; then
+            echo "400 300"
+          elif [[ "$4" == *large* ]]; then
+            echo "2400 3600"
+          else
+            echo "1024 768"
+          fi
+        elif [[ "$2" == "-resize" ]]; then
+          # Simulate successful resize
+          return 0
+        fi
+      End
+
+      When run source "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
+      
+      The status should be success
+      The output should include "Removed all .npz files"
+      The output should include "Skip small.jpg"
+      The output should include "large.jpg resized"
     End
   End
 End
