@@ -1,0 +1,65 @@
+#!/bin/sh
+# Copyright (C) 2025 Jim Chen <Jim@ChenJ.im>, licensed under GPL-3.0-or-later
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Pre-test hook for ShellSpec Docker container
+# This script is executed before running tests in the Docker container
+
+echo "========== PRE-TEST HOOK EXECUTING =========="
+echo "Current user: $(whoami)"
+echo "Current working directory: $(pwd)"
+echo "Available shells:"
+ls -la /bin/*sh || true
+
+
+# Install zsh, bc, jq, and git (needed for coverage threshold calculation, JSON processing, and version control)
+if command -v apt-get >/dev/null 2>&1; then
+    # Debian-based container
+    echo "Installing zsh, bc, jq, and git using apt-get..."
+    apt-get update
+    apt-get install -y zsh bc jq git
+elif command -v apk >/dev/null 2>&1; then
+    # Alpine-based container  
+    echo "Installing zsh, bc, jq, and git using apk..."
+    apk add --no-cache zsh bc jq git
+fi
+
+
+
+# Verify installations
+if ! command -v zsh >/dev/null 2>&1; then
+    echo "Error: Failed to install zsh"
+    exit 1
+fi
+
+if ! command -v bc >/dev/null 2>&1; then
+    echo "Error: Failed to install bc"
+    exit 1
+fi
+
+if ! command -v jq >/dev/null 2>&1; then
+    echo "Error: Failed to install jq"
+    exit 1
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+    echo "Error: Failed to install git"
+    exit 1
+fi
+
+echo "Successfully installed zsh and bc"
+echo "Available shells after installation:"
+ls -la /bin/*sh || true
+echo "========== PRE-TEST HOOK COMPLETED =========="

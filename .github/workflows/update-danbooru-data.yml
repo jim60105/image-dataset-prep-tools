@@ -54,6 +54,9 @@ jobs:
         run: |
           chmod +x ./src/scrape_danbooru_aliases.zsh
           ./src/scrape_danbooru_aliases.zsh
+        env:
+          DANBOORU_APIKEY: ${{ secrets.DANBOORU_APIKEY }}
+          DANBOORU_LOGIN: ${{ secrets.DANBOORU_LOGIN }}
 
       - name: 🔍 Check for changes
         id: check_changes
