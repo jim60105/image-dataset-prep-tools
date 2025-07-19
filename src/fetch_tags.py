@@ -32,7 +32,7 @@ import requests
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -41,9 +41,7 @@ GELBOORU_MD5_PATTERN = re.compile(
     r'<section[^>]+class="[^"]*image-container note-container[^"]*"'
     r'[^>]*data-md5="([0-9a-fA-F]{32})"'
 )
-GELBOORU_TAG_UL_PATTERN = re.compile(
-    r'<ul[^>]+id="tag-list"[^>]*>([\s\S]*?)</ul>'
-)
+GELBOORU_TAG_UL_PATTERN = re.compile(r'<ul[^>]+id="tag-list"[^>]*>([\s\S]*?)</ul>')
 GELBOORU_TAG_LI_PATTERN = re.compile(
     r'<li[^>]+class="tag-type-general"[^>]*>[\s\S]*?'
     r'<a [^>]*href="[^"]*tags=[^>]+>([^<]+)</a>',
@@ -113,13 +111,9 @@ def fetch_gelbooru_tags(md5_hash: str, post_id: str) -> Optional[List[str]]:
     }
 
     try:
-        post_url = (
-            f"https://gelbooru.com/index.php?page=post&s=view&id={post_id}"
-        )
+        post_url = f"https://gelbooru.com/index.php?page=post&s=view&id={post_id}"
         resp = requests.get(post_url, headers=headers, timeout=10)
-        logger.info(
-            f"[Gelbooru-HTML] Post Status: {resp.status_code} for id {post_id}"
-        )
+        logger.info(f"[Gelbooru-HTML] Post Status: {resp.status_code} for id {post_id}")
 
         if resp.status_code != 200:
             logger.error(f"[Gelbooru-HTML] Post HTTP {resp.status_code}")
@@ -138,9 +132,7 @@ def fetch_gelbooru_tags(md5_hash: str, post_id: str) -> Optional[List[str]]:
             logger.info(f"[Gelbooru-HTML] md5 in data-md5: {found_md5}")
             return None
 
-        logger.info(
-            f"[Gelbooru-HTML] Matched md5 for id {post_id} (from data-md5)"
-        )
+        logger.info(f"[Gelbooru-HTML] Matched md5 for id {post_id} (from data-md5)")
 
         # Parse tags from tag-list
         tags = _parse_gelbooru_tags(html)
