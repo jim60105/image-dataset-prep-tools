@@ -78,7 +78,7 @@ process_txt_files.zsh
 **Function:**
 
 - Resizes all `.jpg` and `.png` images in the current working directory so the long side is 1024px, keeping aspect ratio.
-- Images with both sides smaller than 1024px are skipped.
+- Images with any side smaller than 1024px are skipped.
 
 **Usage:**
 

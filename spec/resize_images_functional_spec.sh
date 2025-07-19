@@ -61,7 +61,7 @@ Describe 'resize_images.zsh functionality'
 
       Mock magick
         if [[ "$1" == "identify" ]]; then
-          echo "1200 800"
+          echo "1500 1200"
         else
           echo "Landscape image large.jpg resized height to 1024 (overwritten)"
         fi
