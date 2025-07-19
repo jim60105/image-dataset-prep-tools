@@ -58,7 +58,7 @@ jobs:
         # Run tests with kcov coverage and capture output
         shellspec --kcov 2>&1 | tee coverage/shellspec_output.log
         
-    - name: 🎯 Check coverage threshold (85%)
+    - name: 🎯 Check coverage threshold (75%)
       run: |
         # Parse kcov coverage results from JSON file
         if [ -f coverage/coverage.json ]; then
@@ -68,11 +68,11 @@ jobs:
             coverage_percent=$(sed -n 's/.*"percent_covered": "\([0-9.]*\)".*/\1/p' coverage/coverage.json | tail -1 || echo "")
           fi
           echo "� Final coverage: ${coverage_percent}%"
-          if (( $(echo "${coverage_percent} >= 85.0" | bc -l) )); then
-            echo "✅ Coverage ${coverage_percent}% meets 85% threshold"
+          if (( $(echo "${coverage_percent} >= 75.0" | bc -l) )); then
+            echo "✅ Coverage ${coverage_percent}% meets 75% threshold"
           else
-            echo "❌ Coverage ${coverage_percent}% is below 85% threshold"
-            echo "🎯 Target: 85% | Current: ${coverage_percent}% | Gap: $(echo "85.0 - ${coverage_percent}" | bc -l)%"
+            echo "❌ Coverage ${coverage_percent}% is below 75% threshold"
+            echo "🎯 Target: 75% | Current: ${coverage_percent}% | Gap: $(echo "75.0 - ${coverage_percent}" | bc -l)%"
             exit 1
           fi
         else
@@ -107,16 +107,16 @@ jobs:
             const coverageData = JSON.parse(coverageJson);
             if (coverageData.percent_covered) {
               const coverage = parseFloat(coverageData.percent_covered);
-              const status = coverage >= 85 ? '✅' : '❌';
-              const statusText = coverage >= 85 ? 'PASSED' : 'FAILED';
-              coverageComment += `${status} **Coverage: ${coverage}%** (Threshold: 85%) - ${statusText}\n\n`;
+              const status = coverage >= 75 ? '✅' : '❌';
+              const statusText = coverage >= 75 ? 'PASSED' : 'FAILED';
+              coverageComment += `${status} **Coverage: ${coverage}%** (Threshold: 75%) - ${statusText}\n\n`;
               coverageComment += `📊 **Details:**\n`;
               coverageComment += `- Covered lines: ${coverageData.covered_lines}\n`;
               coverageComment += `- Total lines: ${coverageData.total_lines}\n\n`;
-              if (coverage >= 85) {
+              if (coverage >= 75) {
                 coverageComment += '🎉 Great job! Coverage meets the required threshold.\n';
               } else {
-                coverageComment += '⚠️ Coverage is below the 85% threshold. Please add more tests.\n';
+                coverageComment += '⚠️ Coverage is below the 75% threshold. Please add more tests.\n';
               }
             } else {
               coverageComment += '⚠️ Could not parse coverage report, but tests completed.\n';

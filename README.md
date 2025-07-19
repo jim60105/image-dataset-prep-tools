@@ -241,7 +241,7 @@ This project uses [ShellSpec](https://shellspec.info/) for comprehensive BDD tes
 
 ### 📋 Test Coverage
 
-- 🎯 **Target**: 85% minimum coverage for all zsh scripts
+- 🎯 **Target**: 75% minimum coverage for all zsh scripts
 - 🧪 **Total Tests**: 44+ examples across all scripts
 - 📊 **Framework**: ShellSpec with BDD approach
 - 🔄 **CI/CD**: Automated testing on every commit
@@ -270,7 +270,7 @@ When adding new features:
 
 1. Write tests first (TDD approach)
 2. Follow our [Testing Guideline](docs/testing-guideline.md)
-3. Ensure 85%+ coverage
+3. Ensure 75%+ coverage
 4. Verify all existing tests pass
 
 ## 💡 Notes

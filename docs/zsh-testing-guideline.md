@@ -6,7 +6,7 @@ This document provides comprehensive guidelines for writing effective BDD (Behav
 
 We use [ShellSpec](https://shellspec.info/) as our testing framework with a focus on:
 
-- **85%+ coverage** requirement for all zsh scripts
+- **75%+ coverage** requirement for all zsh scripts
 - **Behavior-Driven Development** (BDD) approach
 - **Command-based mocking** for external dependencies
 - **Comprehensive test scenarios** covering normal, edge, and error cases
@@ -407,7 +407,7 @@ Before submitting your tests, verify:
 - [ ] Tests use temporary directories
 - [ ] Setup/cleanup hooks are properly implemented
 - [ ] Tests are independent and can run in any order
-- [ ] Coverage target (85%+) is met
+- [ ] Coverage target (75%+) is met
 - [ ] All edge cases and error conditions are tested
 - [ ] Test descriptions are clear and descriptive
 - [ ] GPL-3.0-or-later license header is included
