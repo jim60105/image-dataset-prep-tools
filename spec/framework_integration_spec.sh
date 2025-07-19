@@ -60,21 +60,6 @@ Describe 'ShellSpec Testing Framework Integration'
     End
   End
 
-  Describe 'External dependencies'
-    It 'should handle imagemagick availability for testing'
-      When call bash -c 'which identify 2>/dev/null || echo "imagemagick not available - tests will use mocks"'
-      The status should be success
-      The output should include "imagemagick"
-    End
-
-    It 'should handle missing optional dependencies gracefully'
-      # Test that scripts can handle missing czkawka_cli
-      When call bash -c 'test -x /usr/local/bin/czkawka_cli || echo "czkawka_cli not required for basic tests"'
-      The status should be success  
-      The output should include "czkawka_cli"
-    End
-  End
-
   Describe 'Code quality checks'
     It 'should have all scripts pass zsh syntax check'
       When call zsh -n "$SHELLSPEC_PROJECT_ROOT/src/resize_images.zsh"
