@@ -3,8 +3,14 @@ name: 🧪 Shell Script Testing with Coverage
 on:
   push:
     branches: [ master ]
+    paths:
+      - '**/*.zsh'
+      - '**/*.sh'
   pull_request:
     branches: [ master ]
+    paths:
+      - '**/*.zsh'
+      - '**/*.sh'
 
 env:
   SHELLSPEC_VERSION: "0.28.1"
