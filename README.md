@@ -5,7 +5,7 @@
 This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training.
 
 > [!TIP]  
-> Add this project's root directory to your PATH to execute scripts from anywhere and process files in your current working directory.
+> Add this project's `/src/` directory to your PATH to execute scripts from anywhere and process files in your current working directory.
 
 > [!CAUTION]  
 > All tools overwrite original files. Always back up important data first!
@@ -26,7 +26,7 @@ This project provides several practical tools for image dataset preparation. The
 
 ### ⚙️ Setup
 
-First, add this project's root directory to your PATH to run scripts from anywhere:
+First, add this project's `/src/` directory to your PATH to run scripts from anywhere:
 
 ```bash
 # Add to your shell configuration file (.bashrc, .zshrc, etc.)
