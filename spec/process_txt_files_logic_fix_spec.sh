@@ -57,6 +57,8 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "flower"
       The status should be success
+      The stderr should include "Using provided trigger word: flower"
+      The output should include "Processing complete!"
       
       # Check that compound words are preserved (accounting for tag aliases)
       # flower_crown becomes head_wreath due to alias, but sunflower should be preserved
@@ -76,6 +78,8 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "apple"
       The status should be success
+      The stderr should include "Using provided trigger word: apple"
+      The output should include "Processing complete!"
       
       # For debugging - let's first check the actual content
       The file test.txt should be present
@@ -92,6 +96,8 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "labia"
       The status should be success
+      The stderr should include "Using provided trigger word: labia"
+      The output should include "Processing complete!"
       
       # Check that compound words are preserved
       The contents of file test.txt should include "thick_labia"
@@ -111,6 +117,7 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
       The stderr should include "Auto-detected trigger word from path: my_special_character"
+      The output should include "Processing complete!"
     End
 
     It 'should handle trigger word at different positions'
@@ -118,6 +125,8 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "trigger"
       The status should be success
+      The stderr should include "Using provided trigger word: trigger"
+      The output should include "Processing complete!"
       
       # Check boundary matching
       The contents of file test.txt should include "trigger_word"

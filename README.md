@@ -52,17 +52,24 @@ After setup, navigate to any directory containing your dataset files and run the
 ```bash
 # Navigate to your dataset directory first
 cd /path/to/your/dataset
+
+# Auto-detect trigger from directory name (e.g., 3_blue_flower -> blue_flower)
 process_txt_files.zsh
+
+# Or specify trigger word manually
+process_txt_files.zsh "my_trigger"
 ```
 
-- The script will prompt for a trigger keyword, then process all `.txt` files automatically.
+- The script can auto-detect trigger words from directory names (format: `number_trigger_word`)
+- Or you can provide a trigger keyword as a parameter
 - Requires `data/danbooru_tag_aliases.csv` file for tag alias functionality.
 - Original files will be overwritten. **Back up important files first!**
 
 **Processing details:**
 
 - Replaces all `(` with `\(` and `)` with `\)`.
-- Removes the trigger keyword, and commentary/commission-related noise tags.
+- Removes standalone trigger keywords while preserving compound words (e.g., keeps `blue_flower` when trigger is `flower`).
+- Removes commentary/commission-related noise tags.
 - Cleans up redundant commas and spaces.
 - Applies Danbooru tag aliases to standardize tag names.
 - Removes duplicate tags from each file after alias processing.
