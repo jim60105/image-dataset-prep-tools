@@ -468,6 +468,7 @@ Before submitting your tests, verify:
 - [ ] All edge cases and error conditions are tested
 - [ ] Test descriptions are clear and descriptive
 - [ ] GPL-3.0-or-later license header is included
+- [ ] There is NO warning or error in the test output. We don't allow any warnings. Treat warnings as errors. CI will fail with warnings and your PR will be rejected.
 
 ---
 
