@@ -1,6 +1,7 @@
 ---
 applyTo: '**/*.zsh'
 ---
+
 # Zsh Development Guidelines
 
 This project provides tools with Zsh scripts that process files in the current working directory. All scripts are designed to run from any directory via PATH.

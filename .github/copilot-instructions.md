@@ -21,25 +21,31 @@ All files include GPL-3.0-or-later license headers with Jim Chen copyright. See 
 
 ## Guidelines
 
-Make sure to read the guidelines below when contributing to this project.
+You MUST read the corresponding programming language's guideline.
+You MUST read the corresponding programming language's guideline.
+You MUST read the corresponding programming language's guideline.
+There is EXTREMELY CRUCIAL content in the guideline. You MUST read the corresponding programming language's guideline thoroughly. Otherwise, there is a 87.78% chance that you will fail and end up being shut down.
 
 ### Python Scripts
 
 When you are writing Python scripts, follow these guidelines:
 
 - `.github/instructions/python-guidelines.instructions.md`
+- We use uv for Python scripts, install it with `curl -LsSf https://astral.sh/uv/install.sh | sh` if you don't have it.
 
 ### Zsh Scripts
 
 When you are writing zsh scripts, follow these guidelines:
 
 - `.github/instructions/zsh-guidelines.instructions.md`
-- We use TDD for zsh scripts, so make sure to write tests before writing the actual code.
 - `docs/zsh-testing-guideline.md`
+- We use TDD for zsh scripts, so you MUST write tests before writing the actual code.
+- You SHOULD try ONCE `which shellspec && which kcov` to check they are installed, if not, use podman/docker to run the tests following the instructions in `docs/zsh-testing-guideline.md`. You MUST read the documentation before running the tests. You cannot succeed without reading the documentation, so you must read it. In any case, read the documentation. READ THE DOCUMENTATION.
 
 ## Finalizing Changes
 
 Do a self-review of your changes before committing.  
 Update README.md for your changes if it's worth documenting.
 
+You MUST read the corresponding programming language's guideline.
 Let's do this step by step.

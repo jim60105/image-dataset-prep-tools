@@ -378,27 +378,6 @@ It 'should produce expected output'
 End
 ```
 
-## Common Pitfalls
-
-1. **Forgetting to mock external commands**: Always mock dependencies like `magick`, `curl`, `jq`
-2. **Not using absolute paths**: Always use `$SHELLSPEC_PROJECT_ROOT` for script references
-3. **Ignoring cleanup**: Always use `After` hooks to clean up test environments
-4. **Weak assertions**: Use specific assertions rather than just checking status
-5. **Testing in project directory**: Always use temporary directories for file operations
-
-## Testing Checklist
-
-Before submitting your tests, verify:
-
-- [ ] All external commands are mocked
-- [ ] Tests use temporary directories
-- [ ] Setup/cleanup hooks are properly implemented
-- [ ] Tests are independent and can run in any order
-- [ ] Coverage target (75%+) is met
-- [ ] All edge cases and error conditions are tested
-- [ ] Test descriptions are clear and descriptive
-- [ ] GPL-3.0-or-later license header is included
-
 ## Running Tests
 
 ```bash
@@ -438,5 +417,59 @@ sudo chown -R $(id -u):$(id -g) coverage
 > - `shellspec/shellspec:kcov` is the official Docker image with kcov support.
 > - The `--kcov` flag outputs the coverage report to the `coverage/` directory.
 > - Always fix the coverage directory ownership after tests, or some files may be owned by root.
+
+## Coverage Guide
+
+This project requires at least 75% test coverage for all zsh scripts. Coverage reports are automatically generated in the `coverage/` directory, usually including files like `index.html` and `cobertura.xml`.
+
+### How to View Coverage Reports
+
+- Open `coverage/index.html` in your browser to see a graphical overview of coverage for each script.
+- To analyze which lines are not covered, check `coverage/image-dataset-prep-tools [specfiles]/codecov.json`. This file lists uncovered line numbers and their execution counts for each script.
+
+### Advanced: Analyzing Uncovered Lines
+
+- `codecov.json` uses script filenames as keys, with each line number and its execution count as values.
+
+For example:
+
+```jsonc
+{
+    "coverage": {
+        "resize_images.zsh": {
+            "65": 0,
+            "66": 0
+        }
+    }
+}
+```
+
+This means lines 65 and 66 in `resize_images.zsh` were not covered by any test.
+
+- Use this information to add or improve test cases and increase coverage.
+
+## Common Pitfalls
+
+1. **Forgetting to mock external commands**: Always mock dependencies like `magick`, `curl`, `jq`
+2. **Not using absolute paths**: Always use `$SHELLSPEC_PROJECT_ROOT` for script references
+3. **Ignoring cleanup**: Always use `After` hooks to clean up test environments
+4. **Weak assertions**: Use specific assertions rather than just checking status
+5. **Testing in project directory**: Always use temporary directories for file operations
+
+## Testing Checklist
+
+Before submitting your tests, verify:
+
+- [ ] All external commands are mocked
+- [ ] Tests use temporary directories
+- [ ] Setup/cleanup hooks are properly implemented
+- [ ] Tests are independent and can run in any order
+- [ ] Coverage target (75%+) is met
+- [ ] All edge cases and error conditions are tested
+- [ ] Test descriptions are clear and descriptive
+- [ ] GPL-3.0-or-later license header is included
+- [ ] There is NO warning or error in the test output. We don't allow any warnings. Treat warnings as errors. CI will fail with warnings and your PR will be rejected.
+
+---
 
 For more detailed ShellSpec documentation, visit [https://shellspec.info/](https://shellspec.info/).

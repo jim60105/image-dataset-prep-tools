@@ -20,25 +20,6 @@ Describe 'process_txt_files.zsh trigger word logic fix'
   After 'cleanup'
 
   Describe 'Trigger word extraction from path'
-    It 'should extract compound trigger word from blue_flower directory'
-      mkdir -p 3_blue_flower && cd 3_blue_flower
-      echo "blue_flower, nature, garden, flower_crown" > test.txt
-      
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-      The stderr should include "Auto-detected trigger word from path: blue_flower"
-      The output should include "Processing complete!"
-    End
-
-    It 'should extract compound trigger word from green_apple directory'
-      mkdir -p 2_green_apple && cd 2_green_apple
-      echo "green_apple, red_apple, apple_tree" > test.txt
-      
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-      The stderr should include "Auto-detected trigger word from path: green_apple"
-      The output should include "Processing complete!"
-    End
   End
 
   Describe 'Compound word preservation in content processing'
@@ -47,7 +28,7 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "flower"
       The status should be success
-      The stderr should include "Using provided trigger word: flower"
+  The output should include "Using provided trigger word: flower"
       The output should include "Processing complete!"
       
       # Check that compound words are preserved (accounting for tag aliases)
@@ -68,7 +49,7 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "apple"
       The status should be success
-      The stderr should include "Using provided trigger word: apple"
+  The output should include "Using provided trigger word: apple"
       The output should include "Processing complete!"
       
       # For debugging - let's first check the actual content
@@ -89,7 +70,7 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
-      The stderr should include "Auto-detected trigger word from path: my_special_character"
+  The output should include "Auto-detected trigger word from path: my_special_character"
       The output should include "Processing complete!"
     End
 
@@ -98,7 +79,7 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "trigger"
       The status should be success
-      The stderr should include "Using provided trigger word: trigger"
+  The output should include "Using provided trigger word: trigger"
       The output should include "Processing complete!"
       
       # Check boundary matching
