@@ -1,0 +1,350 @@
+<svg width="1000" height="300" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A0A0A"/>
+      <stop offset="25%" stop-color="#1A1A2E"/>
+      <stop offset="50%" stop-color="#16213E"/>
+      <stop offset="75%" stop-color="#0F3460"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </linearGradient>
+    
+    <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4FC3F7"/>
+      <stop offset="50%" stop-color="#E3F2FD"/>
+      <stop offset="100%" stop-color="#1976D2"/>
+    </linearGradient>
+    
+    <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0D47A1" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#42A5F5" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0D47A1" stop-opacity="0"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadowFilter" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    
+    <!-- Pattern for circuit board background -->
+    <pattern id="circuitPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="none"/>
+      <path d="M0 20h40M20 0v40" stroke="#0D47A1" stroke-width="0.5" opacity="0.3"/>
+      <circle cx="20" cy="20" r="2" fill="#1976D2" opacity="0.5"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1000" height="300" fill="url(#bgGradient)"/>
+  
+  <!-- Circuit pattern overlay -->
+  <rect width="1000" height="300" fill="url(#circuitPattern)" opacity="0.3">
+    <animateTransform 
+      attributeName="transform" 
+      type="translate" 
+      values="0,0; 40,0; 0,0" 
+      dur="20s" 
+      repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Animated data flow lines -->
+  <g id="dataFlow" opacity="0.7">
+    <!-- Horizontal flow lines -->
+    <line x1="-100" y1="50" x2="1100" y2="50" stroke="#42A5F5" stroke-width="2" opacity="0.6">
+      <animate attributeName="stroke-dasharray" values="0,20; 20,0; 0,20" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6; 1; 0.6" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="-100" y1="150" x2="1100" y2="150" stroke="#1976D2" stroke-width="2" opacity="0.4">
+      <animate attributeName="stroke-dasharray" values="10,10; 0,20; 10,10" dur="4s" repeatCount="indefinite"/>
+    </line>
+    <line x1="-100" y1="250" x2="1100" y2="250" stroke="#4FC3F7" stroke-width="2" opacity="0.5">
+      <animate attributeName="stroke-dasharray" values="5,15; 15,5; 5,15" dur="3.5s" repeatCount="indefinite"/>
+    </line>
+    
+    <!-- Vertical flow lines -->
+    <line x1="100" y1="-50" x2="100" y2="350" stroke="#0D47A1" stroke-width="1.5" opacity="0.4">
+      <animate attributeName="stroke-dasharray" values="0,15; 15,0; 0,15" dur="2.5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="300" y1="-50" x2="300" y2="350" stroke="#1565C0" stroke-width="1.5" opacity="0.3">
+      <animate attributeName="stroke-dasharray" values="8,12; 0,20; 8,12" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <line x1="700" y1="-50" x2="700" y2="350" stroke="#1976D2" stroke-width="1.5" opacity="0.4">
+      <animate attributeName="stroke-dasharray" values="12,8; 20,0; 12,8" dur="2.8s" repeatCount="indefinite"/>
+    </line>
+    <line x1="900" y1="-50" x2="900" y2="350" stroke="#42A5F5" stroke-width="1.5" opacity="0.3">
+      <animate attributeName="stroke-dasharray" values="6,14; 14,6; 6,14" dur="3.2s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  
+  <!-- Floating particles -->
+  <g id="particles">
+    <circle cx="150" cy="80" r="2" fill="#4FC3F7" opacity="0.8">
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,0; 50,-20; 100,10; 150,-30; 200,0" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8; 0.3; 0.8; 0.5; 0.8" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="120" r="1.5" fill="#1976D2" opacity="0.6">
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,0; -30,40; 20,80; 70,20; 120,60" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6; 0.9; 0.4; 0.7; 0.6" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="750" cy="200" r="2.5" fill="#0D47A1" opacity="0.7">
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,0; -80,-40; -160,20; -240,-60; -320,0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7; 0.4; 0.9; 0.3; 0.7" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="850" cy="160" r="1.8" fill="#42A5F5" opacity="0.5">
+      <animateTransform attributeName="transform" type="translate" 
+        values="0,0; 40,60; -20,120; 80,180; 160,240" dur="9s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5; 0.8; 0.3; 0.6; 0.5" dur="9s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Left side icons and elements -->
+  <g id="leftElements">
+    <!-- Image processing icon -->
+    <g transform="translate(80, 80)">
+      <rect x="0" y="0" width="60" height="40" rx="5" fill="none" stroke="#1976D2" stroke-width="2" opacity="0.8">
+        <animate attributeName="stroke-opacity" values="0.8; 0.4; 0.8" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="8" y="8" width="44" height="24" rx="2" fill="#0D47A1" opacity="0.6">
+        <animate attributeName="opacity" values="0.6; 0.9; 0.6" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+      <circle cx="15" cy="15" r="3" fill="#4FC3F7" opacity="0.8">
+        <animate attributeName="r" values="3; 5; 3" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <rect x="25" y="12" width="20" height="2" fill="#42A5F5" opacity="0.7">
+        <animate attributeName="width" values="20; 30; 20" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="25" y="18" width="15" height="2" fill="#42A5F5" opacity="0.7">
+        <animate attributeName="width" values="15; 25; 15" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    
+    <!-- File system representation -->
+    <g transform="translate(60, 160)">
+      <rect x="0" y="0" width="8" height="40" fill="#1976D2" opacity="0.6"/>
+      <rect x="12" y="5" width="25" height="6" fill="#42A5F5" opacity="0.7">
+        <animate attributeName="width" values="25; 35; 25" dur="4s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="12" y="15" width="30" height="6" fill="#4FC3F7" opacity="0.6">
+        <animate attributeName="width" values="30; 20; 30" dur="3.5s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="12" y="25" width="20" height="6" fill="#1565C0" opacity="0.8">
+        <animate attributeName="width" values="20; 40; 20" dur="2.8s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    
+    <!-- Tag processing visualization -->
+    <g transform="translate(40, 240)">
+      <text x="0" y="0" font-family="Monaco, monospace" font-size="8" fill="#4FC3F7" opacity="0.7">
+        <tspan x="0" dy="0">tags: [</tspan>
+        <tspan x="10" dy="12" opacity="0.8">
+          <animate attributeName="opacity" values="0.8; 0.3; 0.8" dur="2s" repeatCount="indefinite"/>
+          "flower",
+        </tspan>
+        <tspan x="10" dy="12" opacity="0.6">
+          <animate attributeName="opacity" values="0.6; 0.9; 0.6" dur="2.5s" repeatCount="indefinite"/>
+          "nature",
+        </tspan>
+        <tspan x="10" dy="12" opacity="0.7">
+          <animate attributeName="opacity" values="0.7; 0.4; 0.7" dur="1.8s" repeatCount="indefinite"/>
+          "garden"
+        </tspan>
+        <tspan x="0" dy="12">]</tspan>
+      </text>
+    </g>
+  </g>
+  
+  <!-- Center title -->
+  <g id="centerTitle" transform="translate(500, 150)">
+    <!-- Main title background -->
+    <rect x="-300" y="-40" width="600" height="80" fill="url(#glowGradient)" opacity="0.3" rx="10">
+      <animate attributeName="opacity" values="0.3; 0.6; 0.3" dur="4s" repeatCount="indefinite"/>
+    </rect>
+    
+    <!-- Title text with glow effect -->
+    <text x="0" y="-10" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" 
+          fill="url(#titleGradient)" filter="url(#glow)">
+      Image Dataset Prep Tools
+      <animate attributeName="opacity" values="1; 0.8; 1" dur="3s" repeatCount="indefinite"/>
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="0" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" 
+          fill="#42A5F5" opacity="0.8">
+      AI Training Data Processing Pipeline
+      <animate attributeName="opacity" values="0.8; 0.5; 0.8" dur="2.5s" repeatCount="indefinite"/>
+    </text>
+  </g>
+  
+  <!-- Right side elements -->
+  <g id="rightElements">
+    <!-- API connections -->
+    <g transform="translate(820, 60)">
+      <!-- Danbooru API -->
+      <circle cx="0" cy="0" r="8" fill="#1976D2" opacity="0.8">
+        <animate attributeName="r" values="8; 12; 8" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <text x="15" y="4" font-family="Monaco, monospace" font-size="10" fill="#4FC3F7" opacity="0.7">
+        Danbooru API
+        <animate attributeName="opacity" values="0.7; 1; 0.7" dur="2s" repeatCount="indefinite"/>
+      </text>
+      
+      <!-- Connection line -->
+      <line x1="8" y1="0" x2="40" y2="30" stroke="#42A5F5" stroke-width="2" opacity="0.6">
+        <animate attributeName="stroke-dasharray" values="0,10; 10,0; 0,10" dur="2s" repeatCount="indefinite"/>
+      </line>
+      
+      <!-- Gelbooru API -->
+      <circle cx="40" cy="40" r="8" fill="#0D47A1" opacity="0.7">
+        <animate attributeName="r" values="8; 10; 8" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="55" y="44" font-family="Monaco, monospace" font-size="10" fill="#42A5F5" opacity="0.6">
+        Gelbooru API
+        <animate attributeName="opacity" values="0.6; 0.9; 0.6" dur="2.8s" repeatCount="indefinite"/>
+      </text>
+    </g>
+    
+    <!-- Processing pipeline visualization -->
+    <g transform="translate(780, 160)">
+      <!-- Pipeline boxes -->
+      <rect x="0" y="0" width="25" height="15" fill="#1976D2" opacity="0.7" rx="2">
+        <animate attributeName="opacity" values="0.7; 1; 0.7" dur="2s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="35" y="0" width="25" height="15" fill="#0D47A1" opacity="0.6" rx="2">
+        <animate attributeName="opacity" values="0.6; 0.9; 0.6" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="70" y="0" width="25" height="15" fill="#1565C0" opacity="0.8" rx="2">
+        <animate attributeName="opacity" values="0.8; 0.5; 0.8" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="105" y="0" width="25" height="15" fill="#42A5F5" opacity="0.7" rx="2">
+        <animate attributeName="opacity" values="0.7; 1; 0.7" dur="1.8s" repeatCount="indefinite"/>
+      </rect>
+      
+      <!-- Arrow connectors -->
+      <polygon points="28,7.5 32,5 32,10" fill="#4FC3F7" opacity="0.8">
+        <animate attributeName="opacity" values="0.8; 0.4; 0.8" dur="2s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="63,7.5 67,5 67,10" fill="#4FC3F7" opacity="0.6">
+        <animate attributeName="opacity" values="0.6; 0.9; 0.6" dur="2.5s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="98,7.5 102,5 102,10" fill="#4FC3F7" opacity="0.7">
+        <animate attributeName="opacity" values="0.7; 0.3; 0.7" dur="3s" repeatCount="indefinite"/>
+      </polygon>
+      
+      <!-- Labels -->
+      <text x="12.5" y="28" text-anchor="middle" font-family="Monaco, monospace" font-size="6" fill="#42A5F5" opacity="0.6">
+        Fetch
+      </text>
+      <text x="47.5" y="28" text-anchor="middle" font-family="Monaco, monospace" font-size="6" fill="#42A5F5" opacity="0.6">
+        Process
+      </text>
+      <text x="82.5" y="28" text-anchor="middle" font-family="Monaco, monospace" font-size="6" fill="#42A5F5" opacity="0.6">
+        Resize
+      </text>
+      <text x="117.5" y="28" text-anchor="middle" font-family="Monaco, monospace" font-size="6" fill="#42A5F5" opacity="0.6">
+        Validate
+      </text>
+    </g>
+    
+    <!-- Code representation -->
+    <g transform="translate(780, 220)">
+      <text x="0" y="0" font-family="Monaco, monospace" font-size="8" fill="#1976D2" opacity="0.7">
+        <tspan x="0" dy="0">#!/bin/zsh</tspan>
+        <tspan x="0" dy="12" opacity="0.6">
+          <animate attributeName="opacity" values="0.6; 0.9; 0.6" dur="2s" repeatCount="indefinite"/>
+          process_txt_files.zsh
+        </tspan>
+        <tspan x="0" dy="12" opacity="0.5">
+          <animate attributeName="opacity" values="0.5; 0.8; 0.5" dur="2.5s" repeatCount="indefinite"/>
+          validate_dataset.zsh
+        </tspan>
+        <tspan x="0" dy="12" opacity="0.7">
+          <animate attributeName="opacity" values="0.7; 0.4; 0.7" dur="1.8s" repeatCount="indefinite"/>
+          fetch_tags.py
+        </tspan>
+      </text>
+    </g>
+  </g>
+  
+  <!-- Animated neural network nodes -->
+  <g id="neuralNodes" opacity="0.4">
+    <circle cx="200" cy="50" r="3" fill="#4FC3F7">
+      <animate attributeName="r" values="3; 6; 3" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4; 0.8; 0.4" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="350" cy="80" r="3" fill="#1976D2">
+      <animate attributeName="r" values="3; 5; 3" dur="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4; 0.7; 0.4" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="650" cy="70" r="3" fill="#0D47A1">
+      <animate attributeName="r" values="3; 7; 3" dur="4.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4; 0.9; 0.4" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="800" cy="40" r="3" fill="#42A5F5">
+      <animate attributeName="r" values="3; 4; 3" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4; 0.6; 0.4" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Connecting lines between nodes -->
+    <line x1="200" y1="50" x2="350" y2="80" stroke="#1976D2" stroke-width="1" opacity="0.3">
+      <animate attributeName="stroke-dasharray" values="0,10; 10,0; 0,10" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <line x1="350" y1="80" x2="650" y2="70" stroke="#42A5F5" stroke-width="1" opacity="0.3">
+      <animate attributeName="stroke-dasharray" values="5,5; 0,10; 5,5" dur="3.5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="650" y1="70" x2="800" y2="40" stroke="#0D47A1" stroke-width="1" opacity="0.3">
+      <animate attributeName="stroke-dasharray" values="3,7; 7,3; 3,7" dur="4s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  
+  <!-- Bottom decorative elements -->
+  <g id="bottomElements" opacity="0.5">
+    <!-- Gear icons -->
+    <g transform="translate(150, 280)">
+      <circle cx="0" cy="0" r="8" fill="none" stroke="#1976D2" stroke-width="2">
+        <animateTransform attributeName="transform" type="rotate" 
+          values="0; 360; 0" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="0" cy="0" r="3" fill="#42A5F5"/>
+    </g>
+    
+    <g transform="translate(850, 280)">
+      <circle cx="0" cy="0" r="6" fill="none" stroke="#0D47A1" stroke-width="1.5">
+        <animateTransform attributeName="transform" type="rotate" 
+          values="360; 0; 360" dur="6s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="0" cy="0" r="2.5" fill="#4FC3F7"/>
+    </g>
+    
+    <!-- Progress bars -->
+    <g transform="translate(300, 275)">
+      <rect x="0" y="0" width="100" height="4" fill="#0D47A1" opacity="0.3" rx="2"/>
+      <rect x="0" y="0" width="0" height="4" fill="#42A5F5" opacity="0.8" rx="2">
+        <animate attributeName="width" values="0; 100; 0" dur="5s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    
+    <g transform="translate(500, 275)">
+      <rect x="0" y="0" width="120" height="4" fill="#1976D2" opacity="0.3" rx="2"/>
+      <rect x="0" y="0" width="0" height="4" fill="#4FC3F7" opacity="0.7" rx="2">
+        <animate attributeName="width" values="0; 120; 0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+  </g>
+  
+  <!-- Pulsing border effect -->
+  <rect x="5" y="5" width="990" height="290" fill="none" stroke="url(#glowGradient)" stroke-width="2" rx="10" opacity="0.3">
+    <animate attributeName="opacity" values="0.3; 0.7; 0.3" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="stroke-width" values="2; 4; 2" dur="4s" repeatCount="indefinite"/>
+  </rect>
+</svg>

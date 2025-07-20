@@ -1,5 +1,7 @@
 # 🖼️ Image Dataset Preparation Tools
 
+![Image Dataset Preparation Tools Banner](assets/banner.svg)
+
 ![Zsh](https://img.shields.io/badge/Zsh-F15A24?logo=Zsh&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?logo=Python&logoColor=white) [![CodeFactor](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools/badge)](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools) [![codecov](https://codecov.io/gh/jim60105/image-dataset-prep-tools/graph/badge.svg?token=eCb26rs5Ma)](https://codecov.io/gh/jim60105/image-dataset-prep-tools) ![Danbooru tag aliases last commit](https://img.shields.io/github/last-commit/jim60105/image-dataset-prep-tools?path=data%2Fdanbooru_tag_aliases.csv&label=%F0%9F%94%84%20Update%20Danbooru%20Tag%20Aliases%20Data&link=https%3A%2F%2Fgithub.com%2Fjim60105%2Fimage-dataset-prep-tools%2Fblob%2Fmaster%2Fdata%2Fdanbooru_tag_aliases.csv)
 
 This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training. I specifically utilize them for Stable Diffusion LoRA training.
