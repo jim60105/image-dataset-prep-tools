@@ -25,6 +25,8 @@ Describe 'process_txt_files.zsh class word core functionality'
       echo "blue_flower, nature, garden" > test.txt
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "hydrangea"
+      The output should include "Processing complete!"
+      The output should include "Processing text files with trigger: hydrangea"
       The status should be success
       The stderr should include "Using provided trigger word: hydrangea"
       The stderr should include "Loading tag aliases from:"
@@ -54,6 +56,8 @@ Describe 'process_txt_files.zsh class word core functionality'
       The stderr should include "Auto-detected class word from path: flower"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: hydrangea, class: flower"
+      The output should include "Processing complete!"
       The contents of file test.txt should equal "flower, hydrangea, blue_flower, sunflower"
     End
 
@@ -78,6 +82,8 @@ Describe 'process_txt_files.zsh class word core functionality'
       The stderr should include "Auto-detected class word from path: flower"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: hydrangea, class: flower"
+      The output should include "Processing complete!"
       The contents of file test.txt should equal "flower, hydrangea, blue_flower, nature"
     End
   End
@@ -93,6 +99,8 @@ Describe 'process_txt_files.zsh class word core functionality'
       The stderr should include "Auto-detected class word from path: flower"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: hydrangea, class: flower"
+      The output should include "Processing complete!"
       The contents of file test.txt should equal "flower, hydrangea"
     End
 
@@ -104,6 +112,8 @@ Describe 'process_txt_files.zsh class word core functionality'
       The stderr should include "Using provided trigger word: hydrangea"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: hydrangea"
+      The output should include "Processing complete!"
       The contents of file test.txt should equal "hydrangea"
     End
   End
