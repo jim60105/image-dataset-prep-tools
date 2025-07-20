@@ -445,11 +445,13 @@ process_single_file() {
 # Main function
 main() {
     # Get trigger and class words based on parameters
-    get_trigger_and_class_words "$@"
+    if ! get_trigger_and_class_words "$@"; then
+        exit 1
+    fi
     
     # Validate that we have a trigger word
     if [[ -z "$final_trigger" ]]; then
-        echo "ERROR: No trigger word provided or could be determined" >&2
+        echo "ERROR: No trigger word provided or could be determined"
         exit 1
     fi
     

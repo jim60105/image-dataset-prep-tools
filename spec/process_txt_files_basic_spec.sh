@@ -26,7 +26,6 @@ Describe 'process_txt_files.zsh basic functionality'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "param1" "param2" "param3"
       The status should be failure
       The stderr should include "ERROR: Too many parameters"
-      The output should include "ERROR: No trigger word provided or could be determined"
     End
   End
 
