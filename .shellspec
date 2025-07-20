@@ -3,7 +3,8 @@
 
 --format documentation
 --color
---fail-fast
+--warning-as-failure
+--fail-low-coverage
 --random none
 --shell zsh
 
