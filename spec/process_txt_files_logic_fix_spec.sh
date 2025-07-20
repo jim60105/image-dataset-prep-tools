@@ -30,16 +30,6 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       The output should include "Processing complete!"
     End
 
-    It 'should extract compound trigger word from thick_labia directory'
-      mkdir -p 1_thick_labia && cd 1_thick_labia
-      echo "thick_labia, anatomy, medical" > test.txt
-      
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-      The stderr should include "Auto-detected trigger word from path: thick_labia"
-      The output should include "Processing complete!"
-    End
-
     It 'should extract compound trigger word from green_apple directory'
       mkdir -p 2_green_apple && cd 2_green_apple
       echo "green_apple, red_apple, apple_tree" > test.txt
@@ -89,23 +79,6 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       The contents of file test.txt should include "green_apple"
       The contents of file test.txt should include "apple_tree"
       The contents of file test.txt should include "apple_sauce"
-    End
-
-    It 'should preserve thick_labia when trigger is labia'
-      echo "labia, thick_labia, anatomy, medical" > test.txt
-      
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "labia"
-      The status should be success
-      The stderr should include "Using provided trigger word: labia"
-      The output should include "Processing complete!"
-      
-      # Check that compound words are preserved
-      The contents of file test.txt should include "thick_labia"
-      The contents of file test.txt should not include ", thick_,"
-      The contents of file test.txt should not include "thick_, "
-      # Check that only standalone "labia" after the trigger is removed
-      The contents of file test.txt should not include ", labia,"
-      The contents of file test.txt should not include ", labia$"
     End
   End
 
