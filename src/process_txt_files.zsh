@@ -215,7 +215,33 @@ remove_duplicate_tags() {
 # TRIGGER WORD FUNCTIONS
 # ============================================================================
 
-# Function to extract trigger word from current directory path
+# Function to extract trigger and class words from current directory path
+# Returns trigger_word and class_word via global variables
+extract_trigger_and_class_from_path() {
+    local current_dir=$(basename "$(pwd)")
+    
+    # Remove numeric prefix (e.g., "5_Doraemon" -> "Doraemon")
+    local clean_dir=${current_dir#[0-9]*_}
+    
+    # Split on spaces and take max 2 parts
+    local parts=(${(s: :)clean_dir})
+    case ${#parts[@]} in
+        1) 
+            extracted_trigger="${parts[1]}"
+            extracted_class=""
+            ;;
+        2) 
+            extracted_trigger="${parts[1]}"
+            extracted_class="${parts[2]}"
+            ;;
+        *) 
+            extracted_trigger="${parts[1]}"
+            extracted_class="${parts[2]}"
+            ;;  # 3 or more parts, use first two
+    esac
+}
+
+# Legacy function for backward compatibility - kept for existing logic
 extract_trigger_from_path() {
     local current_dir=$(basename "$(pwd)")
     
@@ -265,6 +291,101 @@ get_trigger_word() {
     esac
 }
 
+# Function to prompt user for trigger and class words
+prompt_for_words() {
+    echo "Could not auto-detect words from current path." >&2
+    echo -n "Please enter the trigger word: " >&2
+    read trigger_word
+    echo -n "Please enter the class word (or press Enter if none): " >&2
+    read class_word
+    
+    # Trim whitespace and validate
+    trigger_word=$(trim_whitespace "$trigger_word")
+    class_word=$(trim_whitespace "$class_word")
+    
+    if [[ -z "$trigger_word" ]]; then
+        echo "ERROR: Trigger word cannot be empty" >&2
+        return 1
+    fi
+    
+    echo "Using provided trigger word: $trigger_word" >&2
+    [[ -n "$class_word" ]] && echo "Using provided class word: $class_word" >&2
+    
+    # Return via global variables
+    final_trigger="$trigger_word"
+    final_class="$class_word"
+}
+
+# Function to get trigger and class words based on parameters
+get_trigger_and_class_words() {
+    case $# in
+        0)
+            # Auto-detect mode
+            extract_trigger_and_class_from_path
+            if [[ -n "$extracted_trigger" && "$extracted_trigger" != "" ]]; then
+                echo "Auto-detected trigger word from path: $extracted_trigger" >&2
+                [[ -n "$extracted_class" ]] && echo "Auto-detected class word from path: $extracted_class" >&2
+                final_trigger="$extracted_trigger"
+                final_class="$extracted_class"
+            else
+                prompt_for_words || return 1
+            fi
+            ;;
+        1)
+            # Single parameter mode - treat as trigger only
+            echo "Using provided trigger word: $1" >&2
+            final_trigger="$1"
+            final_class=""
+            ;;
+        *)
+            echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]" >&2
+            return 1
+            ;;
+    esac
+}
+
+# Function to remove class word from content using tag processing
+remove_class_word_from_content() {
+    local content="$1"
+    local class_word="$2"
+    
+    # If no class word, return content unchanged
+    [[ -z "$class_word" ]] && { echo "$content"; return; }
+    
+    # Use the existing tag processing functions for reliable handling
+    split_tags "$content"
+    local filtered_tags=()
+    
+    for tag in "${split_tags_result[@]}"; do
+        # Only skip tags that exactly match the class word
+        if [[ "$tag" != "$class_word" ]]; then
+            filtered_tags+=("$tag")
+        fi
+    done
+    
+    join_tags "${filtered_tags[@]}"
+}
+
+# Function to add prefix to content based on trigger and class words
+add_prefix_to_content() {
+    local content="$1"
+    local trigger="$2"
+    local class_word="$3"
+    
+    local prefix=""
+    if [[ -n "$class_word" ]]; then
+        prefix="$class_word, $trigger"
+    else
+        prefix="$trigger"
+    fi
+    
+    if [[ -n "$content" ]]; then
+        echo "$prefix, $content"
+    else
+        echo "$prefix"
+    fi
+}
+
 # ============================================================================
 # CONTENT PROCESSING FUNCTIONS
 # ============================================================================
@@ -273,53 +394,46 @@ get_trigger_word() {
 process_content() {
     local content="$1"
     local trigger="$2"
+    local class_word="$3"
     
     # Step 1: Escape parentheses
     content=$(escape_parentheses "$content")
     
-    # Step 2: Remove unwanted patterns
+    # Step 2: Remove unwanted patterns (including trigger word)
     content=$(remove_unwanted_patterns "$content" "$trigger")
     
-    # Step 3: Convert emoji tags
+    # Step 3: Remove class word from content
+    content=$(remove_class_word_from_content "$content" "$class_word")
+    
+    # Step 4: Convert emoji tags
     content=$(convert_emoji_tags "$content")
     
-    # Step 4: Remove standalone problematic tags
+    # Step 5: Remove standalone problematic tags
     content=$(remove_standalone_tags "$content")
     
-    # Step 5: Clean up formatting
+    # Step 6: Clean up formatting
     content=$(cleanup_formatting "$content")
     
-    # Step 6: Apply tag aliases
+    # Step 7: Apply tag aliases
     content=$(apply_tag_aliases_to_content "$content")
     
-    # Step 7: Remove duplicates
+    # Step 8: Remove duplicates
     content=$(remove_duplicate_tags "$content")
     
     echo "$content"
-}
-
-# Function to add trigger to front of content
-add_trigger_to_content() {
-    local content="$1"
-    local trigger="$2"
-    
-    if [[ -n "$content" ]]; then
-        echo "$trigger, $content"
-    else
-        echo "$trigger"
-    fi
 }
 
 # Function to process a single file
 process_single_file() {
     local file="$1"
     local trigger="$2"
+    local class_word="$3"
     
     echo "Processing: $file"
     
     local content=$(cat "$file")
-    local processed_content=$(process_content "$content" "$trigger")
-    local final_content=$(add_trigger_to_content "$processed_content" "$trigger")
+    local processed_content=$(process_content "$content" "$trigger" "$class_word")
+    local final_content=$(add_prefix_to_content "$processed_content" "$trigger" "$class_word")
     
     printf "%s" "$final_content" > "$file"
 }
@@ -330,23 +444,28 @@ process_single_file() {
 
 # Main function
 main() {
-    # Get trigger word based on parameters
-    local trigger=$(get_trigger_word "$@")
+    # Get trigger and class words based on parameters
+    get_trigger_and_class_words "$@"
     
     # Validate that we have a trigger word
-    if [[ -z "$trigger" ]]; then
-        echo "ERROR: No trigger word provided or could be determined"
+    if [[ -z "$final_trigger" ]]; then
+        echo "ERROR: No trigger word provided or could be determined" >&2
         exit 1
     fi
     
     # Load tag aliases
     load_tag_aliases
     
-    echo "Processing text files with trigger: $trigger"
+    # Display processing information
+    if [[ -n "$final_class" ]]; then
+        echo "Processing text files with trigger: $final_trigger, class: $final_class"
+    else
+        echo "Processing text files with trigger: $final_trigger"
+    fi
     
     # Process all txt files in the current directory
     for file in *.txt; do
-        [[ -f "$file" ]] && process_single_file "$file" "$trigger"
+        [[ -f "$file" ]] && process_single_file "$file" "$final_trigger" "$final_class"
     done
     
     echo "Processing complete!"
