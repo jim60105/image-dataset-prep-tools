@@ -184,7 +184,8 @@ Describe 'process_txt_files.zsh coverage enhancement'
       # Test with empty trigger should fail
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" ""
       The status should be failure
-      The stderr should include "ERROR"
+      The stderr should include "Using provided trigger word:"
+      The stderr should include "ERROR: No trigger word provided or could be determined"
     End
 
     It 'should handle too many parameters'
@@ -257,6 +258,10 @@ Describe 'process_txt_files.zsh coverage enhancement'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: flower"
+      The stderr should include "Auto-detected class word from path: plant"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       # Should remove standalone class word but preserve compounds
       The contents of file test.txt should not include ", plant,"
       The contents of file test.txt should include "plant_life"

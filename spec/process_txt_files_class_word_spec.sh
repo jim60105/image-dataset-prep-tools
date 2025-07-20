@@ -62,6 +62,9 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "hydrangea"
       The status should be success
+      The stderr should include "Using provided trigger word: hydrangea"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should match pattern "hydrangea, *"
     End
 
@@ -71,6 +74,10 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: hydrangea"
+      The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should match pattern "flower, hydrangea, *"
     End
 
@@ -79,6 +86,9 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "hydrangea"
       The status should be success
+      The stderr should include "Using provided trigger word: hydrangea"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should equal "hydrangea, blue_flower, nature, garden"
     End
 
@@ -88,6 +98,10 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: hydrangea"
+      The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should equal "flower, hydrangea, blue_flower, nature, garden"
     End
 
@@ -96,6 +110,9 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "flower"
       The status should be success
+      The stderr should include "Using provided trigger word: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should include "sunflower"
       The contents of file test.txt should include "yellow_flower"
     End
@@ -106,6 +123,10 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: hydrangea"
+      The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should include "sunflower"
       The contents of file test.txt should include "blue_flower"
       # Note: flower_crown becomes head_wreath due to tag aliases
@@ -117,6 +138,10 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: hydrangea"
+      The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should equal "flower, hydrangea, blue_flower, nature, garden"
     End
   End
@@ -154,6 +179,10 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: hydrangea"
+      The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should equal "flower, hydrangea"
     End
 
@@ -162,6 +191,9 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "hydrangea"
       The status should be success
+      The stderr should include "Using provided trigger word: hydrangea"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should equal "hydrangea"
     End
 
@@ -171,6 +203,10 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: hydrangea"
+      The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should equal "flower, hydrangea"
     End
 
@@ -182,6 +218,8 @@ Describe 'process_txt_files.zsh class word functionality'
       The status should be success
       The stderr should include "Auto-detected trigger word from path: my_character"
       The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
     End
   End
 
@@ -194,6 +232,10 @@ Describe 'process_txt_files.zsh class word functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
+      The stderr should include "Auto-detected trigger word from path: hydrangea"
+      The stderr should include "Auto-detected class word from path: flower"
+      The stderr should include "Loading tag aliases from:"
+      The stderr should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing: file1.txt"
       The output should include "Processing: file2.txt"
       The output should include "Processing: file3.txt"
