@@ -52,7 +52,8 @@ jobs:
           docker run --rm \
             -v "$PWD:/src" \
             --entrypoint=/shellspec-docker \
-            shellspec/shellspec:kcov
+            shellspec/shellspec:kcov \
+            --kcov
 
           # Fix ownership of coverage files created by container
           sudo chown -R $(id -u):$(id -g) coverage

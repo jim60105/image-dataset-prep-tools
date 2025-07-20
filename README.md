@@ -1,8 +1,8 @@
 # 🖼️ Image Dataset Preparation Tools
 
-![Zsh](https://img.shields.io/badge/Zsh-F15A24?logo=Zsh&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?logo=Python&logoColor=white) [![CodeFactor](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools/badge)](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools) [![codecov](https://codecov.io/gh/jim60105/image-dataset-prep-tools/graph/badge.svg?token=eCb26rs5Ma)](https://codecov.io/gh/jim60105/image-dataset-prep-tools) [![🧪 Shell Script Testing with Coverage](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/test.yml/badge.svg)](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/test.yml) [![🔄 Update Danbooru Tag Aliases Data](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/update-danbooru-data.yml/badge.svg)](https://github.com/jim60105/image-dataset-prep-tools/actions/workflows/update-danbooru-data.yml)  
+![Zsh](https://img.shields.io/badge/Zsh-F15A24?logo=Zsh&logoColor=white) ![Python](https://img.shields.io/badge/Python-3776AB?logo=Python&logoColor=white) [![CodeFactor](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools/badge)](https://www.codefactor.io/repository/github/jim60105/image-dataset-prep-tools) [![codecov](https://codecov.io/gh/jim60105/image-dataset-prep-tools/graph/badge.svg?token=eCb26rs5Ma)](https://codecov.io/gh/jim60105/image-dataset-prep-tools) ![Danbooru tag aliases last commit](https://img.shields.io/github/last-commit/jim60105/image-dataset-prep-tools?path=data%2Fdanbooru_tag_aliases.csv&label=%F0%9F%94%84%20Update%20Danbooru%20Tag%20Aliases%20Data&link=https%3A%2F%2Fgithub.com%2Fjim60105%2Fimage-dataset-prep-tools%2Fblob%2Fmaster%2Fdata%2Fdanbooru_tag_aliases.csv)
 
-This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training.
+This project provides several practical tools for image dataset preparation. These scripts are designed for pre-processing datasets before AI training. I specifically utilize them for Stable Diffusion LoRA training.
 
 > [!TIP]  
 > Add this project's `/src/` directory to your PATH to execute scripts from anywhere and process files in your current working directory.
@@ -26,7 +26,7 @@ This project provides several practical tools for image dataset preparation. The
 
 ### ⚙️ Setup
 
-First, add this project's `/src/` directory to your PATH to run scripts from anywhere:
+First, add the `/src/` directory of this project to your PATH so you can run scripts from anywhere:
 
 ```bash
 # Add to your shell configuration file (.bashrc, .zshrc, etc.)
@@ -34,6 +34,14 @@ export PATH="/path/to/image-dataset-prep-tools/src:$PATH"
 ```
 
 After setup, navigate to any directory containing your dataset files and run the scripts directly.
+
+### 💡 Dependencies
+
+- All the zsh scripts require zsh shell.
+- `resize_images.zsh` requires ImageMagick.
+- `validate_dataset.zsh` requires ImageMagick and (Optional) czkawka_cli.
+- `fetch_tags.py` requires Python 3.12 and `requests` package, recommended to use uv run script.
+- `scrape_danbooru_aliases.zsh` requires curl, jq, and bc.
 
 ### 1️⃣ process_txt_files.zsh
 
@@ -111,9 +119,9 @@ resize_images.zsh
 **Requirements:**
 
 - Python 3.12+
-- [`requests<3`](https://pypi.org/project/requests/)
+- [`requests`](https://pypi.org/project/requests/)
   - If you use `uv run`, all requirements are managed automatically, no manual installation needed.
-  - If you do not use `uv`, you must manually install dependencies with `pip install requests<3`.
+  - If you do not use `uv`, you must manually install dependencies with `pip install requests`.
 
 **Function:**
 
@@ -208,7 +216,7 @@ validate_dataset.zsh "your_trigger_word"
 - Data is sorted by tag count (most popular aliases first) for better relevance
 - Implements proper rate limiting (10 requests/second max)
 - Improved CSV data validation: as long as the API returns valid JSON and the CSV conversion is successful, the data is accepted (no longer misclassifies valid data as invalid)
-- Designed for danbooru.donmai.us, easily configurable for test environments
+- Designed for `danbooru.donmai.us`, easily configurable for test environments
 
 **Usage:**
 
@@ -262,38 +270,27 @@ This project uses [ShellSpec](https://shellspec.info/) for comprehensive BDD tes
 curl -fsSL https://git.io/shellspec | sh
 
 # Run all tests
-cd spec/
 shellspec
 
+# Install kcov for coverage reporting
+# https://github.com/SimonKagstrom/kcov/blob/master/INSTALL.md
+
 # Run with coverage
-shellspec --kcov ../coverage
+shellspec --kcov
 ```
 
 ### 📖 Writing Tests
 
-For detailed guidelines on writing effective BDD tests for zsh scripts, see our comprehensive [Testing Guideline](docs/testing-guideline.md).
+For detailed guidelines on writing effective BDD tests for zsh scripts, see our comprehensive [Testing Guideline](docs/zsh-testing-guideline.md).
 
 ### 🤝 Contributing
 
 When adding new features:
 
 1. Write tests first (TDD approach)
-2. Follow our [Testing Guideline](docs/testing-guideline.md)
+2. Follow our [Testing Guideline](docs/zsh-testing-guideline.md)
 3. Ensure 75%+ coverage
 4. Verify all existing tests pass
-
-## 💡 Notes
-
-- **Dependencies:**
-  - All the zsh scripts require zsh shell.
-  - `resize_images.zsh` requires ImageMagick.
-  - `validate_dataset.zsh` requires ImageMagick and czkawka_cli (Optional).
-  - `fetch_tags.py` requires `requests<3`, recommended to use uv for management.
-  - `scrape_danbooru_aliases.zsh` requires curl, jq, and bc.
-
-### Installing czkawka_cli (Optional)
-
-For similarity detection functionality in `validate_dataset.zsh`, install [czkawka_cli](https://github.com/qarmin/czkawka)
 
 ---
 

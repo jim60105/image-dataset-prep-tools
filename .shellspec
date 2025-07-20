@@ -8,7 +8,6 @@
 --shell zsh
 
 # Coverage options for kcov integration  
---kcov
 --kcov-options "--include-pattern="
 --kcov-options "--include-path=./src"
 --kcov-options "--exclude-pattern=/."

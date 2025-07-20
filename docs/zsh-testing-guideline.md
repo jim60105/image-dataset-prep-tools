@@ -378,19 +378,6 @@ It 'should produce expected output'
 End
 ```
 
-### Verbose Output
-
-```bash
-# Run tests with verbose output
-shellspec --format documentation
-
-# Run specific test file
-shellspec script_name_spec.sh
-
-# Run with coverage
-shellspec --kcov ../coverage
-```
-
 ## Common Pitfalls
 
 1. **Forgetting to mock external commands**: Always mock dependencies like `magick`, `curl`, `jq`
