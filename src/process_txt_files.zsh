@@ -136,8 +136,19 @@ remove_unwanted_patterns() {
     local content="$1"
     local trigger="$2"
     
-    # Remove the trigger word itself
-    content=${content//$trigger/}
+    # Remove the trigger word only when it appears as a standalone tag
+    # Use the existing tag processing functions for more reliable handling
+    split_tags "$content"
+    local filtered_tags=()
+    
+    for tag in "${split_tags_result[@]}"; do
+        # Only skip tags that exactly match the trigger word
+        if [[ "$tag" != "$trigger" ]]; then
+            filtered_tags+=("$tag")
+        fi
+    done
+    
+    content=$(join_tags "${filtered_tags[@]}")
     
     # Remove commentary patterns using bash parameter expansion where possible
     content=${content//, commentary_request/}
@@ -209,7 +220,7 @@ extract_trigger_from_path() {
     local current_dir=$(basename "$(pwd)")
     
     # Remove numeric prefix (e.g., "5_Doraemon" -> "Doraemon")
-    local clean_dir=${current_dir##[0-9]*_}
+    local clean_dir=${current_dir#[0-9]*_}
     
     # Split on spaces and take max 2 parts
     local parts=(${(s: :)clean_dir})
