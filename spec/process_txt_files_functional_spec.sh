@@ -30,9 +30,9 @@ Describe 'process_txt_files.zsh functionality'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "new_trigger"
       
       The status should be success
-      The stderr should include "Using provided trigger word: new_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: new_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: new_trigger"
       The output should include "Processing complete!"
     End
@@ -43,11 +43,11 @@ Describe 'process_txt_files.zsh functionality'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       
       The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The output should include "Processing text files with trigger: test_trigger"
-      The output should include "Processing complete!"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The output should include "Processing text files with trigger: test_trigger"
+  The output should include "Processing complete!"
     End
   End
 
@@ -58,11 +58,11 @@ Describe 'process_txt_files.zsh functionality'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "character"
       
       The status should be success
-      The stderr should include "Using provided trigger word: character"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The output should include "Processing text files with trigger: character"
-      The output should include "Processing complete!"
+  The output should include "Using provided trigger word: character"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The output should include "Processing text files with trigger: character"
+  The output should include "Processing complete!"
     End
 
     It 'should verify file content after processing'
@@ -82,14 +82,14 @@ Describe 'process_txt_files.zsh functionality'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "trigger"
       
       The status should be success
-      The stderr should include "Using provided trigger word: trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The output should include "Processing text files with trigger: trigger"
-      The output should include "Processing: file1.txt"
-      The output should include "Processing: file2.txt"
-      The output should include "Processing: file3.txt"
-      The output should include "Processing complete!"
+  The output should include "Using provided trigger word: trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The output should include "Processing text files with trigger: trigger"
+  The output should include "Processing: file1.txt"
+  The output should include "Processing: file2.txt"
+  The output should include "Processing: file3.txt"
+  The output should include "Processing complete!"
     End
   End
 End

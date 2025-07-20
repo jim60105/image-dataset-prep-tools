@@ -31,9 +31,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing complete!"
       The output should include "Processing text files with trigger: test_trigger"
       The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The file test.txt should be exist
     End
 
@@ -45,9 +45,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing: empty.txt"
       The output should include "Processing: whitespace.txt"
       The output should include "Processing: tab.txt"
@@ -61,9 +61,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing complete!"
       The output should include "Processing text files with trigger: test_trigger"
       The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       # Parentheses should be escaped to \( \)
       The contents of file test.txt should include "\\("
       The contents of file test.txt should include "\\)"
@@ -77,9 +77,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing complete!"
       The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       # Underscore patterns should be converted to colon format (single char patterns)
       The contents of file test.txt should include ":h"
     End
@@ -89,10 +89,10 @@ Describe 'process_txt_files.zsh coverage enhancement'
       echo "content, s, quality_tag" > test.txt
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
-      The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The status should be success
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing complete!"
       # The 's' tag in the middle should be removed
@@ -109,9 +109,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing complete!"
       # Should only contain one instance of each tag
@@ -125,13 +125,13 @@ Describe 'process_txt_files.zsh coverage enhancement'
       echo "tag1  ,   tag2,tag3   ,    tag4 ,tag5" > test.txt
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
-      The status should be success
-      The output should include "Processing text files with trigger: test_trigger"
-      The output should include "Processing: test.txt"
-      The output should include "Processing complete!"
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The status should be success
+  The output should include "Processing text files with trigger: test_trigger"
+  The output should include "Processing: test.txt"
+  The output should include "Processing complete!"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       # Should have clean comma-space separation
       The contents of file test.txt should match pattern "*test_trigger, tag1, tag2, tag3, tag4, tag5*"
     End
@@ -141,8 +141,8 @@ Describe 'process_txt_files.zsh coverage enhancement'
       echo "blue_flower, flower_blue, blue, flower, blue_flower_crown" > test.txt
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
       # Should remove standalone trigger but preserve compounds
       The contents of file test.txt should not include ", blue_flower,"
@@ -158,15 +158,15 @@ Describe 'process_txt_files.zsh coverage enhancement'
       echo "flower_crown, head_wreath, tiara, crown" > test.txt
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
-      The status should be success
-      The output should include "Processing text files with trigger: test_trigger"
-      The output should include "Processing: test.txt"
-      The output should include "Processing complete!"
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The stderr should include "Loaded"
-      The stderr should include "active tag aliases"
+  The status should be success
+  The output should include "Processing text files with trigger: test_trigger"
+  The output should include "Processing: test.txt"
+  The output should include "Processing complete!"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loaded"
+  The output should include "active tag aliases"
     End
   End
 
@@ -179,11 +179,11 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: hydrangea_flower"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The status should be success
-      # Should extract from directory name even without numeric prefix
-      The stderr should include "Auto-detected trigger word"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The status should be success
+  # Should extract from directory name even without numeric prefix
+  The output should include "Auto-detected trigger word"
     End
 
     It 'should handle directory names with special characters'
@@ -194,10 +194,10 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test-char_name"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The status should be success
-      The stderr should include "Auto-detected trigger word from path: test-char_name"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The status should be success
+  The output should include "Auto-detected trigger word from path: test-char_name"
     End
 
     It 'should handle complex directory names with spaces and underscores'
@@ -208,11 +208,11 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: character_name, class: flower"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The status should be success
-      The stderr should include "Auto-detected trigger word from path: character_name"
-      The stderr should include "Auto-detected class word from path: flower"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The status should be success
+  The output should include "Auto-detected trigger word from path: character_name"
+  The output should include "Auto-detected class word from path: flower"
     End
   End
 
@@ -231,7 +231,7 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Using provided trigger word: test_trigger"
+  The output should include "Using provided trigger word: test_trigger"
       The stderr should include "WARNING: Tag aliases file not found"
       
       # Restore the aliases file
@@ -246,9 +246,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       
       # Test with empty trigger should fail
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" ""
-      The status should be failure
-      The output should include "ERROR: No trigger word provided or could be determined"
-      The stderr should include "Using provided trigger word:"
+  The status should be failure
+  The output should include "ERROR: No trigger word provided or could be determined"
+  The output should include "Using provided trigger word:"
     End
 
     It 'should handle too many parameters'
@@ -268,10 +268,10 @@ Describe 'process_txt_files.zsh coverage enhancement'
       touch readme.md
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
-      The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The status should be success
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing complete!"
       The output should not include "Processing:"
     End
@@ -283,15 +283,15 @@ Describe 'process_txt_files.zsh coverage enhancement'
       echo "content3" > file3.txt
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
-      The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The output should include "Processing text files with trigger: test_trigger"
-      The output should include "Processing complete!"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The output should include "Processing: file1.txt"
-      The output should include "Processing: file2.txt"  
-      The output should include "Processing: file3.txt"
+  The status should be success
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should include "Processing text files with trigger: test_trigger"
+  The output should include "Processing complete!"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The output should include "Processing: file1.txt"
+  The output should include "Processing: file2.txt"  
+  The output should include "Processing: file3.txt"
     End
 
     It 'should preserve file order and content'
@@ -305,9 +305,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing: test1.txt"
       The output should include "Processing: test2.txt"
       The output should include "Processing complete!"
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       
       # Files should exist and have been processed
       The file test1.txt should be exist
@@ -326,10 +326,10 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
-      The stderr should include "Auto-detected trigger word from path: test_trigger"
+  The output should include "Auto-detected trigger word from path: test_trigger"
       The stderr should not include "Auto-detected class word"
       The contents of file test.txt should match pattern "test_trigger, *"
       The contents of file test.txt should not match pattern "*, test_trigger, *"
@@ -343,11 +343,11 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: flower, class: plant"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
-      The stderr should include "Auto-detected trigger word from path: flower"
-      The stderr should include "Auto-detected class word from path: plant"
+  The output should include "Auto-detected trigger word from path: flower"
+  The output should include "Auto-detected class word from path: plant"
       # Should remove standalone class word but preserve compounds
       The contents of file test.txt should not include ", plant,"
       The contents of file test.txt should include "plant_life"
@@ -363,8 +363,8 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: rose, class: flower"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
       # Should have class word first, then trigger word
       The contents of file test.txt should match pattern "flower, rose, *"
@@ -380,11 +380,11 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: legacy_test"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
       # Legacy function should still work for single word directories
-      The stderr should include "Auto-detected trigger word from path: legacy_test"
+  The output should include "Auto-detected trigger word from path: legacy_test"
     End
 
     It 'should handle two-word legacy directory format'
@@ -395,12 +395,12 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: character, class: person"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
       # Should work with both legacy and new formats
-      The stderr should include "Auto-detected trigger word from path: character"
-      The stderr should include "Auto-detected class word from path: person"
+  The output should include "Auto-detected trigger word from path: character"
+  The output should include "Auto-detected class word from path: person"
     End
   End
 
@@ -414,9 +414,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       # Should properly split and clean tags
       The contents of file test.txt should include "test_trigger"
     End
@@ -430,9 +430,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The contents of file test.txt should equal "test_trigger"
     End
 
@@ -442,9 +442,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       The status should be success
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       # Non-existent aliases should remain unchanged
       The contents of file test.txt should include "nonexistent_tag"
       The contents of file test.txt should include "unknown_alias"
@@ -461,8 +461,8 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: complex_trigger_name"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
       # Should remove exact trigger but preserve compounds
       The contents of file test.txt should not include ", complex_trigger_name,"
@@ -479,9 +479,9 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Using provided trigger word: test_trigger"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Using provided trigger word: test_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       # Standalone 's' tags should be removed
       The contents of file test.txt should not include ", s,"
       The contents of file test.txt should include "content"
@@ -499,8 +499,8 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: test"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
       
       # Should process through all steps
@@ -520,10 +520,10 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: valid_trigger"
       The output should include "Processing: test.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
-      The status should be success
-      The stderr should include "Using provided trigger word: valid_trigger"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
+  The status should be success
+  The output should include "Using provided trigger word: valid_trigger"
     End
 
     It 'should handle process_single_file function'
@@ -534,8 +534,8 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The output should include "Processing text files with trigger: trigger_word"
       The output should include "Processing: single.txt"
       The output should include "Processing complete!"
-      The stderr should include "Loading tag aliases from:"
-      The stderr should match pattern "*Loaded * active tag aliases*"
+  The output should include "Loading tag aliases from:"
+  The output should match pattern "*Loaded * active tag aliases*"
       The status should be success
       The contents of file single.txt should include "trigger_word"
       # Original content should be replaced/processed, not completely removed

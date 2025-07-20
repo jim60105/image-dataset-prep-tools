@@ -78,7 +78,7 @@ load_tag_aliases() {
         return 1
     fi
     
-    echo "Loading tag aliases from: $csv_file" >&2
+    echo "Loading tag aliases from: $csv_file"
     
     local line_count=0
     while IFS=',' read -r id antecedent_name consequent_name creator_id forum_topic_id alias_status rest; do
@@ -90,7 +90,7 @@ load_tag_aliases() {
         tag_aliases[$clean_antecedent]=$clean_consequent
     done < "$csv_file"
     
-    echo "Loaded ${#tag_aliases[@]} active tag aliases" >&2
+    echo "Loaded ${#tag_aliases[@]} active tag aliases"
     return 0
 }
 
@@ -260,9 +260,9 @@ extract_trigger_from_path() {
 # Function to prompt user for trigger word
 prompt_for_trigger() {
     echo "Could not auto-detect trigger word from current path." >&2
-    echo -n "Please enter the trigger word: " >&2
+    echo -n "Please enter the trigger word: "
     read trigger
-    echo "Using provided trigger word: $trigger" >&2
+    echo "Using provided trigger word: $trigger"
     echo "$trigger"
 }
 
@@ -273,7 +273,7 @@ get_trigger_word() {
             # Auto-detect mode
             local auto_trigger=$(extract_trigger_from_path)
             if [[ -n "$auto_trigger" && "$auto_trigger" != "" ]]; then
-                echo "Auto-detected trigger word from path: $auto_trigger" >&2
+                echo "Auto-detected trigger word from path: $auto_trigger"
                 echo "$auto_trigger"
             else
                 prompt_for_trigger
@@ -281,7 +281,7 @@ get_trigger_word() {
             ;;
         1)
             # Single parameter mode
-            echo "Using provided trigger word: $1" >&2
+            echo "Using provided trigger word: $1"
             echo "$1"
             ;;
         *)
@@ -294,9 +294,9 @@ get_trigger_word() {
 # Function to prompt user for trigger and class words
 prompt_for_words() {
     echo "Could not auto-detect words from current path." >&2
-    echo -n "Please enter the trigger word: " >&2
+    echo -n "Please enter the trigger word: "
     read trigger_word
-    echo -n "Please enter the class word (or press Enter if none): " >&2
+    echo -n "Please enter the class word (or press Enter if none): "
     read class_word
     
     # Trim whitespace and validate
@@ -308,8 +308,8 @@ prompt_for_words() {
         return 1
     fi
     
-    echo "Using provided trigger word: $trigger_word" >&2
-    [[ -n "$class_word" ]] && echo "Using provided class word: $class_word" >&2
+    echo "Using provided trigger word: $trigger_word"
+    [[ -n "$class_word" ]] && echo "Using provided class word: $class_word"
     
     # Return via global variables
     final_trigger="$trigger_word"
@@ -323,8 +323,8 @@ get_trigger_and_class_words() {
             # Auto-detect mode
             extract_trigger_and_class_from_path
             if [[ -n "$extracted_trigger" && "$extracted_trigger" != "" ]]; then
-                echo "Auto-detected trigger word from path: $extracted_trigger" >&2
-                [[ -n "$extracted_class" ]] && echo "Auto-detected class word from path: $extracted_class" >&2
+                echo "Auto-detected trigger word from path: $extracted_trigger"
+                [[ -n "$extracted_class" ]] && echo "Auto-detected class word from path: $extracted_class"
                 final_trigger="$extracted_trigger"
                 final_class="$extracted_class"
             else
@@ -333,7 +333,7 @@ get_trigger_and_class_words() {
             ;;
         1)
             # Single parameter mode - treat as trigger only
-            echo "Using provided trigger word: $1" >&2
+            echo "Using provided trigger word: $1"
             final_trigger="$1"
             final_class=""
             ;;
