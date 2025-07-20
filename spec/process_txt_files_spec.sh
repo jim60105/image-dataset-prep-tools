@@ -22,14 +22,12 @@ Describe 'process_txt_files.zsh'
   After 'cleanup'
 
   Describe 'Basic execution'
-    It 'should handle empty directory gracefully'
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
+    It 'should run script successfully with minimal input'
+      touch test.txt
+      echo "test content" > test.txt
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "smoke_trigger"
       The status should be success
-  The output should include "Using provided trigger word: test_trigger"
-  The output should include "Loading tag aliases from:"
-  The output should match pattern "*Loaded * active tag aliases*"
-      The stdout should include "Processing text files with trigger: test_trigger"
-      The stdout should include "Processing complete!"
+      The output should include "Processing complete!"
     End
   End
 

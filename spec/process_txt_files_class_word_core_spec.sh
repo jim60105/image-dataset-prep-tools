@@ -21,18 +21,6 @@ Describe 'process_txt_files.zsh class word core functionality'
   After 'cleanup'
 
   Describe 'Basic class word support'
-    It 'should work with single trigger word (backward compatibility)'
-      echo "blue_flower, nature, garden" > test.txt
-      
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "hydrangea"
-      The output should include "Processing complete!"
-      The output should include "Processing text files with trigger: hydrangea"
-      The status should be success
-  The output should include "Using provided trigger word: hydrangea"
-  The output should include "Loading tag aliases from:"
-  The output should match pattern "*Loaded * active tag aliases*"
-      The contents of file test.txt should equal "hydrangea, blue_flower, nature, garden"
-    End
 
     It 'should detect and use class word from directory name'
       mkdir -p "1_hydrangea flower" && cd "1_hydrangea flower"

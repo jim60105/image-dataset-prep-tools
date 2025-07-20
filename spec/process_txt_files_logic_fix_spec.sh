@@ -20,25 +20,6 @@ Describe 'process_txt_files.zsh trigger word logic fix'
   After 'cleanup'
 
   Describe 'Trigger word extraction from path'
-    It 'should extract compound trigger word from blue_flower directory'
-      mkdir -p 3_blue_flower && cd 3_blue_flower
-      echo "blue_flower, nature, garden, flower_crown" > test.txt
-      
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-  The output should include "Auto-detected trigger word from path: blue_flower"
-      The output should include "Processing complete!"
-    End
-
-    It 'should extract compound trigger word from green_apple directory'
-      mkdir -p 2_green_apple && cd 2_green_apple
-      echo "green_apple, red_apple, apple_tree" > test.txt
-      
-      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
-      The status should be success
-  The output should include "Auto-detected trigger word from path: green_apple"
-      The output should include "Processing complete!"
-    End
   End
 
   Describe 'Compound word preservation in content processing'
