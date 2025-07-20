@@ -202,7 +202,6 @@ Describe 'process_txt_files.zsh class word functionality'
       The output should include "Processing complete!"
       The contents of file test.txt should equal "flower, hydrangea"
     End
-      The output should include "Processing complete!"
 
     It 'should handle content with only trigger word'
       echo "hydrangea" > test.txt
@@ -212,9 +211,10 @@ Describe 'process_txt_files.zsh class word functionality'
       The stderr should include "Using provided trigger word: hydrangea"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: hydrangea"
+      The output should include "Processing complete!"
       The contents of file test.txt should equal "hydrangea"
     End
-      The output should include "Processing complete!"
 
     It 'should handle content with only class word'
       mkdir -p "1_hydrangea flower" && cd "1_hydrangea flower"
@@ -226,6 +226,8 @@ Describe 'process_txt_files.zsh class word functionality'
       The stderr should include "Auto-detected class word from path: flower"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: hydrangea, class: flower"
+      The output should include "Processing complete!"
       The contents of file test.txt should equal "flower, hydrangea"
     End
 
@@ -239,6 +241,8 @@ Describe 'process_txt_files.zsh class word functionality'
       The stderr should include "Auto-detected class word from path: flower"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: my_character, class: flower"
+      The output should include "Processing complete!"
     End
   End
 

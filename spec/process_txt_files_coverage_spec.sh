@@ -87,14 +87,14 @@ Describe 'process_txt_files.zsh coverage enhancement'
     It 'should handle standalone tag removal'
       mkdir -p "1_test" && cd "1_test"
       echo "content, s, quality_tag" > test.txt
-      The output should include "Processing text files with trigger: test_trigger"
-      The output should include "Processing complete!"
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       The status should be success
       The stderr should include "Using provided trigger word: test_trigger"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: test_trigger"
+      The output should include "Processing complete!"
       # The 's' tag in the middle should be removed
       The contents of file test.txt should not include ", s,"
       The contents of file test.txt should include "content"
@@ -104,8 +104,6 @@ Describe 'process_txt_files.zsh coverage enhancement'
 
   Describe 'Content processing edge cases'
     It 'should handle duplicate tag removal'
-      The output should include "Processing text files with trigger: test_trigger"
-      The output should include "Processing complete!"
       mkdir -p "1_test" && cd "1_test"
       echo "flower, nature, flower, garden, nature, flower" > test.txt
       
@@ -114,13 +112,13 @@ Describe 'process_txt_files.zsh coverage enhancement'
       The stderr should include "Using provided trigger word: test_trigger"
       The stderr should include "Loading tag aliases from:"
       The stderr should match pattern "*Loaded * active tag aliases*"
+      The output should include "Processing text files with trigger: test_trigger"
+      The output should include "Processing complete!"
       # Should only contain one instance of each tag
       The contents of file test.txt should include "flower"
       The contents of file test.txt should include "nature"
       The contents of file test.txt should include "garden"
     End
-      The output should include "Processing text files with trigger: test_trigger"
-      The output should include "Processing complete!"
 
     It 'should handle complex formatting cleanup'
       mkdir -p "1_test" && cd "1_test"
