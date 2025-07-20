@@ -16,7 +16,7 @@ This project provides several practical tools for image dataset preparation. The
 
 ## 📝 Overview
 
-- **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on a user-provided trigger keyword.
+- **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on trigger and optional class words. Supports enhanced labeling control with class word functionality for AI training datasets.
 - **resize_images.zsh**: Automatically resizes all images in the current working directory so the long side is 1024px, skipping images that are already smaller.
 - **fetch_tags.py**: Fetches tags from Danbooru/Gelbooru using the MD5 in the image filename from the current working directory and writes them to a corresponding `.txt` file.
 - **validate_dataset.zsh**: Validates image dataset completeness and quality by checking image files and corresponding tag files.
@@ -53,7 +53,8 @@ After setup, navigate to any directory containing your dataset files and run the
 
 **Function:**
 
-- Batch processes all `.txt` tag files in the current working directory, cleans content based on a user-input trigger keyword, removes noise tags, and prepends `{trigger}` to each line.
+- Batch processes all `.txt` tag files in the current working directory, cleans content based on trigger and optional class words, removes noise tags, and prepends appropriate prefix to each line.
+- Supports both single trigger word and trigger + class word formats for enhanced dataset labeling control.
 - Automatically applies Danbooru tag aliases from `data/danbooru_tag_aliases.csv` to standardize tag names.
 - Removes duplicate tags from each file after alias processing.
 
@@ -63,27 +64,55 @@ After setup, navigate to any directory containing your dataset files and run the
 # Navigate to your dataset directory first
 cd /path/to/your/dataset
 
-# Auto-detect trigger from directory name (e.g., 3_blue_flower -> blue_flower)
+# Auto-detect trigger (and class word) from directory name
 process_txt_files.zsh
 
-# Or specify trigger word manually
+# Or specify trigger word manually (class word will be empty)
 process_txt_files.zsh "my_trigger"
 ```
 
-- The script can auto-detect trigger words from directory names (format: `number_trigger_word`)
-- Or you can provide a trigger keyword as a parameter
+**Directory Name Formats:**
+
+The script supports two directory naming formats for auto-detection:
+
+1. **Single trigger word**: `1_hydrangea` → trigger: "hydrangea", no class word
+   - Output format: `"hydrangea, {processed_content}"`
+
+2. **Trigger + class word**: `1_hydrangea flower` → trigger: "hydrangea", class: "flower"  
+   - Output format: `"flower, hydrangea, {processed_content}"`
+
+3. **Three or more words**: `1_hydrangea flower plant` → uses first two words
+   - trigger: "hydrangea", class: "flower"
+
+**Examples:**
+
+```bash
+# Example 1: Single trigger word
+# Directory: 3_hydrangea
+# Input content: "blue_flower, nature, garden, flower_crown"
+# Output: "hydrangea, blue_flower, nature, garden, head_wreath"
+
+# Example 2: Trigger + class word  
+# Directory: 3_hydrangea flower
+# Input content: "blue_flower, nature, garden, flower_crown"  
+# Output: "flower, hydrangea, blue_flower, nature, garden, head_wreath"
+# Note: Standalone "flower" removed, compound "blue_flower" preserved
+```
+
 - Requires `data/danbooru_tag_aliases.csv` file for tag alias functionality.
 - Original files will be overwritten. **Back up important files first!**
 
 **Processing details:**
 
 - Replaces all `(` with `\(` and `)` with `\)`.
-- Removes standalone trigger keywords while preserving compound words (e.g., keeps `blue_flower` when trigger is `flower`).
+- Removes standalone trigger and class keywords while preserving compound words (e.g., keeps `blue_flower` when class word is `flower`).
 - Removes commentary/commission-related noise tags.
 - Cleans up redundant commas and spaces.
 - Applies Danbooru tag aliases to standardize tag names.
 - Removes duplicate tags from each file after alias processing.
-- Prepends `{trigger}` to the beginning of each file's content.
+- Prepends appropriate prefix based on whether class word exists:
+  - With class word: `"class_word, trigger_word, {content}"`
+  - Without class word: `"trigger_word, {content}"`
 
 ---
 
