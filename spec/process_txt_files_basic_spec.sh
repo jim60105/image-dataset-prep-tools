@@ -30,15 +30,13 @@ Describe 'process_txt_files.zsh basic functionality'
   End
 
   Describe 'Trigger word parameter handling'
-
     It 'should accept trigger word as first parameter'
       echo "test content" > test.txt
-      
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "test_trigger"
       The status should be success
-  The output should include "Using provided trigger word: test_trigger"
-  The output should include "Loading tag aliases from:"
-  The output should match pattern "*Loaded * active tag aliases*"
+      The output should include "Using provided trigger word: test_trigger"
+      The output should include "Loading tag aliases from:"
+      The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: test_trigger"
       The output should include "Processing complete!"
     End
@@ -46,12 +44,11 @@ Describe 'process_txt_files.zsh basic functionality'
     It 'should auto-detect trigger from directory path'
       mkdir -p character_test && cd character_test
       echo "test content" > test.txt
-      
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh"
       The status should be success
-  The output should include "Auto-detected trigger word from path"
-  The output should include "Loading tag aliases from:"
-  The output should match pattern "*Loaded * active tag aliases*"
+      The output should include "Auto-detected trigger word from path"
+      The output should include "Loading tag aliases from:"
+      The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing complete!"
     End
   End
@@ -60,12 +57,11 @@ Describe 'process_txt_files.zsh basic functionality'
     It 'should process txt files when they exist'
       echo "sample content" > file1.txt
       echo "another sample" > file2.txt
-      
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "character"
       The status should be success
-  The output should include "Using provided trigger word: character"
-  The output should include "Loading tag aliases from:"
-  The output should match pattern "*Loaded * active tag aliases*"
+      The output should include "Using provided trigger word: character"
+      The output should include "Loading tag aliases from:"
+      The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: character"
       The output should include "Processing: file1.txt"
       The output should include "Processing: file2.txt"
@@ -75,19 +71,18 @@ Describe 'process_txt_files.zsh basic functionality'
     It 'should handle empty directory gracefully'
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "character"
       The status should be success
-  The output should include "Using provided trigger word: character"
-  The output should include "Loading tag aliases from:"
-  The output should match pattern "*Loaded * active tag aliases*"
+      The output should include "Using provided trigger word: character"
+      The output should include "Loading tag aliases from:"
+      The output should match pattern "*Loaded * active tag aliases*"
       The output should include "Processing text files with trigger: character"
       The output should include "Processing complete!"
     End
 
     It 'should handle non-existent trigger parameter gracefully'
       echo "test content" > test.txt
-      
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" ""
       The status should be failure
-  The output should include "Using provided trigger word:"
+      The output should include "Using provided trigger word:"
       The output should include "ERROR: No trigger word provided or could be determined"
     End
   End
