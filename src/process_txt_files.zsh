@@ -241,56 +241,6 @@ extract_trigger_and_class_from_path() {
     esac
 }
 
-# Legacy function for backward compatibility - kept for existing logic
-extract_trigger_from_path() {
-    local current_dir=$(basename "$(pwd)")
-    
-    # Remove numeric prefix (e.g., "5_Doraemon" -> "Doraemon")
-    local clean_dir=${current_dir#[0-9]*_}
-    
-    # Split on spaces and take max 2 parts
-    local parts=(${(s: :)clean_dir})
-    case ${#parts[@]} in
-        1) echo "${parts[1]}" ;;
-        2) echo "${parts[2]}, ${parts[1]}" ;;
-        *) echo "${parts[2]}, ${parts[1]}" ;;  # 3 or more parts
-    esac
-}
-
-# Function to prompt user for trigger word
-prompt_for_trigger() {
-    echo "Could not auto-detect trigger word from current path." >&2
-    echo -n "Please enter the trigger word: "
-    read trigger
-    echo "Using provided trigger word: $trigger"
-    echo "$trigger"
-}
-
-# Function to get trigger word based on parameters
-get_trigger_word() {
-    case $# in
-        0)
-            # Auto-detect mode
-            local auto_trigger=$(extract_trigger_from_path)
-            if [[ -n "$auto_trigger" && "$auto_trigger" != "" ]]; then
-                echo "Auto-detected trigger word from path: $auto_trigger"
-                echo "$auto_trigger"
-            else
-                prompt_for_trigger
-            fi
-            ;;
-        1)
-            # Single parameter mode
-            echo "Using provided trigger word: $1"
-            echo "$1"
-            ;;
-        *)
-            echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]" >&2
-            exit 1
-            ;;
-    esac
-}
-
 # Function to prompt user for trigger and class words
 prompt_for_words() {
     echo "Could not auto-detect words from current path." >&2
