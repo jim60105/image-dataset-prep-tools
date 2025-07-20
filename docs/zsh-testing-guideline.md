@@ -415,4 +415,28 @@ shellspec --kcov
 shellspec --format documentation
 ```
 
+### Using Docker to run tests
+
+The project CI uses Docker to run ShellSpec and generate kcov coverage reports. You can also use Docker locally with the following commands:
+
+```bash
+# Run ShellSpec with kcov coverage in Docker
+docker run --rm \
+  -v "$PWD:/src" \
+  --entrypoint=/shellspec-docker \
+  shellspec/shellspec:kcov \
+  --kcov
+
+# Fix coverage directory ownership (to avoid root-owned files)
+sudo chown -R $(id -u):$(id -g) coverage
+```
+
+> [!NOTE]
+>
+> - `-v "$PWD:/src"` mounts your current directory to `/src` inside the container. ShellSpec will auto-detect the project root.
+> - `--entrypoint=/shellspec-docker` runs ShellSpec's default entrypoint, ensuring pre-test hooks are executed.
+> - `shellspec/shellspec:kcov` is the official Docker image with kcov support.
+> - The `--kcov` flag outputs the coverage report to the `coverage/` directory.
+> - Always fix the coverage directory ownership after tests, or some files may be owned by root.
+
 For more detailed ShellSpec documentation, visit [https://shellspec.info/](https://shellspec.info/).
