@@ -25,6 +25,9 @@ setopt nullglob
 # Global variable for tag aliases
 declare -gA tag_aliases
 
+# Global variable for preserved tags
+declare -ga preserve_tags
+
 # ============================================================================
 # UTILITY FUNCTIONS
 # ============================================================================
@@ -98,6 +101,12 @@ load_tag_aliases() {
 apply_tag_alias() {
     local tag="$1"
     
+    # Check if tag should be preserved
+    if is_tag_preserved "$tag"; then
+        echo "$tag"
+        return
+    fi
+    
     if [[ -n "${tag_aliases[$tag]}" ]]; then
         echo "${tag_aliases[$tag]}"
     else
@@ -128,7 +137,29 @@ apply_tag_aliases_to_content() {
 # Function to escape parentheses in content
 escape_parentheses() {
     local content="$1"
-    echo "$content" | sed -E 's/([^\\]|^)[(]/\1\\(/g; s/([^\\]|^)\)/\1\\)/g'
+    
+    # If no preserved tags, use original logic
+    if [[ ${#preserve_tags[@]} -eq 0 ]]; then
+        echo "$content" | sed -E 's/([^\\]|^)[(]/\1\\(/g; s/([^\\]|^)\)/\1\\)/g'
+        return
+    fi
+    
+    # Split content into tags and process each one
+    split_tags "$content"
+    local processed_tags=()
+    
+    for tag in "${split_tags_result[@]}"; do
+        if is_tag_preserved "$tag"; then
+            # Don't escape preserved tags
+            processed_tags+=("$tag")
+        else
+            # Escape parentheses in non-preserved tags
+            local escaped_tag=$(echo "$tag" | sed -E 's/([^\\]|^)[(]/\1\\(/g; s/([^\\]|^)\)/\1\\)/g')
+            processed_tags+=("$escaped_tag")
+        fi
+    done
+    
+    join_tags "${processed_tags[@]}"
 }
 
 # Function to remove unwanted patterns from content
@@ -142,6 +173,12 @@ remove_unwanted_patterns() {
     local filtered_tags=()
     
     for tag in "${split_tags_result[@]}"; do
+        # Check if tag should be preserved
+        if is_tag_preserved "$tag"; then
+            filtered_tags+=("$tag")
+            continue
+        fi
+        
         # Only skip tags that exactly match the trigger word
         if [[ "$tag" != "$trigger" ]]; then
             filtered_tags+=("$tag")
@@ -212,6 +249,120 @@ remove_duplicate_tags() {
 }
 
 # ============================================================================
+# PARAMETER PARSING FUNCTIONS
+# ============================================================================
+
+# Function to show usage information
+show_usage() {
+    cat >&2 << 'EOF'
+Usage: process_txt_files.zsh [trigger_word] [class_word] [-p|--preserve tag1,tag2] [-p tag3]
+
+Parameters:
+  trigger_word          Trigger word to use (optional if auto-detectable from path)
+  class_word           Class word to use (optional)
+  -p, --preserve tags  Comma-separated list of tags to preserve from alias conversion
+                       and removal. Can be specified multiple times.
+
+Examples:
+  process_txt_files.zsh                                    # Auto-detect from path
+  process_txt_files.zsh cornflower                         # Specify trigger only
+  process_txt_files.zsh cornflower flower                  # Specify trigger and class
+  process_txt_files.zsh cornflower -p iris                 # Preserve single tag (short)
+  process_txt_files.zsh cornflower --preserve iris         # Preserve single tag (long)
+  process_txt_files.zsh cornflower -p iris,rose            # Preserve multiple tags
+  process_txt_files.zsh cornflower -p iris -p hydrangea    # Multiple short flags
+  process_txt_files.zsh cornflower -p iris --preserve rose # Mixed short/long flags
+
+EOF
+}
+
+# Function to parse preserve tags from comma-separated string
+parse_preserve_tags() {
+    local preserve_string="$1"
+    [[ -z "$preserve_string" ]] && return
+    
+    IFS=',' read -rA temp_tags <<< "$preserve_string"
+    for tag in "${temp_tags[@]}"; do
+        local trimmed_tag=$(trim_whitespace "$tag")
+        [[ -n "$trimmed_tag" ]] && preserve_tags+=("$trimmed_tag")
+    done
+}
+
+# Function to check if a tag should be preserved
+is_tag_preserved() {
+    local tag="$1"
+    local preserved_tag
+    for preserved_tag in "${preserve_tags[@]}"; do
+        [[ "$tag" == "$preserved_tag" ]] && return 0
+    done
+    return 1
+}
+
+# Function to display preserved tags info
+show_preserve_info() {
+    if [[ ${#preserve_tags[@]} -gt 0 ]]; then
+        local preserve_list
+        preserve_list=$(join_tags "${preserve_tags[@]}")
+        echo "Preserving tags: $preserve_list"
+    else
+        echo "No tags to preserve"
+    fi
+}
+
+# Function to parse command line arguments
+parse_arguments() {
+    local args=("$@")
+    local i=1
+    local trigger=""
+    local class=""
+    local trigger_provided=false
+    preserve_tags=()
+    
+    while [[ $i -le ${#args[@]} ]]; do
+        case "${args[$i]}" in
+            --preserve|-p)
+                if [[ $i -eq ${#args[@]} || "${args[$((i+1))]}" =~ ^- ]]; then
+                    echo "ERROR: -p/--preserve requires a value" >&2
+                    show_usage
+                    return 1
+                fi
+                local preserve_value="${args[$((i+1))]}"
+                parse_preserve_tags "$preserve_value"
+                i=$((i + 2))
+                ;;
+            --*)
+                echo "ERROR: Unknown parameter: ${args[$i]}" >&2
+                show_usage
+                return 1
+                ;;
+            -*)
+                echo "ERROR: Unknown parameter: ${args[$i]}" >&2
+                show_usage
+                return 1
+                ;;
+            *)
+                if [[ -z "$trigger" && "$trigger_provided" == false ]]; then
+                    trigger="${args[$i]}"
+                    trigger_provided=true
+                elif [[ -z "$class" ]]; then
+                    class="${args[$i]}"
+                else
+                    echo "ERROR: Too many parameters" >&2
+                    show_usage
+                    return 1
+                fi
+                i=$((i + 1))
+                ;;
+        esac
+    done
+    
+    # Set results to global variables
+    parsed_trigger="$trigger"
+    parsed_class="$class"
+    parsed_trigger_provided="$trigger_provided"
+}
+
+# ============================================================================
 # TRIGGER WORD FUNCTIONS
 # ============================================================================
 
@@ -268,30 +419,35 @@ prompt_for_words() {
 
 # Function to get trigger and class words based on parameters
 get_trigger_and_class_words() {
-    case $# in
-        0)
-            # Auto-detect mode
-            extract_trigger_and_class_from_path
-            if [[ -n "$extracted_trigger" && "$extracted_trigger" != "" ]]; then
-                echo "Auto-detected trigger word from path: $extracted_trigger"
-                [[ -n "$extracted_class" ]] && echo "Auto-detected class word from path: $extracted_class"
-                final_trigger="$extracted_trigger"
-                final_class="$extracted_class"
-            else
-                prompt_for_words || return 1
-            fi
-            ;;
-        1)
-            # Single parameter mode - treat as trigger only
-            echo "Using provided trigger word: $1"
-            final_trigger="$1"
-            final_class=""
-            ;;
-        *)
-            echo "ERROR: Too many parameters. Usage: process_txt_files.zsh [trigger_word]" >&2
-            return 1
-            ;;
-    esac
+    # Parse command line arguments first
+    if ! parse_arguments "$@"; then
+        return 1
+    fi
+    
+    # Handle trigger and class word resolution
+    if [[ "$parsed_trigger_provided" == false ]]; then
+        # Auto-detect mode
+        extract_trigger_and_class_from_path
+        if [[ -n "$extracted_trigger" && "$extracted_trigger" != "" ]]; then
+            echo "Auto-detected trigger word from path: $extracted_trigger"
+            [[ -n "$extracted_class" ]] && echo "Auto-detected class word from path: $extracted_class"
+            final_trigger="$extracted_trigger"
+            final_class="$extracted_class"
+        else
+            prompt_for_words || return 1
+        fi
+    elif [[ -z "$(trim_whitespace "$parsed_trigger")" ]]; then
+        # Empty trigger provided explicitly
+        echo "Using provided trigger word: $parsed_trigger"
+        echo "ERROR: No trigger word provided or could be determined"
+        return 1
+    else
+        # Use parsed values
+        echo "Using provided trigger word: $parsed_trigger"
+        [[ -n "$parsed_class" ]] && echo "Using provided class word: $parsed_class"
+        final_trigger="$parsed_trigger"
+        final_class="$parsed_class"
+    fi
 }
 
 # Function to remove class word from content using tag processing
@@ -307,6 +463,12 @@ remove_class_word_from_content() {
     local filtered_tags=()
     
     for tag in "${split_tags_result[@]}"; do
+        # Check if tag should be preserved
+        if is_tag_preserved "$tag"; then
+            filtered_tags+=("$tag")
+            continue
+        fi
+        
         # Only skip tags that exactly match the class word
         if [[ "$tag" != "$class_word" ]]; then
             filtered_tags+=("$tag")
@@ -404,6 +566,9 @@ main() {
         echo "ERROR: No trigger word provided or could be determined"
         exit 1
     fi
+    
+    # Show preserve information
+    show_preserve_info
     
     # Load tag aliases
     load_tag_aliases
