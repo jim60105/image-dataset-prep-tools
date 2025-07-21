@@ -71,6 +71,8 @@ Describe 'process_txt_files.zsh --preserve/-p functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "flower" -p "flower"
       The status should be success
+      The output should include "Using provided trigger word: flower"
+      The output should include "Preserving tags: flower"
       
       # Preserved trigger word should appear twice: as prefix and in content
       The contents of file test.txt should include "flower, flower"
@@ -82,6 +84,9 @@ Describe 'process_txt_files.zsh --preserve/-p functionality'
       
       When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" -p "flower"
       The status should be success
+      The output should include "Auto-detected trigger word from path: iris"
+      The output should include "Auto-detected class word from path: flower"
+      The output should include "Preserving tags: flower"
       
       # Class word should be preserved in content despite being the class word
       The contents of file test.txt should include ", flower"

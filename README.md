@@ -114,21 +114,10 @@ Use `-p` or `--preserve` to protect specific tags from Danbooru alias conversion
 ```bash
 # Preserve specific tag variations (short form)
 process_txt_files.zsh cornflower flower -p iris_(character)
-process_txt_files.zsh cornflower flower -p iris,hydrangeas
 
 # Preserve specific tag variations (long form)
 process_txt_files.zsh cornflower flower --preserve iris_(character)
-process_txt_files.zsh cornflower flower --preserve iris,hydrangeas
-
-# Mixed usage
-process_txt_files.zsh cornflower flower -p iris --preserve hydrangeas
 ```
-
-**Benefits:**
-- Maintains specific tag forms (e.g., character vs general tags)
-- Prevents unwanted alias conversions
-- Preserves tags even when they match trigger/class words
-- Short `-p` form for quick typing, long `--preserve` for clarity
 
 - Requires `data/danbooru_tag_aliases.csv` file for tag alias functionality.
 - Original files will be overwritten. **Back up important files first!**
