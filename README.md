@@ -10,7 +10,7 @@ This project provides several practical tools for image dataset preparation. The
 > Add this project's `/src/` directory to your PATH to execute scripts from anywhere and process files in your current working directory.
 
 > [!CAUTION]  
-> All tools overwrite original files. Always back up important data first!
+> All tools overwrite original files. Always back up data first!
 
 ---
 
@@ -58,6 +58,9 @@ After setup, navigate to any directory containing your dataset files and run the
 - Provides tag preservation functionality to protect specific tags from alias conversion and removal.
 - Automatically applies Danbooru tag aliases from `data/danbooru_tag_aliases.csv` to standardize tag names.
 - Removes duplicate tags from each file after alias processing.
+
+> [!CAUTION]  
+> Original files will be overwritten. **Back up files first!**
 
 **Usage:**
 
@@ -116,9 +119,6 @@ process_txt_files.zsh cornflower flower -p iris_(character)
 process_txt_files.zsh cornflower flower --preserve iris_(character)
 ```
 
-- Requires `data/danbooru_tag_aliases.csv` file for tag alias functionality.
-- Original files will be overwritten. **Back up important files first!**
-
 **Processing details:**
 
 - Replaces all `(` with `\(` and `)` with `\)` (except for preserved tags).
@@ -146,6 +146,9 @@ process_txt_files.zsh cornflower flower --preserve iris_(character)
 - Resizes all `.jpg` and `.png` images in the current working directory so the short side is 1024px, keeping aspect ratio.
 - Images with any side smaller than 1024px are skipped.
 
+> [!CAUTION]  
+> Original files will be overwritten. **Back up files first!**
+
 **Usage:**
 
 ```bash
@@ -153,8 +156,6 @@ process_txt_files.zsh cornflower flower --preserve iris_(character)
 cd /path/to/your/dataset
 resize_images.zsh
 ```
-
-- Original images will be overwritten. **Back up important files first!**
 
 **Processing details:**
 
