@@ -88,5 +88,25 @@ Describe 'process_txt_files.zsh trigger word logic fix'
       The contents of file test.txt should include "trigger_suffix"
       The contents of file test.txt should include "prefix_trigger"
     End
+
+    It 'should use parameter trigger instead of folder name when both are present'
+      # Set up a folder with auto-detectable name
+      mkdir -p "1_cat animal" && cd "1_cat animal"
+      echo "fluffy, whiskers, playful" > test.txt
+      
+      # Run with different parameter than folder name
+      When run script "$SHELLSPEC_PROJECT_ROOT/src/process_txt_files.zsh" "dog"
+      The status should be success
+      The output should include "Using provided trigger word: dog"
+      The output should not include "Auto-detected trigger word from path: cat"
+      The output should include "Processing complete!"
+      
+      # Check that parameter trigger "dog" is used instead of folder name "cat"
+      The contents of file test.txt should start with "dog, "
+      The contents of file test.txt should not start with "cat, "
+      The contents of file test.txt should include "fluffy"
+      The contents of file test.txt should include "whiskers"
+      The contents of file test.txt should include "playful"
+    End
   End
 End
