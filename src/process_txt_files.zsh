@@ -315,6 +315,7 @@ parse_arguments() {
     local i=1
     local trigger=""
     local class=""
+    local trigger_provided=false
     preserve_tags=()
     
     while [[ $i -le ${#args[@]} ]]; do
@@ -340,8 +341,9 @@ parse_arguments() {
                 return 1
                 ;;
             *)
-                if [[ -z "$trigger" ]]; then
+                if [[ -z "$trigger" && "$trigger_provided" == false ]]; then
                     trigger="${args[$i]}"
+                    trigger_provided=true
                 elif [[ -z "$class" ]]; then
                     class="${args[$i]}"
                 else
@@ -357,6 +359,7 @@ parse_arguments() {
     # Set results to global variables
     parsed_trigger="$trigger"
     parsed_class="$class"
+    parsed_trigger_provided="$trigger_provided"
 }
 
 # ============================================================================
@@ -422,7 +425,7 @@ get_trigger_and_class_words() {
     fi
     
     # Handle trigger and class word resolution
-    if [[ -z "$parsed_trigger" ]]; then
+    if [[ "$parsed_trigger_provided" == false ]]; then
         # Auto-detect mode
         extract_trigger_and_class_from_path
         if [[ -n "$extracted_trigger" && "$extracted_trigger" != "" ]]; then
@@ -433,6 +436,11 @@ get_trigger_and_class_words() {
         else
             prompt_for_words || return 1
         fi
+    elif [[ -z "$(trim_whitespace "$parsed_trigger")" ]]; then
+        # Empty trigger provided explicitly
+        echo "Using provided trigger word: $parsed_trigger"
+        echo "ERROR: No trigger word provided or could be determined"
+        return 1
     else
         # Use parsed values
         echo "Using provided trigger word: $parsed_trigger"
