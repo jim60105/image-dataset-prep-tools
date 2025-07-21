@@ -74,9 +74,6 @@ process_txt_files.zsh "my_trigger"
 # Preserve specific tags from alias conversion
 process_txt_files.zsh "my_trigger" -p "iris_(character)"
 process_txt_files.zsh "my_trigger" --preserve "iris,hydrangeas"
-
-# Mixed usage with multiple preserved tags
-process_txt_files.zsh "my_trigger" -p "iris" --preserve "hydrangeas,violet"
 ```
 
 **Directory Name Formats:**
@@ -311,7 +308,7 @@ This project uses [ShellSpec](https://shellspec.info/) for comprehensive BDD tes
 ### 📋 Test Coverage
 
 - 🎯 **Target**: 75% minimum coverage for all zsh scripts
-- 🧪 **Total Tests**: 44+ examples across all scripts
+- 🧪 **Total Tests**: 100+ examples across all scripts
 - 📊 **Framework**: ShellSpec with BDD approach
 - 🔄 **CI/CD**: Automated testing on every commit
 
