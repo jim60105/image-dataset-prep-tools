@@ -16,7 +16,7 @@ This project provides several practical tools for image dataset preparation. The
 
 ## 📝 Overview
 
-- **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on trigger and optional class words. Supports enhanced labeling control with class word functionality for AI training datasets.
+- **process_txt_files.zsh**: Batch cleans and standardizes all `.txt` tag files in the current working directory, removing noise and unifying format based on trigger and optional class words. Supports enhanced labeling control with class word functionality and tag preservation features for AI training datasets.
 - **resize_images.zsh**: Automatically resizes all images in the current working directory so the long side is 1024px, skipping images that are already smaller.
 - **fetch_tags.py**: Fetches tags from Danbooru/Gelbooru using the MD5 in the image filename from the current working directory and writes them to a corresponding `.txt` file.
 - **validate_dataset.zsh**: Validates image dataset completeness and quality by checking image files and corresponding tag files.
@@ -55,6 +55,7 @@ After setup, navigate to any directory containing your dataset files and run the
 
 - Batch processes all `.txt` tag files in the current working directory, cleans content based on trigger and optional class words, removes noise tags, and prepends appropriate prefix to each line.
 - Supports both single trigger word and trigger + class word formats for enhanced dataset labeling control.
+- Provides tag preservation functionality to protect specific tags from alias conversion and removal.
 - Automatically applies Danbooru tag aliases from `data/danbooru_tag_aliases.csv` to standardize tag names.
 - Removes duplicate tags from each file after alias processing.
 
@@ -69,6 +70,13 @@ process_txt_files.zsh
 
 # Or specify trigger word manually (class word will be empty)
 process_txt_files.zsh "my_trigger"
+
+# Preserve specific tags from alias conversion
+process_txt_files.zsh "my_trigger" -p "iris_(character)"
+process_txt_files.zsh "my_trigger" --preserve "iris,hydrangeas"
+
+# Mixed usage with multiple preserved tags
+process_txt_files.zsh "my_trigger" -p "iris" --preserve "hydrangeas,violet"
 ```
 
 **Directory Name Formats:**
@@ -99,16 +107,40 @@ The script supports two directory naming formats for auto-detection:
 # Note: Standalone "flower" removed, compound "blue_flower" preserved
 ```
 
+#### Tag Preservation
+
+Use `-p` or `--preserve` to protect specific tags from Danbooru alias conversion:
+
+```bash
+# Preserve specific tag variations (short form)
+process_txt_files.zsh cornflower flower -p iris_(character)
+process_txt_files.zsh cornflower flower -p iris,hydrangeas
+
+# Preserve specific tag variations (long form)
+process_txt_files.zsh cornflower flower --preserve iris_(character)
+process_txt_files.zsh cornflower flower --preserve iris,hydrangeas
+
+# Mixed usage
+process_txt_files.zsh cornflower flower -p iris --preserve hydrangeas
+```
+
+**Benefits:**
+- Maintains specific tag forms (e.g., character vs general tags)
+- Prevents unwanted alias conversions
+- Preserves tags even when they match trigger/class words
+- Short `-p` form for quick typing, long `--preserve` for clarity
+
 - Requires `data/danbooru_tag_aliases.csv` file for tag alias functionality.
 - Original files will be overwritten. **Back up important files first!**
 
 **Processing details:**
 
-- Replaces all `(` with `\(` and `)` with `\)`.
+- Replaces all `(` with `\(` and `)` with `\)` (except for preserved tags).
 - Removes standalone trigger and class keywords while preserving compound words (e.g., keeps `blue_flower` when class word is `flower`).
+- Preserved tags (`-p`/`--preserve`) are protected from alias conversion and removal.
 - Removes commentary/commission-related noise tags.
 - Cleans up redundant commas and spaces.
-- Applies Danbooru tag aliases to standardize tag names.
+- Applies Danbooru tag aliases to standardize tag names (except preserved tags).
 - Removes duplicate tags from each file after alias processing.
 - Prepends appropriate prefix based on whether class word exists:
   - With class word: `"class_word, trigger_word, {content}"`
